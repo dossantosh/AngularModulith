@@ -1,0 +1,50 @@
+@use 'common.styles' as *;
+@use 'theme' as *;
+
+// dashboard.component.scss
+
+// Main container styles for the dashboard layout
+.dashboard {
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+
+  // Content section inside the dashboard, grows to fill available space
+  &__content {
+    flex: 1;
+    padding: 2rem;
+    display: flex;
+    flex-direction: column;
+    gap: 2rem;
+  }
+
+  // Footer section of the dashboard with background and text styling
+  &__footer {
+    background: darken($color-primary-dark, 10%);
+    color: #ecf0f1;
+    text-align: center;
+    padding: 1rem;
+    font-size: 0.95rem;
+    box-shadow: 0 -2px 8px rgba(0, 0, 0, 0.1);
+
+    // Paragraph text inside the footer, no margin
+    .dashboard__footer-text {
+      margin: 0;
+    }
+
+    // Container for footer links, flex layout with spacing and wrapping
+    .dashboard__footer-links {
+      margin-top: 0.5rem;
+      display: flex;
+      justify-content: center;
+      gap: 1rem;
+      flex-wrap: wrap;
+
+      // Apply common button styles with transparent gray variant
+      .btn {
+        @extend .btn;
+        @extend .btn--transparent-gray;
+      }
+    }
+  }
+}

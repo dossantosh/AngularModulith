@@ -1,0 +1,40 @@
+<!-- libs/.../header/header.component.html -->
+<header class="dashboard__header">
+  <div class="dashboard__header-left">
+    <!-- Tip: if this lib is used in multiple apps, consider an [logoSrc] @Input or use /favicon.ico -->
+    <img src="/favicon.ico" alt="Logo" class="logo" />
+    <h1 class="dashboard__company-name">{{ companyName }}</h1>
+  </div>
+
+  <nav class="dashboard__header-center">
+    <a
+      routerLink="/"
+      routerLinkActive="is-active"
+      [routerLinkActiveOptions]="{ exact: true }"
+      class="module-card btn--transparent-gray"
+    >Dashboard</a>
+
+    <a
+      routerLink="/usersmanagement/searchUsers"
+      routerLinkActive="is-active"
+      class="module-card btn--transparent-gray"
+    >Usuarios</a>
+
+    <a
+      routerLink="/perfumes"
+      routerLinkActive="is-active"
+      class="module-card btn--transparent-gray"
+    >Perfumes</a>
+
+    <a
+      routerLink="/configuration"
+      routerLinkActive="is-active"
+      class="module-card btn--transparent-gray"
+    >Configuración</a>
+  </nav>
+
+  <div class="dashboard__header-right">
+    <span class="dashboard__user-name">Hola, {{ userName }}</span>
+    <button class="logout-btn btn btn--danger" (click)="logout.emit()">Salir</button>
+  </div>
+</header>

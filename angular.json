@@ -23,6 +23,7 @@
             "browser": "src/main.ts",
             "tsConfig": "tsconfig.app.json",
             "inlineStyleLanguage": "scss",
+            "polyfills": ["src/polyfills.ts"],
             "assets": [
               {
                 "glob": "**/*",
@@ -30,8 +31,14 @@
               }
             ],
             "styles": [
-              "src/styles.scss"
-            ]
+              "src/styles/theme.scss",
+              "src/styles/common.styles.scss"
+            ],
+            "stylePreprocessorOptions": {
+              "includePaths": [
+                "src/styles"
+              ]
+            }
           },
           "configurations": {
             "production": {
@@ -59,6 +66,9 @@
         },
         "serve": {
           "builder": "@angular/build:dev-server",
+          "options": {
+            "proxyConfig": "proxy.conf.json"
+          },
           "configurations": {
             "production": {
               "buildTarget": "AngularModulith:build:production"

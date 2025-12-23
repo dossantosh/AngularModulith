@@ -1,0 +1,37 @@
+<!-- login.component.html -->
+<div class="login-container">
+  <h2>Iniciar Sesión</h2>
+  <form [formGroup]="loginForm" (ngSubmit)="onSubmit()">
+    <input
+      type="text"
+      placeholder="Usuario"
+      formControlName="username"
+      [class.invalid]="submitted && f['username'].invalid"
+    />
+
+    @if (submitted && f['username'].errors) {
+      <div class="error">
+        @if (f['username'].errors['required']) {
+          <small>Usuario es obligatorio.</small>
+        }
+      </div>
+    }
+
+    <input
+      type="password"
+      placeholder="Contraseña"
+      formControlName="password"
+      [class.invalid]="submitted && f['password'].invalid"
+    />
+
+    @if (submitted && f['password'].errors) {
+      <div class="error">
+        @if (f['password'].errors['required']) {
+          <small>Contraseña es obligatoria.</small>
+        }
+      </div>
+    }
+
+    <button type="submit">Entrar</button>
+  </form>
+</div>

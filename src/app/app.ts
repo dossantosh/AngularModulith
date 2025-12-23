@@ -1,12 +1,16 @@
-import { Component, signal } from '@angular/core';
-import { RouterOutlet } from '@angular/router';
+import { Component } from '@angular/core';
+import { RouterModule } from '@angular/router';
 
+/**
+ * Root application component.
+ * Serves as the host for routed views via <router-outlet>.
+ */
 @Component({
+  standalone: true,
+  imports: [RouterModule],
   selector: 'app-root',
-  imports: [RouterOutlet],
-  templateUrl: './app.html',
-  styleUrl: './app.scss'
+  template: `<router-outlet></router-outlet>`,
 })
 export class App {
-  protected readonly title = signal('AngularModulith');
+  protected title = 'Modulith Application';
 }
