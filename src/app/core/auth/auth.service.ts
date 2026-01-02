@@ -27,7 +27,7 @@ export class AuthService {
    * If not logged in, it returns 401
    */
   initCsrf(): Observable<void> {
-    return this.http.get(`${this.baseUrl}/csrf`, { withCredentials: true }).pipe(
+    return this.http.get(`${this.baseUrl}/csrf`, {  }).pipe(
       map(() => void 0),
       catchError(() => of(void 0))
     );
@@ -35,15 +35,18 @@ export class AuthService {
 
   login(body: LoginRequest): Observable<string> {
     return this.http
-      .post<{ username: string }>(`${this.baseUrl}/login`, body, { withCredentials: true })
+      .post<{ username: string }>(`${this.baseUrl}/login`, body, {  })
       .pipe(
-        tap((res) => this._username$.next(res.username)),
+        tap((res) => {
+          this._username$.next(res.username);
+          this.meOnce$ = undefined;
+        }),
         map((res) => res.username)
       );
   }
 
   logout(): Observable<void> {
-    return this.http.post<void>(`${this.baseUrl}/logout`, {}, { withCredentials: true }).pipe(
+    return this.http.post<void>(`${this.baseUrl}/logout`, {}, {  }).pipe(
       tap(() => {
         this._username$.next(null);
         this.meOnce$ = undefined;
@@ -54,7 +57,7 @@ export class AuthService {
   // me(): Observable<MeResponse> {
   //   if (!this.meOnce$) {
   //     this.meOnce$ = this.http
-  //       .get<MeResponse>(`${this.baseUrl}/me`, { withCredentials: true })
+  //       .get<MeResponse>(`${this.baseUrl}/me`, {  })
   //       .pipe(
   //         tap((me) => this._username$.next(me.username)),
   //         shareReplay(1)
@@ -64,7 +67,7 @@ export class AuthService {
   // }
   me(): Observable<MeResponse> {
     this.meOnce$ ??= this.http
-      .get<MeResponse>(`${this.baseUrl}/me`, { withCredentials: true })
+      .get<MeResponse>(`${this.baseUrl}/me`, {  })
       .pipe(
         tap((me) => this._username$.next(me.username)),
         shareReplay(1)
