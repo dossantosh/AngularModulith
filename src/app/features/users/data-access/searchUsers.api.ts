@@ -15,12 +15,10 @@ import { SearchUsersDTO } from '../models/searchUser.dto';
  *   <li>Returning raw DTO responses</li>
  * </ul>
  *
- * <p>It is intentionally "thin". Business rules, caching, and UI state belong
- * in a store or repository layer.</p>
  */
 @Injectable({ providedIn: 'root' })
 export class UsersApi {
-  private readonly baseUrl = `/api/auth`;
+  private readonly baseUrl = `/api/`;
 
   constructor(private readonly http: HttpClient) {}
 
@@ -36,6 +34,6 @@ export class UsersApi {
     if (filters.email.trim()) params = params.set('email', filters.email.trim());
     if (lastId != null) params = params.set('lastId', String(lastId));
 
-    return this.http.get<KeysetPage<SearchUsersDTO>>(this.baseUrl, { params });
+    return this.http.get<KeysetPage<SearchUsersDTO>>(this.baseUrl + 'users/', { params });
   }
 }
