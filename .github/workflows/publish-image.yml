@@ -2,7 +2,7 @@ name: Publish frontend image (GHCR)
 
 on:
   push:
-    branches: ["main", "master"]
+    branches: ["*"]
   workflow_dispatch:
 
 jobs:
@@ -29,4 +29,5 @@ jobs:
           push: true
           tags: |
             ghcr.io/${{ github.repository_owner }}/angularmodulith:latest
+            ghcr.io/${{ github.repository_owner }}/springfirstmodulith:${{ github.ref_name }}
             ghcr.io/${{ github.repository_owner }}/angularmodulith:${{ github.sha }}
