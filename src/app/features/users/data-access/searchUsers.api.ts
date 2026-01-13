@@ -20,7 +20,7 @@ import { SearchUsersDTO } from '../models/searchUser.dto';
  */
 @Injectable({ providedIn: 'root' })
 export class UsersApi {
-  private readonly baseUrl = '/api-auth/api/users';
+  private readonly baseUrl = `/api/auth`;
 
   constructor(private readonly http: HttpClient) {}
 

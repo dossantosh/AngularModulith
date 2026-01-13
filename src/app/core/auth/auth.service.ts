@@ -13,7 +13,7 @@ export interface MeResponse {
 
 @Injectable({ providedIn: 'root' })
 export class AuthService {
-  private readonly baseUrl = `/api-auth/api/auth`;
+  private readonly baseUrl = `/api/auth`;
 
   private readonly _username$ = new BehaviorSubject<string | null>(null);
   readonly username$ = this._username$.asObservable();
