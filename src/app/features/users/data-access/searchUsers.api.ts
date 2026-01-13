@@ -34,6 +34,6 @@ export class UsersApi {
     if (filters.email.trim()) params = params.set('email', filters.email.trim());
     if (lastId != null) params = params.set('lastId', String(lastId));
 
-    return this.http.get<KeysetPage<SearchUsersDTO>>(this.baseUrl + 'users/', { params });
+    return this.http.get<KeysetPage<SearchUsersDTO>>(this.baseUrl + 'users', { params });
   }
 }
