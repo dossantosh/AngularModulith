@@ -1,9 +1,9 @@
 {
-  "/api-auth": {
-    "target": "http://localhost:9090",
+  "/api/": {
+    "target": "http://localhost:9090/api/",
     "secure": false,
     "changeOrigin": true,
     "logLevel": "debug",
-    "pathRewrite": { "^/api-auth": "" }
+    "pathRewrite": { "^/api/": "" }
   }
 }

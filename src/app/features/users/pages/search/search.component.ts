@@ -1,64 +1,71 @@
-import { Component, OnInit, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
+import { Component, DestroyRef, OnInit, inject } from '@angular/core';
 import { RouterModule } from '@angular/router';
-import { FormsModule } from '@angular/forms';
+import { FormBuilder, ReactiveFormsModule } from '@angular/forms';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 
 import { UsersStore } from '../../data-access/users.store';
 
-/**
- * Users search page (routeable component).
- *
- * <p>This component is intentionally thin:
- * <ul>
- *   <li>Holds only display-only UI properties</li>
- *   <li>Binds to store signals for data, loading, and pagination</li>
- *   <li>Delegates all business/state logic to {@link UsersStore}</li>
- * </ul>
- */
+import { PageComponent } from '../../../../layout/components/page.component';
+import { CardComponent } from '../../../../layout/components/card.component';
+import { InputComponent } from '../../../../layout/components/input.component';
+import { ButtonComponent } from '../../../../layout/components/button.component';
+
 @Component({
   standalone: true,
   selector: 'app-users-search',
-  imports: [CommonModule, RouterModule, FormsModule],
+  imports: [CommonModule, RouterModule, ReactiveFormsModule, PageComponent, CardComponent, InputComponent, ButtonComponent],
   templateUrl: './search.component.html',
-  styleUrls: ['./search.component.scss'],
 })
 export class UsersSearchPage implements OnInit {
-  store = inject(UsersStore);
+  readonly store = inject(UsersStore);
+  private readonly fb = inject(FormBuilder);
+  private readonly destroyRef = inject(DestroyRef);
 
-  // Display data (keep here; it's UI-only)
-  userName = 'Temporal Name';
-  companyName = 'Temporal Name';
-  year = new Date().getFullYear();
+  // UI-only
+  readonly year = new Date().getFullYear();
+
+  // Form is just UI binding (store remains source of truth)
+  readonly filtersForm = this.fb.nonNullable.group({
+    id: this.fb.control<number | null>(null),
+    username: this.fb.control<string>(''),
+    email: this.fb.control<string>(''),
+  });
 
   ngOnInit(): void {
+    // sync initial store -> form
+    this.filtersForm.patchValue(this.store.filters(), { emitEvent: false });
+
+    // sync form -> store (no business logic here)
+    this.filtersForm.valueChanges
+      .pipe(takeUntilDestroyed(this.destroyRef))
+      .subscribe((v) => {
+        this.store.setFilters({
+          id: v.id ?? null,
+          username: v.username ?? '',
+          email: v.email ?? '',
+        });
+      });
+
+    // initial load
     this.store.search();
   }
 
-  // convenience for template/ngModel
-  get filters() {
-    return this.store.filters();
-  }
-
-  onIdChange(v: number | null) {
-    this.store.setFilters({ id: v });
-  }
-  onUsernameChange(v: string) {
-    this.store.setFilters({ username: v });
-  }
-  onEmailChange(v: string) {
-    this.store.setFilters({ email: v });
-  }
-
-  searchUsers() {
+  searchUsers(): void {
+    // just command
     this.store.search();
   }
-  clearFilters() {
+
+  clearFilters(): void {
+    this.filtersForm.reset({ id: null, username: '', email: '' }, { emitEvent: false });
     this.store.clearFiltersAndSearch();
   }
-  loadNext() {
+
+  loadNext(): void {
     this.store.loadNext();
   }
-  loadPrevious() {
+
+  loadPrevious(): void {
     this.store.loadPrevious();
   }
 }

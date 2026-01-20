@@ -6,12 +6,16 @@ import { toSignal } from '@angular/core/rxjs-interop';
 
 import { AuthService } from '../../core/auth/auth.service';
 
+import { CardComponent } from '../../layout/components/card.component';
+import { PageComponent } from '../../layout/components/page.component';
+import { InputComponent } from '../../layout/components/input.component';
+import { ButtonComponent } from '../../layout/components/button.component';
+
 @Component({
   standalone: true,
   selector: 'app-index',
-  imports: [CommonModule, RouterModule],
+  imports: [CommonModule, RouterModule, CardComponent, PageComponent, InputComponent, ButtonComponent],
   templateUrl: './index.component.html',
-  styleUrls: ['./index.component.scss'],
 })
 export class IndexComponent {
   private readonly auth = inject(AuthService);
