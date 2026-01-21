@@ -3,27 +3,33 @@ import { Component, computed, inject } from '@angular/core';
 import { Router, RouterOutlet } from '@angular/router';
 import { toSignal } from '@angular/core/rxjs-interop';
 
-import { HeaderComponent } from './header/header.component';
-import { FooterComponent } from './footer/footer.component';
-import { AuthService } from '../core/auth/auth.service';
+import { HeaderComponent } from './header.component';
+import { FooterComponent } from './footer.component';
+import { AuthService } from '../../../core/auth/auth.service';
 
 @Component({
   selector: 'lib-base-layout',
   standalone: true,
   imports: [HeaderComponent, RouterOutlet, FooterComponent],
   template: `
-    <div class="dashboard">
+    <!-- Use dvh + overflow-hidden so the layout controls scrolling -->
+    <div class="flex h-dvh flex-col overflow-hidden">
       <lib-header
+        class="shrink-0"
         [companyName]="companyName"
         [userName]="userName()"
         (logout)="logout()"
       ></lib-header>
 
-      <main>
+      <!-- Only this area scrolls. pb-24 reserves space for sticky footer -->
+      <main class="flex-1 overflow-y-auto bg-gray-50 dark:bg-slate-950">
         <router-outlet></router-outlet>
       </main>
 
-      <lib-footer [companyName]="companyName" [year]="year"></lib-footer>
+      <!-- Sticky footer always visible -->
+      <div class="sticky bottom-0 z-20 shrink-0">
+        <lib-footer [companyName]="companyName" [year]="year"></lib-footer>
+      </div>
     </div>
   `,
 })

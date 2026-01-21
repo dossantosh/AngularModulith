@@ -12,16 +12,6 @@ type LoadStatus = 'idle' | 'loading' | 'success' | 'error';
 
 /**
  * Store managing users search state (filters, pagination) and results.
- *
- * <p>This centralizes:
- * <ul>
- *   <li>Filter state</li>
- *   <li>Pagination state (direction/lastId + next/previous cursors)</li>
- *   <li>Network request lifecycle (loading/error)</li>
- *   <li>Derived UI state (empty, hasNext, etc.)</li>
- * </ul>
- *
- * <p>Components/pages should remain "thin" and bind to these signals.</p>
  */
 @Injectable({ providedIn: 'root' })
 export class UsersStore {
