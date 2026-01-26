@@ -5,10 +5,13 @@ import { BehaviorSubject, Observable, catchError, map, of, shareReplay, tap } fr
 export interface LoginRequest {
   username: string;
   password: string;
+  view: 'prod' | 'historic';
 }
+
 
 export interface MeResponse {
   username: string;
+  authorities: string[];
 }
 
 @Injectable({ providedIn: 'root' })
@@ -20,6 +23,18 @@ export class AuthService {
 
   private meOnce$?: Observable<MeResponse>;
 
+  private readonly _authorities$ = new BehaviorSubject<Set<string>>(new Set());
+  readonly authorities$ = this._authorities$.asObservable();
+
+  hasAuthority(authority: string): boolean {
+    return this._authorities$.value.has(authority);
+  }
+
+  hasAnyAuthority(...authorities: string[]): boolean {
+    const set = this._authorities$.value;
+    return authorities.some((a) => set.has(a));
+  }
+
   constructor(private readonly http: HttpClient) {}
 
   login(body: LoginRequest): Observable<string> {
@@ -28,7 +43,7 @@ export class AuthService {
         this._username$.next(res.username);
         this.meOnce$ = undefined;
       }),
-      map((res) => res.username)
+      map((res) => res.username),
     );
   }
 
@@ -36,31 +51,23 @@ export class AuthService {
     return this.http.post<void>(`${this.baseUrl}auth/logout`, {}, {}).pipe(
       tap(() => {
         this._username$.next(null);
+        this._authorities$.next(new Set());
         this.meOnce$ = undefined;
-      })
+      }),
     );
   }
 
-  // me(): Observable<MeResponse> {
-  //   if (!this.meOnce$) {
-  //     this.meOnce$ = this.http
-  //       .get<MeResponse>(`${this.baseUrl}/me`, {  })
-  //       .pipe(
-  //         tap((me) => this._username$.next(me.username)),
-  //         shareReplay(1)
-  //       );
-  //   }
-  //   return this.meOnce$;
-  // }
   me(): Observable<MeResponse> {
     this.meOnce$ ??= this.http.get<MeResponse>(`${this.baseUrl}auth/me`, {}).pipe(
-      tap((me) => this._username$.next(me.username)),
-      shareReplay(1)
+      tap((me) => {
+        this._username$.next(me.username);
+        this._authorities$.next(new Set(me.authorities ?? []));
+      }),
+      shareReplay(1),
     );
 
     return this.meOnce$;
   }
-
   /**
    * GET first so Spring gives us XSRF-TOKEN cookie.
    * If not logged in, it returns 401
@@ -68,7 +75,7 @@ export class AuthService {
   initCsrf(): Observable<void> {
     return this.http.get(`${this.baseUrl}auth/csrf`, {}).pipe(
       map(() => void 0),
-      catchError(() => of(void 0))
+      catchError(() => of(void 0)),
     );
   }
 }

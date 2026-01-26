@@ -8,7 +8,7 @@ import { provideHttpClient, withInterceptors, withXsrfConfiguration } from '@ang
 
 import { routes } from './app.routes';
 
-import { authInterceptor } from './core/auth/auth.interceptor';
+import { authInterceptor } from './core/auth/interceptors/auth.interceptor';
 
 /**
  * Root application configuration for the shell.

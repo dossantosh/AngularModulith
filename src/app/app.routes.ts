@@ -4,7 +4,8 @@ import { IndexComponent } from './features/index/index.component';
 import { LoginComponent } from './features/login/login.component';
 
 import { MainLayoutComponent } from './layout/components/main/main-layout.component';
-import { authGuard } from './core/auth/auth.guard';
+import { authGuard } from './core/auth/guards/auth.guard';
+import { authorityGuard } from './core/auth/guards/authority.guard';
 
 export const routes: Routes = [
   /**
@@ -18,13 +19,17 @@ export const routes: Routes = [
       /**
        * Index route
        */
-      { path: '', component: IndexComponent },
+      { 
+        path: '',
+        component: IndexComponent,
+      },
 
       /**
        * Users
        */
       {
         path: 'usersmanagement',
+        canActivate: [authorityGuard('MODULE_USERS')],
         loadChildren: () => import('./features/users/users.routes').then((m) => m.USERS_ROUTES),
       },
     ],

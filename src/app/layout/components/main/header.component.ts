@@ -1,12 +1,14 @@
 import { Component, EventEmitter, Input, Output, OnInit } from '@angular/core';
 import { RouterLink, RouterLinkActive } from '@angular/router';
 
+import { HasAuthorityDirective } from '../../../core/auth/directives/has-authority.directive';
+
 type Theme = 'light' | 'dark';
 
 @Component({
   selector: 'lib-header',
   standalone: true,
-  imports: [RouterLink, RouterLinkActive],
+  imports: [RouterLink, RouterLinkActive, HasAuthorityDirective],
   template: `
     <header
       class="sticky top-0 z-40 bg-white ring-1 ring-gray-200 shadow-sm
@@ -44,6 +46,7 @@ type Theme = 'light' | 'dark';
                    focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-gray-300/40
                    dark:text-gray-300 dark:hover:bg-gray-800 dark:hover:text-gray-100
                    dark:focus-visible:ring-gray-700/40"
+            *hasAuthority="'MODULE_USERS'"
           >
             Usuarios
           </a>
@@ -56,6 +59,7 @@ type Theme = 'light' | 'dark';
                    focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-gray-300/40
                    dark:text-gray-300 dark:hover:bg-gray-800 dark:hover:text-gray-100
                    dark:focus-visible:ring-gray-700/40"
+            *hasAuthority="'MODULE_PERFUMES'"
           >
             Perfumes
           </a>
@@ -139,8 +143,7 @@ export class HeaderComponent implements OnInit {
 
     // If nothing saved, default to system preference
     const prefersDark =
-      window.matchMedia &&
-      window.matchMedia('(prefers-color-scheme: dark)').matches;
+      window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches;
 
     this.isDark = saved ? saved === 'dark' : prefersDark;
 
