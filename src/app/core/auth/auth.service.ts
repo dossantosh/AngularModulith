@@ -8,11 +8,12 @@ export interface LoginRequest {
   view: 'prod' | 'historic';
 }
 
-
 export interface MeResponse {
   username: string;
   authorities: string[];
 }
+
+export type DataView = 'prod' | 'historic';
 
 @Injectable({ providedIn: 'root' })
 export class AuthService {
@@ -25,6 +26,14 @@ export class AuthService {
 
   private readonly _authorities$ = new BehaviorSubject<Set<string>>(new Set());
   readonly authorities$ = this._authorities$.asObservable();
+
+  // ---- Data view (prod/historic)
+  private readonly _view$ = new BehaviorSubject<DataView>('prod');
+  readonly view$ = this._view$.asObservable();
+
+  get currentView(): DataView {
+    return this._view$.value;
+  }
 
   hasAuthority(authority: string): boolean {
     return this._authorities$.value.has(authority);
@@ -41,6 +50,7 @@ export class AuthService {
     return this.http.post<{ username: string }>(`${this.baseUrl}auth/login`, body, {}).pipe(
       tap((res) => {
         this._username$.next(res.username);
+        this._view$.next(body.view); // 👈 remember selected view
         this.meOnce$ = undefined;
       }),
       map((res) => res.username),
@@ -52,6 +62,7 @@ export class AuthService {
       tap(() => {
         this._username$.next(null);
         this._authorities$.next(new Set());
+        this._view$.next('prod'); // reset to default
         this.meOnce$ = undefined;
       }),
     );
@@ -62,12 +73,14 @@ export class AuthService {
       tap((me) => {
         this._username$.next(me.username);
         this._authorities$.next(new Set(me.authorities ?? []));
+        // NOTE: view is chosen at login time, so we don't override it here.
       }),
       shareReplay(1),
     );
 
     return this.meOnce$;
   }
+
   /**
    * GET first so Spring gives us XSRF-TOKEN cookie.
    * If not logged in, it returns 401

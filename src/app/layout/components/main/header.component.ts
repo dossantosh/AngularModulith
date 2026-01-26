@@ -1,14 +1,17 @@
-import { Component, EventEmitter, Input, Output, OnInit } from '@angular/core';
+import { Component, EventEmitter, Input, Output, OnInit, inject } from '@angular/core';
 import { RouterLink, RouterLinkActive } from '@angular/router';
 
+import { AsyncPipe } from '@angular/common';
+
 import { HasAuthorityDirective } from '../../../core/auth/directives/has-authority.directive';
+import { AuthService } from '../../../core/auth/auth.service';
 
 type Theme = 'light' | 'dark';
 
 @Component({
   selector: 'lib-header',
   standalone: true,
-  imports: [RouterLink, RouterLinkActive, HasAuthorityDirective],
+  imports: [RouterLink, RouterLinkActive, HasAuthorityDirective, AsyncPipe],
   template: `
     <header
       class="sticky top-0 z-40 bg-white ring-1 ring-gray-200 shadow-sm
@@ -103,6 +106,17 @@ type Theme = 'light' | 'dark';
             </span>
           </span>
 
+          <!-- Historic badge -->
+          @if ((view$ | async) === 'historic') {
+            <span
+              class="rounded-md bg-amber-100 px-2 py-0.5 text-xs font-semibold
+               text-amber-800 dark:bg-amber-900 dark:text-amber-200"
+              title="Estás navegando datos históricos"
+            >
+              Historic
+            </span>
+          }
+
           <button
             type="button"
             (click)="logout.emit()"
@@ -118,8 +132,14 @@ type Theme = 'light' | 'dark';
   `,
 })
 export class HeaderComponent implements OnInit {
+  private readonly auth = inject(AuthService);
+
   @Input() companyName = 'My Company';
   @Input() userName = 'User';
+
+  // 👇 now sourced from AuthService
+  readonly view$ = this.auth.view$;
+
   @Output() logout = new EventEmitter<void>();
 
   isDark = false;
@@ -142,8 +162,7 @@ export class HeaderComponent implements OnInit {
     const saved = localStorage.getItem('theme') as Theme | null;
 
     // If nothing saved, default to system preference
-    const prefersDark =
-      window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches;
+    const prefersDark = globalThis.matchMedia?.('(prefers-color-scheme: dark)')?.matches ?? false;
 
     this.isDark = saved ? saved === 'dark' : prefersDark;
 
