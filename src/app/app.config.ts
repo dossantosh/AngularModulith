@@ -9,6 +9,7 @@ import { provideHttpClient, withInterceptors, withXsrfConfiguration } from '@ang
 import { routes } from './app.routes';
 
 import { authInterceptor } from './core/auth/interceptors/auth.interceptor';
+import { provideHttpClientTesting } from '@angular/common/http/testing';
 
 /**
  * Root application configuration for the shell.
@@ -49,6 +50,8 @@ export const appConfig: ApplicationConfig = {
      * Registers global error listeners for unhandled errors and promise rejections.
      * Useful for logging, monitoring, and displaying fallback UIs.
      */
-    provideBrowserGlobalErrorListeners(),
+    provideBrowserGlobalErrorListeners()
+
+    
   ],
 };

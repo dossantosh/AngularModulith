@@ -50,7 +50,7 @@ export class AuthService {
     return this.http.post<{ username: string }>(`${this.baseUrl}auth/login`, body, {}).pipe(
       tap((res) => {
         this._username$.next(res.username);
-        this._view$.next(body.view); // 👈 remember selected view
+        this._view$.next(body.view);
         this.meOnce$ = undefined;
       }),
       map((res) => res.username),
@@ -73,7 +73,7 @@ export class AuthService {
       tap((me) => {
         this._username$.next(me.username);
         this._authorities$.next(new Set(me.authorities ?? []));
-        // NOTE: view is chosen at login time, so we don't override it here.
+
       }),
       shareReplay(1),
     );

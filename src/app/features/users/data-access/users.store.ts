@@ -19,7 +19,7 @@ export class UsersStore {
 
   // ---- UI/query state
   private readonly _filters = signal<UsersFilters>({ id: null, username: '', email: '' });
-  private readonly _limit = signal<number>(50);
+  private readonly _limit = signal<number>(10);
   private readonly _direction = signal<PageDirection>('NEXT');
   private readonly _lastId = signal<number | null>(null);
 

@@ -137,7 +137,6 @@ export class HeaderComponent implements OnInit {
   @Input() companyName = 'My Company';
   @Input() userName = 'User';
 
-  // 👇 now sourced from AuthService
   readonly view$ = this.auth.view$;
 
   @Output() logout = new EventEmitter<void>();
