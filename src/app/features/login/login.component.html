@@ -9,53 +9,50 @@
     </p>
 
     <form [formGroup]="loginForm" (ngSubmit)="onSubmit()" class="mt-6 space-y-4">
+      <!-- Datos -->
+      <div>
+        <label for="view" class="mb-1 block text-sm font-medium text-gray-700">Datos</label>
+        <select formControlName="view" class="w-full rounded-lg border border-gray-300 bg-white px-3 py-2 text-sm text-gray-900
+           shadow-sm outline-none transition
+           focus:border-blue-600 focus:ring-4 focus:ring-blue-600/15">
+          <option value="prod">Producción</option>
+          <option value="historic">Histórico</option>
+        </select>
+      </div>
       <!-- Usuario -->
       <div>
         <label for="username" class="mb-1 block text-sm font-medium text-gray-700">Usuario</label>
-        <input
-          type="text"
-          placeholder="Usuario"
-          formControlName="username"
-          class="w-full rounded-lg border border-gray-300 bg-white px-3 py-2 text-sm text-gray-900
+        <input type="text" placeholder="Usuario" formControlName="username" class="w-full rounded-lg border border-gray-300 bg-white px-3 py-2 text-sm text-gray-900
                  placeholder:text-gray-400 shadow-sm outline-none transition
                  focus:border-blue-600 focus:ring-4 focus:ring-blue-600/15"
           [class.border-red-500]="submitted && f['username'].invalid"
           [class.focus:border-red-500]="submitted && f['username'].invalid"
-          [class.focus:ring-red-500/15]="submitted && f['username'].invalid"
-        />
+          [class.focus:ring-red-500/15]="submitted && f['username'].invalid" />
 
         @if (submitted && f['username'].errors?.['required']) {
-          <p class="mt-1 text-sm text-red-600">Usuario es obligatorio.</p>
+        <p class="mt-1 text-sm text-red-600">Usuario es obligatorio.</p>
         }
       </div>
 
       <!-- Contraseña -->
       <div>
         <label for="password" class="mb-1 block text-sm font-medium text-gray-700">Contraseña</label>
-        <input
-          type="password"
-          placeholder="Contraseña"
-          formControlName="password"
-          class="w-full rounded-lg border border-gray-300 bg-white px-3 py-2 text-sm text-gray-900
+        <input type="password" placeholder="Contraseña" formControlName="password" class="w-full rounded-lg border border-gray-300 bg-white px-3 py-2 text-sm text-gray-900
                  placeholder:text-gray-400 shadow-sm outline-none transition
                  focus:border-blue-600 focus:ring-4 focus:ring-blue-600/15"
           [class.border-red-500]="submitted && f['password'].invalid"
           [class.focus:border-red-500]="submitted && f['password'].invalid"
-          [class.focus:ring-red-500/15]="submitted && f['password'].invalid"
-        />
+          [class.focus:ring-red-500/15]="submitted && f['password'].invalid" />
 
         @if (submitted && f['password'].errors?.['required']) {
-          <p class="mt-1 text-sm text-red-600">Contraseña es obligatoria.</p>
+        <p class="mt-1 text-sm text-red-600">Contraseña es obligatoria.</p>
         }
       </div>
 
       <!-- Botón -->
-      <button
-        type="submit"
-        class="mt-2 w-full rounded-lg bg-blue-600 px-4 py-2.5 text-sm font-semibold text-white
+      <button type="submit" class="mt-2 w-full rounded-lg bg-blue-600 px-4 py-2.5 text-sm font-semibold text-white
                shadow-sm transition hover:bg-blue-700 active:bg-blue-800
-               focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-blue-600/25"
-      >
+               focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-blue-600/25">
         Entrar
       </button>
     </form>

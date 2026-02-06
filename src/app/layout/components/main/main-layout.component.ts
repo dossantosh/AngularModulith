@@ -47,11 +47,8 @@ export class MainLayoutComponent {
   userName = computed(() => this.usernameSig() ?? 'Guest');
 
   constructor() {
-    // 1) Ensure CSRF cookie is present early
     this.auth.initCsrf().subscribe();
 
-    // 2) Try to load current user if a session already exists
-    // (If not logged in, /me returns 401; you can ignore it)
     this.auth.me().subscribe({
       error: () => {}, // ignore 401
     });
