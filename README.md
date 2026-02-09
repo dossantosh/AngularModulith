@@ -1,6 +1,6 @@
 # AngularModulith
 
-A **feature‑modular Angular application** designed to pair with the **SpringFirstModulith** backend (session‑based auth + multi‑datasource *view* routing).
+A **feature‑modular Angular application** designed to pair with the **SpringFirstModulith** backend (session‑based auth + multi‑datasource _view_ routing).
 
 This repository demonstrates a **frontend modulith** approach: strong boundaries between **core infrastructure**, **shared primitives**, **layout**, and **feature modules**, with **lazy loading at the route level**.
 
@@ -37,9 +37,10 @@ High‑level layering:
 - **core** → cross‑cutting infrastructure (auth, guards, interceptors, error handling)
 - **shared** → pure, domain‑agnostic primitives (DTOs, helpers)
 - **layout** → reusable UI shell and components
-- **features** → the *only* place where business pages and routes live
+- **features** → the _only_ place where business pages and routes live
 
 This prevents:
+
 - a single growing `app.module.ts`
 - feature‑to‑feature coupling
 - security rules leaking into UI code
@@ -146,16 +147,16 @@ Routing entry point: `src/app/app.routes.ts`
 
 ## 🛠️ Tech Stack
 
-| Tech            | Purpose                     |
-|-----------------|-----------------------------|
-| Angular 21      | App framework               |
-| Angular Router  | Routing + lazy loading      |
-| RxJS            | Reactive state + HTTP flows |
-| Vitest + JSDOM  | Unit testing                |
-| Playwright      | End-to-end testing          |
-| TailwindCSS     | Styling                     |
-| TypeScript      | Language                    |
-| Nginx           | Production reverse proxy    |
+| Tech           | Purpose                     |
+| -------------- | --------------------------- |
+| Angular 21     | App framework               |
+| Angular Router | Routing + lazy loading      |
+| RxJS           | Reactive state + HTTP flows |
+| Vitest + JSDOM | Unit testing                |
+| Playwright     | End-to-end testing          |
+| TailwindCSS    | Styling                     |
+| TypeScript     | Language                    |
+| Nginx          | Production reverse proxy    |
 
 ---
 
@@ -213,6 +214,7 @@ server {
 ```
 
 This setup:
+
 - Preserves session cookies
 - Supports CSRF
 - Works behind reverse proxies
@@ -239,6 +241,7 @@ npm start
 ```
 
 Frontend:
+
 - http://localhost:4200
 
 ---
@@ -255,46 +258,50 @@ docker/modulithApp/
 ├── docker-compose.dev.yml
 └── 01-create-historic-db.sql
 ```
+
 ### docker-compose.yml
 
 ```yaml
 services:
-  postgres:
+  db:
     image: postgres:17
-    container_name: springfirstmodulith-postgres
     environment:
-      POSTGRES_USER: user
-      POSTGRES_PASSWORD: secret
       POSTGRES_DB: SpringFirstModulithDB
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: Sb202582
     ports:
-      - "5432:5432"
+      - '5432:5432'
     volumes:
-      - pgdata:/var/lib/postgresql/data
-      - ./docker/initdb:/docker-entrypoint-initdb.d
-    healthcheck:
-      test: ["CMD-SHELL", "pg_isready -U user -d SpringFirstModulithDB"]
-      interval: 5s
-      retries: 20
+      - db_data:/var/lib/postgresql/data
+      - ./01-create-historic-db.sql:/docker-entrypoint-initdb.d/01-create-historic-db.sql:ro
 
-  app:
-    build: .
-    container_name: springfirstmodulith-app
-    depends_on:
-      postgres:
-        condition: service_healthy
+  backend:
+    #image: ghcr.io/dossantosh/springfirstmodulith:main
+    image: ghcr.io/dossantosh/springfirstmodulith:flywayImplementation
     environment:
-      DB_HOST: postgres
+      #SPRING_SESSION_JDBC_INITIALIZE_SCHEMA: never
+      DB_HOST: db
       DB_PORT: 5432
       DB_NAME: SpringFirstModulithDB
       DB_HIST_NAME: SpringFirstModulithDBHistoric
-      DB_USER: user
-      DB_PASSWORD: secret
+      DB_USER: postgres
+      DB_PASSWORD: Sb202582
       SERVER_PORT: 9090
     ports:
-      - "9090:9090"
+      - '9090:9090'
+    depends_on:
+      - db
+
+  frontend:
+    image: ghcr.io/dossantosh/angularmodulith:main
+    #image: ghcr.io/dossantosh/angularmodulith:Database-Runtime-Routing
+    ports:
+      - '4200:80'
+    depends_on:
+      - backend
 
 volumes:
-  pgdata:
+  db_data:
 ```
 
 ### docker-compose.dev.yml
@@ -310,7 +317,6 @@ services:
     build:
       context: ../../AngularModulith
     image: angularmodulith:dev
-
 ```
 
 ### Init script for historic DB
@@ -329,7 +335,7 @@ Run everything:
 docker compose up --build
 ```
 
-Run in dev 
+Run in dev
 
 ```sh
 docker compose -f docker-compose.yml -f docker-compose.dev.yml up -d --build
@@ -395,7 +401,7 @@ src/app/features/<feature-name>/
 4️⃣ Protect if needed:
 
 ```ts
-canActivate: [authorityGuard('MODULE_SOMETHING')]
+canActivate: [authorityGuard('MODULE_SOMETHING')];
 ```
 
 This enforces **explicit dependencies and clean boundaries**.
