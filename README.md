@@ -1,59 +1,404 @@
 # AngularModulith
 
-This project was generated using [Angular CLI](https://github.com/angular/angular-cli) version 21.0.4.
+A **feature‑modular Angular application** designed to pair with the **SpringFirstModulith** backend (session‑based auth + multi‑datasource *view* routing).
 
-## Development server
+This repository demonstrates a **frontend modulith** approach: strong boundaries between **core infrastructure**, **shared primitives**, **layout**, and **feature modules**, with **lazy loading at the route level**.
 
-To start a local development server, run:
+The goal mirrors the backend philosophy: **scale by structure, not by fragmentation**.
 
-```bash
-ng serve
+---
+
+## 📖 Table of Contents
+
+- [📌 Project Overview](#-project-overview)
+- [✨ Features](#-features)
+  - [🔐 Auth & Security](#-auth--security)
+  - [🧩 Frontend Modulith Structure](#-frontend-modulith-structure)
+  - [🧪 Testing](#-testing)
+- [🗂️ Project Structure](#️-project-structure)
+- [🛠️ Tech Stack](#️-tech-stack)
+- [⚙️ Configuration](#️-configuration)
+  - [Proxy to Backend (Dev)](#proxy-to-backend-dev)
+  - [Nginx Reverse Proxy (Docker)](#nginx-reverse-proxy-docker)
+- [🚀 Getting Started](#-getting-started)
+- [🐳 Docker Setup](#-docker-setup)
+- [📡 Backend Contract](#-backend-contract)
+- [🧭 Adding a New Feature Module](#-adding-a-new-feature-module)
+- [👤 Author](#-author)
+
+---
+
+## 📌 Project Overview
+
+**AngularModulith** is an **Angular 21** application structured around **feature‑level bounded contexts**.
+
+High‑level layering:
+
+- **core** → cross‑cutting infrastructure (auth, guards, interceptors, error handling)
+- **shared** → pure, domain‑agnostic primitives (DTOs, helpers)
+- **layout** → reusable UI shell and components
+- **features** → the *only* place where business pages and routes live
+
+This prevents:
+- a single growing `app.module.ts`
+- feature‑to‑feature coupling
+- security rules leaking into UI code
+
+---
+
+## ✨ Features
+
+### 🔐 Auth & Security
+
+- **Session‑based authentication** (cookies, not JWT)
+- CSRF bootstrap via backend cookie endpoint
+- Route protection via guards:
+  - `authGuard` → authenticated access
+  - `authorityGuard('MODULE_X')` → module/permission access
+- Authority‑aware UI rendering via `HasAuthorityDirective`
+
+Expected backend endpoints:
+
+- `POST /api/auth/login`
+- `POST /api/auth/logout`
+- `GET  /api/auth/me`
+- `GET  /api/auth/csrf`
+
+Login supports backend datasource routing:
+
+```ts
+export interface LoginRequest {
+  username: string;
+  password: string;
+  view: 'prod' | 'historic';
+}
 ```
 
-Once the server is running, open your browser and navigate to `http://localhost:4200/`. The application will automatically reload whenever you modify any of the source files.
+This maps directly to the **prod / historic datasource routing** in SpringFirstModulith.
 
-## Code scaffolding
+---
 
-Angular CLI includes powerful code scaffolding tools. To generate a new component, run:
+### 🧩 Frontend Modulith Structure
 
-```bash
-ng generate component component-name
+- Feature modules are **lazy loaded**
+- Guards are applied at the **routing boundary**
+- Features do not import other features
+- UI primitives live in `layout/components`, not in features
+
+This keeps features thin, replaceable, and independently evolvable.
+
+---
+
+### 🧪 Testing
+
+- **Unit tests**: Vitest + JSDOM
+- **E2E tests**: Playwright
+- Test setup mirrors real session‑based auth behavior
+
+---
+
+## 🗂️ Project Structure
+
+```
+src/app
+├── core
+│   ├── auth
+│   │   ├── directives
+│   │   ├── guards
+│   │   ├── interceptors
+│   │   └── auth.service.ts
+│   └── errors
+│       ├── api-error.model.ts
+│       └── app-error.model.ts
+│
+├── shared
+│   └── keyset-page.dto.ts
+│
+├── layout
+│   └── components
+│       ├── button.component.ts
+│       ├── card.component.ts
+│       ├── input.component.ts
+│       ├── page.component.ts
+│       └── ui-nav-link.component.ts
+│
+└── features
+    ├── index
+    ├── login
+    └── users
+        ├── components
+        ├── data-access
+        ├── models
+        ├── pages
+        └── users.routes.ts
 ```
 
-For a complete list of available schematics (such as `components`, `directives`, or `pipes`), run:
+Routing entry point: `src/app/app.routes.ts`
 
-```bash
-ng generate --help
+- Public route: `/login`
+- Authenticated shell: `MainLayoutComponent`
+- Lazy features mounted under the shell
+
+---
+
+## 🛠️ Tech Stack
+
+| Tech            | Purpose                     |
+|-----------------|-----------------------------|
+| Angular 21      | App framework               |
+| Angular Router  | Routing + lazy loading      |
+| RxJS            | Reactive state + HTTP flows |
+| Vitest + JSDOM  | Unit testing                |
+| Playwright      | End-to-end testing          |
+| TailwindCSS     | Styling                     |
+| TypeScript      | Language                    |
+| Nginx           | Production reverse proxy    |
+
+---
+
+## ⚙️ Configuration
+
+### Proxy to Backend (Dev)
+
+In development, the Angular dev server proxies API calls.
+
+`proxy.conf.json`:
+
+```json
+{
+  "/api/": {
+    "target": "http://localhost:9090/api/",
+    "secure": false,
+    "changeOrigin": true,
+    "logLevel": "debug",
+    "pathRewrite": { "^/api/": "" }
+  }
+}
 ```
 
-## Building
+This avoids CORS and keeps frontend code backend‑agnostic.
 
-To build the project run:
+---
 
-```bash
-ng build
+### Nginx Reverse Proxy (Docker)
+
+In Docker, API routing is handled by **Nginx**, not Angular.
+
+`nginx.conf`:
+
+```nginx
+server {
+  listen 80;
+
+  root /usr/share/nginx/html;
+  index index.html;
+
+  location /api/ {
+    proxy_pass http://backend:9090/api/;
+    proxy_http_version 1.1;
+
+    proxy_set_header Host $host;
+    proxy_set_header X-Real-IP $remote_addr;
+    proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+    proxy_set_header X-Forwarded-Proto $scheme;
+  }
+
+  location / {
+    try_files $uri $uri/ /index.html;
+  }
+}
 ```
 
-This will compile your project and store the build artifacts in the `dist/` directory. By default, the production build optimizes your application for performance and speed.
+This setup:
+- Preserves session cookies
+- Supports CSRF
+- Works behind reverse proxies
 
-## Running unit tests
+---
 
-To execute unit tests with the [Vitest](https://vitest.dev/) test runner, use the following command:
+## 🚀 Getting Started
+
+### Prerequisites
+
+- Node.js + npm
+- Running **SpringFirstModulith** backend on `http://localhost:9090`
+
+### Install
 
 ```bash
-ng test
+npm install
 ```
 
-## Running end-to-end tests
-
-For end-to-end (e2e) testing, run:
+### Run (Dev)
 
 ```bash
-ng e2e
+npm start
 ```
 
-Angular CLI does not come with an end-to-end testing framework by default. You can choose one that suits your needs.
+Frontend:
+- http://localhost:4200
 
-## Additional Resources
+---
 
-For more information on using the Angular CLI, including detailed command references, visit the [Angular CLI Overview and Command Reference](https://angular.dev/tools/cli) page.
+## 🐳 Docker Setup
+
+This repository includes Docker Compose files for production‑like runs.
+
+Relevant files:
+
+```
+docker/modulithApp/
+├── docker-compose.yml
+├── docker-compose.dev.yml
+└── 01-create-historic-db.sql
+```
+### docker-compose.yml
+
+```yaml
+services:
+  postgres:
+    image: postgres:17
+    container_name: springfirstmodulith-postgres
+    environment:
+      POSTGRES_USER: user
+      POSTGRES_PASSWORD: secret
+      POSTGRES_DB: SpringFirstModulithDB
+    ports:
+      - "5432:5432"
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+      - ./docker/initdb:/docker-entrypoint-initdb.d
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U user -d SpringFirstModulithDB"]
+      interval: 5s
+      retries: 20
+
+  app:
+    build: .
+    container_name: springfirstmodulith-app
+    depends_on:
+      postgres:
+        condition: service_healthy
+    environment:
+      DB_HOST: postgres
+      DB_PORT: 5432
+      DB_NAME: SpringFirstModulithDB
+      DB_HIST_NAME: SpringFirstModulithDBHistoric
+      DB_USER: user
+      DB_PASSWORD: secret
+      SERVER_PORT: 9090
+    ports:
+      - "9090:9090"
+
+volumes:
+  pgdata:
+```
+
+### docker-compose.dev.yml
+
+```yaml
+services:
+  backend:
+    build:
+      context: ../../SpringFirstModulith
+    image: springfirstmodulith:dev
+
+  frontend:
+    build:
+      context: ../../AngularModulith
+    image: angularmodulith:dev
+
+```
+
+### Init script for historic DB
+
+**docker/initdb/01-create-historic-db.sql**
+
+```sql
+-- Create historic DB (only if it doesn't exist)
+SELECT 'CREATE DATABASE "SpringFirstModulithDBHistoric"'
+WHERE NOT EXISTS (SELECT FROM pg_database WHERE datname = 'SpringFirstModulithDBHistoric')\gexec
+```
+
+Run everything:
+
+```sh
+docker compose up --build
+```
+
+Run in dev 
+
+```sh
+docker compose -f docker-compose.yml -f docker-compose.dev.yml up -d --build
+```
+
+Stop containers:
+
+```sh
+docker compose down
+```
+
+Reset volumes:
+
+```sh
+docker compose down -v
+```
+
+- Nginx serves Angular
+- Backend is reverse‑proxied under `/api`
+- Sessions and CSRF work end‑to‑end
+
+---
+
+## 📡 Backend Contract
+
+This frontend assumes the backend:
+
+- Uses **Spring Session (JDBC)**
+- Relies on **cookies**, not JWT
+- Exposes APIs under `/api`
+- Supports CSRF bootstrap
+- Returns authorities from `/api/auth/me`
+
+Without the backend running, protected routes will return `401`.
+
+---
+
+## 🧭 Adding a New Feature Module
+
+1️⃣ Create a feature folder:
+
+```
+src/app/features/<feature-name>/
+```
+
+2️⃣ Add routes:
+
+```
+<feature-name>.routes.ts
+```
+
+3️⃣ Lazy‑load in `app.routes.ts`:
+
+```ts
+{
+  path: 'my-feature',
+  loadChildren: () =>
+    import('./features/my-feature/my-feature.routes')
+      .then(m => m.MY_FEATURE_ROUTES),
+}
+```
+
+4️⃣ Protect if needed:
+
+```ts
+canActivate: [authorityGuard('MODULE_SOMETHING')]
+```
+
+This enforces **explicit dependencies and clean boundaries**.
+
+---
+
+## 👤 Author
+
+Sebastián Dos Santos
