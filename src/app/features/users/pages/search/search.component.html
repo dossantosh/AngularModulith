@@ -33,11 +33,6 @@
     </form>
   </ui-card>
 
-  <!-- LOADING / ERROR -->
-  @if (store.loading()) {
-  <p class="mt-4 text-sm text-gray-500 dark:text-gray-400">Cargando...</p>
-  }
-
   @if (store.error()) {
   <p class="mt-4 text-sm text-red-600 dark:text-red-400">
     {{ store.error() }}

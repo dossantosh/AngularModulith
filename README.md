@@ -116,6 +116,10 @@ src/app
 │
 ├── layout
 │   └── components
+│       ├── main
+│       |   ├── footer.cmponent.ts
+│       |   ├── header.component.ts
+│       |   └── main-layout.component.ts
 │       ├── button.component.ts
 │       ├── card.component.ts
 │       ├── input.component.ts
@@ -126,7 +130,6 @@ src/app
     ├── index
     ├── login
     └── users
-        ├── components
         ├── data-access
         ├── models
         ├── pages
