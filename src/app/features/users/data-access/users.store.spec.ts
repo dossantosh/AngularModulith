@@ -2,8 +2,7 @@ import { TestBed } from '@angular/core/testing';
 import { Subject, of, throwError } from 'rxjs';
 import { vi } from 'vitest';
 import { UsersStore } from './users.store';
-import { UsersApi } from './searchUsers.api';
-
+import { UsersApi } from './search-users.api';
 describe('UsersStore', () => {
   it('search() sets loading true while request is in-flight, then success', () => {
     const subj = new Subject<any>();

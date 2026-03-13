@@ -1,8 +1,8 @@
 import { Injectable, computed, inject, signal } from '@angular/core';
 
 import { KeysetPage } from '../../../shared/keyset-page.dto';
-import { SearchUsersDTO } from '../models/searchUser.dto';
-import { UsersApi } from './searchUsers.api';
+import { SearchUsersDTO } from '../models/search-user.dto';
+import { UsersApi } from './search-users.api';
 import { PageDirection, UsersFilters } from '../models/users-search-params';
 
 /**
