@@ -15,7 +15,7 @@ import { ButtonComponent } from '../../../../layout/components/button.component'
   standalone: true,
   selector: 'app-users-search',
   imports: [CommonModule, RouterModule, ReactiveFormsModule, PageComponent, CardComponent, InputComponent, ButtonComponent],
-  templateUrl: './search.component.html',
+  templateUrl: './users-search.component.html',
 })
 export class UsersSearchPage implements OnInit {
   readonly store = inject(UsersStore);

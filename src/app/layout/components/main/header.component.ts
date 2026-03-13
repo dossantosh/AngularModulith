@@ -42,7 +42,7 @@ type Theme = 'light' | 'dark';
           </a>
 
           <a
-            routerLink="/usersmanagement/searchUsers"
+            routerLink="/usersmanagement/search-users"
             routerLinkActive="bg-gray-100 text-gray-900 dark:bg-gray-800 dark:text-gray-100"
             class="rounded-lg px-3 py-1.5 text-sm font-medium text-gray-600
                    transition hover:bg-gray-100 hover:text-gray-900

@@ -3,7 +3,7 @@ import { Injectable } from '@angular/core';
 
 import { UsersSearchParams } from '../models/users-search-params';
 import { KeysetPage } from '../../../shared/keyset-page.dto';
-import { SearchUsersDTO } from '../models/searchUser.dto';
+import { SearchUsersDTO } from '../models/search-user.dto';
 
 /**
  * Low-level API client for the Users backend endpoint.
