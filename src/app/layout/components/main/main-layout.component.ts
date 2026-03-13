@@ -41,10 +41,10 @@ export class MainLayoutComponent {
   year = new Date().getFullYear();
 
   // Convert username$ (Observable) -> Signal
-  private readonly usernameSig = toSignal(this.auth.username$, { initialValue: null });
+  readonly username = this.auth.username;
 
   // Keep same API your template already uses: userName()
-  userName = computed(() => this.usernameSig() ?? 'Guest');
+  userName = computed(() => this.username() ?? 'Guest');
 
   constructor() {
     this.auth.initCsrf().subscribe();
