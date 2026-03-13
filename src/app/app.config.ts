@@ -1,7 +1,6 @@
 import {
   ApplicationConfig,
-  provideBrowserGlobalErrorListeners,
-  provideZoneChangeDetection,
+  provideBrowserGlobalErrorListeners
 } from '@angular/core';
 import { provideRouter } from '@angular/router';
 import { provideHttpClient, withInterceptors, withXsrfConfiguration } from '@angular/common/http';
@@ -9,7 +8,6 @@ import { provideHttpClient, withInterceptors, withXsrfConfiguration } from '@ang
 import { routes } from './app.routes';
 
 import { authInterceptor } from './core/auth/interceptors/auth.interceptor';
-import { provideHttpClientTesting } from '@angular/common/http/testing';
 
 /**
  * Root application configuration for the shell.
@@ -25,12 +23,6 @@ import { provideHttpClientTesting } from '@angular/common/http/testing';
  */
 export const appConfig: ApplicationConfig = {
   providers: [
-    /**
-     * Configures Angular change detection to coalesce events,
-     * reducing the number of change detection cycles triggered
-     * during high-frequency DOM events.
-     */
-    provideZoneChangeDetection({ eventCoalescing: true }),
 
     provideRouter(routes),
 
