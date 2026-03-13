@@ -1,8 +1,6 @@
 import { Component, EventEmitter, Input, Output, OnInit, inject } from '@angular/core';
 import { RouterLink, RouterLinkActive } from '@angular/router';
 
-import { AsyncPipe } from '@angular/common';
-
 import { HasAuthorityDirective } from '../../../core/auth/directives/has-authority.directive';
 import { AuthService } from '../../../core/auth/auth.service';
 
@@ -11,7 +9,7 @@ type Theme = 'light' | 'dark';
 @Component({
   selector: 'lib-header',
   standalone: true,
-  imports: [RouterLink, RouterLinkActive, HasAuthorityDirective, AsyncPipe],
+  imports: [RouterLink, RouterLinkActive, HasAuthorityDirective],
   template: `
     <header
       class="sticky top-0 z-40 bg-white ring-1 ring-gray-200 shadow-sm
@@ -107,7 +105,7 @@ type Theme = 'light' | 'dark';
           </span>
 
           <!-- Historic badge -->
-          @if ((view$ | async) === 'historic') {
+          @if (view$() === 'historic') {
             <span
               class="rounded-md bg-amber-100 px-2 py-0.5 text-xs font-semibold
                text-amber-800 dark:bg-amber-900 dark:text-amber-200"
@@ -137,7 +135,7 @@ export class HeaderComponent implements OnInit {
   @Input() companyName = 'My Company';
   @Input() userName = 'User';
 
-  readonly view$ = this.auth.view$;
+  readonly view$ = this.auth.view;
 
   @Output() logout = new EventEmitter<void>();
 

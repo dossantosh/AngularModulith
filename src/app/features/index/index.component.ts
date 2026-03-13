@@ -24,9 +24,9 @@ export class IndexComponent {
   year = new Date().getFullYear();
 
   // Observable -> Signal
-  private readonly usernameSig = toSignal(this.auth.username$, { initialValue: null });
+  readonly username = this.auth.username;
 
-  userName = computed(() => this.usernameSig() ?? 'Guest');
+  userName = computed(() => this.username() ?? 'Guest');
 
   constructor() {
 
