@@ -171,7 +171,7 @@ In development, the Angular dev server proxies API calls.
 ```json
 {
   "/api/": {
-    "target": "http://localhost:9090/api/",
+    "target": "http://localhost:7070/api/",
     "secure": false,
     "changeOrigin": true,
     "logLevel": "debug",
@@ -198,7 +198,7 @@ server {
   index index.html;
 
   location /api/ {
-    proxy_pass http://backend:9090/api/;
+    proxy_pass http://backend:7070/api/;
     proxy_http_version 1.1;
 
     proxy_set_header Host $host;
@@ -226,7 +226,7 @@ This setup:
 ### Prerequisites
 
 - Node.js + npm
-- Running **SpringFirstModulith** backend on `http://localhost:9090`
+- Running **SpringFirstModulith** backend on `http://localhost:7070`
 
 ### Install
 
@@ -286,9 +286,9 @@ services:
       DB_HIST_NAME: SpringFirstModulithDBHistoric
       DB_USER: postgres
       DB_PASSWORD: Sb202582
-      SERVER_PORT: 9090
+  SERVER_PORT: 7070
     ports:
-      - '9090:9090'
+      - '7070:7070'
     depends_on:
       - db
 
