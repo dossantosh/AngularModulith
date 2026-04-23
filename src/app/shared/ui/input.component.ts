@@ -33,7 +33,9 @@ export class InputComponent implements ControlValueAccessor {
   disabled = false;
   value = '';
 
-  private onChange: (value: unknown) => void = (_value: unknown) => void 0;
+  private onChange: (value: unknown) => void = (value: unknown) => {
+    void value;
+  };
   private onTouched: () => void = () => void 0;
 
   writeValue(value: unknown): void {

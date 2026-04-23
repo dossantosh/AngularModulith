@@ -2,6 +2,7 @@ import { HttpClient, provideHttpClient } from '@angular/common/http';
 import { TestBed } from '@angular/core/testing';
 import { HttpTestingController, provideHttpClientTesting } from '@angular/common/http/testing';
 
+import { AuthenticatedUser } from '../domain/authenticated-user';
 import { AuthFacade } from './auth.facade';
 
 describe('AuthFacade', () => {
@@ -37,11 +38,11 @@ describe('AuthFacade', () => {
 
     expect(result).toBe('john');
     expect(facade.username()).toBe('john');
-    expect(facade.currentView).toBe('historic');
+    expect(facade.view()).toBe('historic');
   });
 
   it('loadSession() caches until logout resets it', () => {
-    let firstResult: any;
+    let firstResult: AuthenticatedUser | undefined;
     facade.loadSession().subscribe((value) => (firstResult = value));
 
     const firstRequest = http.expectOne((req) => req.url === '/api/auth/me');
@@ -49,7 +50,7 @@ describe('AuthFacade', () => {
 
     expect(firstResult?.username).toBe('john');
 
-    let secondResult: any;
+    let secondResult: AuthenticatedUser | undefined;
     facade.loadSession().subscribe((value) => (secondResult = value));
     http.expectNone((req) => req.url === '/api/auth/me');
     expect(secondResult?.username).toBe('john');
@@ -75,7 +76,7 @@ describe('AuthFacade', () => {
 
     expect(facade.username()).toBe(null);
     expect(facade.authorities()).toEqual([]);
-    expect(facade.currentView).toBe('prod');
+    expect(facade.view()).toBe('prod');
   });
 
   it('initCsrf() swallows errors and completes', () => {

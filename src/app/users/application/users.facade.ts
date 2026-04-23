@@ -16,25 +16,14 @@ export class UsersFacade {
   private readonly paginateUsersUseCase = inject(PaginateUsersUseCase);
 
   readonly filters = this.flowStore.filters;
-  readonly limit = this.flowStore.limit;
-  readonly direction = this.flowStore.direction;
-  readonly lastId = this.flowStore.lastId;
-  readonly status = this.queryStore.status;
   readonly error = this.queryStore.error;
   readonly loading = this.queryStore.loading;
   readonly users = this.queryStore.users;
   readonly hasNext = this.queryStore.hasNext;
   readonly hasPrevious = this.queryStore.hasPrevious;
-  readonly nextId = this.queryStore.nextId;
-  readonly previousId = this.queryStore.previousId;
-  readonly empty = this.queryStore.empty;
 
   setFilters(partial: Partial<UserSearchFilters>): void {
     this.flowStore.setFilters(partial);
-  }
-
-  setLimit(limit: number): void {
-    this.flowStore.setLimit(limit);
   }
 
   search(): void {

@@ -20,7 +20,6 @@ export class UsersQueryStore {
   readonly hasPrevious = computed(() => this._page()?.hasPrevious ?? false);
   readonly nextId = computed(() => this._page()?.nextId ?? null);
   readonly previousId = computed(() => this._page()?.previousId ?? null);
-  readonly empty = computed(() => this._status() === 'success' && this.users().length === 0);
 
   startLoading(): void {
     this._status.set('loading');

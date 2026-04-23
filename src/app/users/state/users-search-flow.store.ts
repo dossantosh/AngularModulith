@@ -26,10 +26,6 @@ export class UsersSearchFlowStore {
     this._filters.set({ ...DEFAULT_USER_SEARCH_FILTERS });
   }
 
-  setLimit(limit: number): void {
-    this._limit.set(limit);
-  }
-
   resetPagination(): void {
     this._lastId.set(null);
     this._direction.set('NEXT');

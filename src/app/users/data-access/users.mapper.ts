@@ -2,7 +2,7 @@ import { UserPage } from '../domain/user-page';
 import { UserSummary } from '../domain/user-summary';
 import { UserPageDto, UserSummaryDto } from './users.dto';
 
-export function mapUserSummaryDto(dto: UserSummaryDto): UserSummary {
+function mapUserSummaryDto(dto: UserSummaryDto): UserSummary {
   return {
     id: dto.id,
     username: dto.username,

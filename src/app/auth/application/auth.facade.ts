@@ -2,7 +2,6 @@ import { Injectable, inject } from '@angular/core';
 
 import { AuthApi } from '../data-access/auth.api';
 import { Authority } from '../domain/authority';
-import { DataView } from '../domain/data-view';
 import { LoginRequest } from '../domain/login-request';
 import { AuthSessionStore } from '../state/auth-session.store';
 import { LoadSessionUseCase } from './load-session.use-case';
@@ -20,11 +19,6 @@ export class AuthFacade {
   readonly username = this.sessionStore.username;
   readonly authorities = this.sessionStore.authorities;
   readonly view = this.sessionStore.view;
-  readonly isLoggedIn = this.sessionStore.isLoggedIn;
-
-  get currentView(): DataView {
-    return this.view();
-  }
 
   hasAuthority(authority: Authority): boolean {
     return this.sessionStore.hasAuthority(authority);

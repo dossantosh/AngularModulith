@@ -12,7 +12,14 @@ import { UsersFacade } from './users.facade';
 
 describe('UsersFacade', () => {
   it('search() sets loading true while request is in-flight, then success', () => {
-    const subject = new Subject<any>();
+    const subject = new Subject<{
+      content: Array<{ id: number; username: string; email: string; enabled: boolean; isAdmin: boolean }>;
+      hasNext: boolean;
+      hasPrevious: boolean;
+      nextId: number | null;
+      previousId: number | null;
+      empty: boolean;
+    }>();
     const api = { search: vi.fn(() => subject.asObservable()) };
 
     TestBed.configureTestingModule({
@@ -32,7 +39,6 @@ describe('UsersFacade', () => {
     facade.search();
 
     expect(facade.loading()).toBe(true);
-    expect(facade.status()).toBe('loading');
 
     subject.next({
       content: [{ id: 1, username: 'john', email: 'a@b.com', enabled: true, isAdmin: false }],
@@ -45,10 +51,8 @@ describe('UsersFacade', () => {
     subject.complete();
 
     expect(facade.loading()).toBe(false);
-    expect(facade.status()).toBe('success');
     expect(facade.users().length).toBe(1);
     expect(facade.hasNext()).toBe(true);
-    expect(facade.nextId()).toBe(10);
   });
 
   it('search() sets error state on failure', () => {
@@ -68,7 +72,6 @@ describe('UsersFacade', () => {
 
     facade.search();
 
-    expect(facade.status()).toBe('error');
     expect(facade.error()).toBe('Failed to load users');
     expect(facade.users().length).toBe(0);
     expect(facade.loading()).toBe(false);
@@ -107,15 +110,17 @@ describe('UsersFacade', () => {
 
     facade.loadNext();
     expect(api.search).toHaveBeenCalledOnce();
-    expect(facade.direction()).toBe('NEXT');
-    expect(facade.lastId()).toBe(123);
+    expect(api.search).toHaveBeenCalledWith(
+      expect.objectContaining({ direction: 'NEXT', lastId: 123 })
+    );
 
     api.search.mockClear();
 
     facade.loadPrevious();
     expect(api.search).toHaveBeenCalledOnce();
-    expect(facade.direction()).toBe('PREVIOUS');
-    expect(facade.lastId()).toBe(55);
+    expect(api.search).toHaveBeenCalledWith(
+      expect.objectContaining({ direction: 'PREVIOUS', lastId: 55 })
+    );
   });
 
   it('loadNext does nothing when hasNext is false or nextId is null', () => {

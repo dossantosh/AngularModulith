@@ -1,4 +1,4 @@
-import { Injectable, computed, signal } from '@angular/core';
+import { Injectable, signal } from '@angular/core';
 
 import { AuthenticatedUser } from '../domain/authenticated-user';
 import { Authority } from '../domain/authority';
@@ -12,7 +12,6 @@ export class AuthSessionStore {
   readonly username = this._username.asReadonly();
   readonly authorities = this._authorities.asReadonly();
   readonly view = this._view.asReadonly();
-  readonly isLoggedIn = computed(() => this._username() !== null);
 
   setSession(session: AuthenticatedUser): void {
     this._username.set(session.username);
