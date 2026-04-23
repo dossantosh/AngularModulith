@@ -3,6 +3,7 @@ import { Routes } from '@angular/router';
 import {
   authGuard,
   authorityGuard,
+  ForbiddenPage,
   LoginPage,
 } from '@angular-modulith/auth';
 import { DashboardPage } from '@angular-modulith/dashboard';
@@ -19,6 +20,10 @@ export const routes: Routes = [
         component: DashboardPage,
       },
       {
+        path: 'forbidden',
+        component: ForbiddenPage,
+      },
+      {
         path: 'users',
         canActivate: [authorityGuard('MODULE_USERS')],
         loadChildren: () => import('@angular-modulith/users').then((m) => m.USERS_ROUTES),
@@ -26,5 +31,5 @@ export const routes: Routes = [
     ],
   },
   { path: 'login', component: LoginPage },
-  { path: '**', redirectTo: '' },
+  { path: '**', redirectTo: 'forbidden' },
 ];
