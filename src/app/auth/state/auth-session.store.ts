@@ -2,27 +2,31 @@ import { Injectable, signal } from '@angular/core';
 
 import { AuthenticatedUser } from '../domain/authenticated-user';
 import { Authority } from '../domain/authority';
+import { BackendDataSource } from '../domain/backend-data-source';
 
 @Injectable({ providedIn: 'root' })
 export class AuthSessionStore {
   private readonly _username = signal<string | null>(null);
   private readonly _authorities = signal<Authority[]>([]);
-  private readonly _view = signal<AuthenticatedUser['view']>('prod');
+  private readonly _dataSource = signal<BackendDataSource>('prod');
 
   readonly username = this._username.asReadonly();
   readonly authorities = this._authorities.asReadonly();
-  readonly view = this._view.asReadonly();
+  readonly dataSource = this._dataSource.asReadonly();
 
-  setSession(session: AuthenticatedUser): void {
-    this._username.set(session.username);
-    this._authorities.set(session.authorities);
-    this._view.set(session.view);
+  setAuthenticatedUser(user: AuthenticatedUser): void {
+    this._username.set(user.username);
+    this._authorities.set(user.authorities);
+  }
+
+  setDataSource(dataSource: BackendDataSource): void {
+    this._dataSource.set(dataSource);
   }
 
   clear(): void {
     this._username.set(null);
     this._authorities.set([]);
-    this._view.set('prod');
+    this._dataSource.set('prod');
   }
 
   hasAuthority(authority: Authority): boolean {

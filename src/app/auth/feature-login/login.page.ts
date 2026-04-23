@@ -23,7 +23,7 @@ export class LoginPage implements OnInit {
     this.loginForm = this.fb.group({
       username: ['', Validators.required],
       password: ['', Validators.required],
-      view: ['prod', Validators.required],
+      dataSource: ['prod', Validators.required],
     });
   }
 

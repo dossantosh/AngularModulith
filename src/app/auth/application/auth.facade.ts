@@ -1,6 +1,5 @@
 import { Injectable, inject } from '@angular/core';
 
-import { AuthApi } from '../data-access/auth.api';
 import { Authority } from '../domain/authority';
 import { LoginRequest } from '../domain/login-request';
 import { AuthSessionStore } from '../state/auth-session.store';
@@ -10,7 +9,6 @@ import { LogoutUseCase } from './logout.use-case';
 
 @Injectable({ providedIn: 'root' })
 export class AuthFacade {
-  private readonly api = inject(AuthApi);
   private readonly sessionStore = inject(AuthSessionStore);
   private readonly loadSessionUseCase = inject(LoadSessionUseCase);
   private readonly loginUseCase = inject(LoginUseCase);
@@ -18,7 +16,7 @@ export class AuthFacade {
 
   readonly username = this.sessionStore.username;
   readonly authorities = this.sessionStore.authorities;
-  readonly view = this.sessionStore.view;
+  readonly dataSource = this.sessionStore.dataSource;
 
   hasAuthority(authority: Authority): boolean {
     return this.sessionStore.hasAuthority(authority);
@@ -26,10 +24,6 @@ export class AuthFacade {
 
   hasAnyAuthority(...authorities: Authority[]): boolean {
     return this.sessionStore.hasAnyAuthority(...authorities);
-  }
-
-  initCsrf() {
-    return this.api.initCsrf();
   }
 
   loadSession() {

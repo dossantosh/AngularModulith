@@ -14,12 +14,12 @@ export class LoadSessionUseCase {
 
   execute(): Observable<AuthenticatedUser> {
     this.sessionOnce$ ??= this.api.me().pipe(
+      tap((response) => this.sessionStore.setDataSource(response.dataSource ?? 'prod')),
       map((response) => ({
         username: response.username,
         authorities: response.authorities ?? [],
-        view: this.sessionStore.view(),
       })),
-      tap((user) => this.sessionStore.setSession(user)),
+      tap((user) => this.sessionStore.setAuthenticatedUser(user)),
       shareReplay({ bufferSize: 1, refCount: true })
     );
 

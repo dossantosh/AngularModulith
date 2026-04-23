@@ -1,4 +1,5 @@
 export { AuthFacade } from './application/auth.facade';
+export { provideAuthBootstrap } from './application/provide-auth-bootstrap';
 export { ForbiddenPage } from './feature-forbidden/forbidden.page';
 export { LoginPage } from './feature-login/login.page';
 export { authInterceptor } from './data-access/auth.interceptor';

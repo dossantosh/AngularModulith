@@ -1,7 +1,8 @@
-import { Component } from '@angular/core';
-import { RouterLink } from '@angular/router';
+import { Component, inject } from '@angular/core';
+import { Router, RouterLink } from '@angular/router';
 
 import { CardComponent, PageComponent } from '@angular-modulith/shared/ui';
+import { AuthFacade } from '../application/auth.facade';
 
 @Component({
   selector: 'app-forbidden-page',
@@ -35,12 +36,13 @@ import { CardComponent, PageComponent } from '@angular-modulith/shared/ui';
                 Volver al inicio
               </a>
 
-              <a
-                routerLink="/login"
+              <button
+                type="button"
+                (click)="changeUser()"
                 class="rounded-lg border border-gray-300 px-4 py-2 text-sm font-semibold text-gray-700 transition hover:bg-gray-100 dark:border-gray-600 dark:text-gray-200 dark:hover:bg-gray-800"
               >
                 Cambiar de usuario
-              </a>
+              </button>
             </div>
           </div>
         </ui-card>
@@ -48,4 +50,14 @@ import { CardComponent, PageComponent } from '@angular-modulith/shared/ui';
     </ui-page>
   `,
 })
-export class ForbiddenPage {}
+export class ForbiddenPage {
+  private readonly auth = inject(AuthFacade);
+  private readonly router = inject(Router);
+
+  changeUser(): void {
+    this.auth.logout().subscribe({
+      next: () => void this.router.navigateByUrl('/login'),
+      error: () => void this.router.navigateByUrl('/login'),
+    });
+  }
+}

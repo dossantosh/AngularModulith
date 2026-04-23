@@ -1,7 +1,7 @@
-import { DataView } from './data-view';
+import { BackendDataSource } from './backend-data-source';
 
 export interface LoginRequest {
   username: string;
   password: string;
-  view: DataView;
+  dataSource: BackendDataSource;
 }

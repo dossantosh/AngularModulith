@@ -1,7 +1,7 @@
 import { Component, EventEmitter, Input, Output } from '@angular/core';
 import { RouterLink, RouterLinkActive } from '@angular/router';
 
-type ShellView = 'prod' | 'historic';
+type ShellDataSource = 'prod' | 'historic';
 
 @Component({
   selector: 'app-header',
@@ -57,10 +57,10 @@ type ShellView = 'prod' | 'historic';
             </span>
           </span>
 
-          @if (view === 'historic') {
+          @if (dataSource === 'historic') {
             <span
               class="rounded-md bg-amber-100 px-2 py-0.5 text-xs font-semibold text-amber-800 dark:bg-amber-900 dark:text-amber-200"
-              title="Estas navegando datos historicos"
+              title="Estas navegando contra el origen historico"
             >
               Historic
             </span>
@@ -81,7 +81,7 @@ type ShellView = 'prod' | 'historic';
 export class HeaderComponent {
   @Input() companyName = 'My Company';
   @Input() userName = 'User';
-  @Input() view: ShellView = 'prod';
+  @Input() dataSource: ShellDataSource = 'prod';
   @Input() canAccessUsers = false;
   @Input() isDark = false;
 

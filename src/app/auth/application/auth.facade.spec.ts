@@ -24,21 +24,27 @@ describe('AuthFacade', () => {
     TestBed.resetTestingModule();
   });
 
-  it('login() stores username and view, and returns username', () => {
+  it('login() loads the full session, stores authorities and preserves the selected data source', () => {
     let result: string | undefined;
 
     facade
-      .login({ username: 'john', password: 'pw', view: 'historic' })
+      .login({ username: 'john', password: 'pw', dataSource: 'historic' })
       .subscribe((value) => (result = value));
 
     const request = http.expectOne((req) => req.url === '/api/auth/login');
     expect(request.request.method).toBe('POST');
 
     request.flush({ username: 'john' });
+    http.expectOne((req) => req.url === '/api/auth/me').flush({
+      username: 'john',
+      authorities: ['MODULE_USERS'],
+      dataSource: 'historic',
+    });
 
     expect(result).toBe('john');
     expect(facade.username()).toBe('john');
-    expect(facade.view()).toBe('historic');
+    expect(facade.authorities()).toEqual(['MODULE_USERS']);
+    expect(facade.dataSource()).toBe('historic');
   });
 
   it('loadSession() caches until logout resets it', () => {
@@ -46,9 +52,10 @@ describe('AuthFacade', () => {
     facade.loadSession().subscribe((value) => (firstResult = value));
 
     const firstRequest = http.expectOne((req) => req.url === '/api/auth/me');
-    firstRequest.flush({ username: 'john', authorities: ['MODULE_USERS'] });
+    firstRequest.flush({ username: 'john', authorities: ['MODULE_USERS'], dataSource: 'historic' });
 
     expect(firstResult?.username).toBe('john');
+    expect(facade.dataSource()).toBe('historic');
 
     let secondResult: AuthenticatedUser | undefined;
     facade.loadSession().subscribe((value) => (secondResult = value));
@@ -61,12 +68,17 @@ describe('AuthFacade', () => {
 
     facade.loadSession().subscribe();
     const secondMeRequest = http.expectOne((req) => req.url === '/api/auth/me');
-    secondMeRequest.flush({ username: 'john', authorities: [] });
+    secondMeRequest.flush({ username: 'john', authorities: [], dataSource: 'prod' });
   });
 
-  it('logout() resets username, authorities, and view', () => {
-    facade.login({ username: 'john', password: 'pw', view: 'historic' }).subscribe();
+  it('logout() resets username, authorities, and data source', () => {
+    facade.login({ username: 'john', password: 'pw', dataSource: 'historic' }).subscribe();
     http.expectOne((req) => req.url === '/api/auth/login').flush({ username: 'john' });
+    http.expectOne((req) => req.url === '/api/auth/me').flush({
+      username: 'john',
+      authorities: ['MODULE_USERS'],
+      dataSource: 'historic',
+    });
 
     facade.logout().subscribe();
 
@@ -76,19 +88,6 @@ describe('AuthFacade', () => {
 
     expect(facade.username()).toBe(null);
     expect(facade.authorities()).toEqual([]);
-    expect(facade.view()).toBe('prod');
-  });
-
-  it('initCsrf() swallows errors and completes', () => {
-    let completed = false;
-
-    facade.initCsrf().subscribe({
-      complete: () => (completed = true),
-    });
-
-    const request = http.expectOne((req) => req.url === '/api/auth/csrf');
-    request.flush('boom', { status: 500, statusText: 'Server Error' });
-
-    expect(completed).toBe(true);
+    expect(facade.dataSource()).toBe('prod');
   });
 });

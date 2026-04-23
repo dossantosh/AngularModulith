@@ -9,10 +9,10 @@
 
     <form [formGroup]="loginForm" (ngSubmit)="onSubmit()" class="mt-6 space-y-4">
       <div>
-        <label for="view" class="mb-1 block text-sm font-medium text-gray-700">Datos</label>
+        <label for="dataSource" class="mb-1 block text-sm font-medium text-gray-700">Origen de datos</label>
         <select
-          id="view"
-          formControlName="view"
+          id="dataSource"
+          formControlName="dataSource"
           class="w-full rounded-lg border border-gray-300 bg-white px-3 py-2 text-sm text-gray-900 shadow-sm outline-none transition focus:border-blue-600 focus:ring-4 focus:ring-blue-600/15"
         >
           <option value="prod">Produccion</option>

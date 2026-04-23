@@ -3,7 +3,7 @@ import { Component, EventEmitter, Input, Output } from '@angular/core';
 import { FooterComponent } from './footer.component';
 import { HeaderComponent } from './header.component';
 
-type ShellView = 'prod' | 'historic';
+type ShellDataSource = 'prod' | 'historic';
 
 @Component({
   selector: 'app-main-layout',
@@ -15,7 +15,7 @@ type ShellView = 'prod' | 'historic';
         class="shrink-0"
         [companyName]="companyName"
         [userName]="userName"
-        [view]="view"
+        [dataSource]="dataSource"
         [canAccessUsers]="canAccessUsers"
         [isDark]="isDark"
         (logout)="logout.emit()"
@@ -35,7 +35,7 @@ type ShellView = 'prod' | 'historic';
 export class MainLayoutComponent {
   @Input() companyName = 'My Company';
   @Input() userName = 'User';
-  @Input() view: ShellView = 'prod';
+  @Input() dataSource: ShellDataSource = 'prod';
   @Input() canAccessUsers = false;
   @Input() isDark = false;
 

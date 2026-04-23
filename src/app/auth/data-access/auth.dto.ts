@@ -1,4 +1,5 @@
 import { Authority } from '../domain/authority';
+import { BackendDataSource } from '../domain/backend-data-source';
 
 export interface LoginResponseDto {
   username: string;
@@ -7,4 +8,5 @@ export interface LoginResponseDto {
 export interface MeResponseDto {
   username: string;
   authorities: Authority[];
+  dataSource: BackendDataSource;
 }

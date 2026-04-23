@@ -71,7 +71,7 @@ Login supports backend datasource routing:
 export interface LoginRequest {
   username: string;
   password: string;
-  view: 'prod' | 'historic';
+  dataSource: 'prod' | 'historic';
 }
 ```
 
