@@ -1,48 +1,30 @@
 import { Routes } from '@angular/router';
 
-import { IndexComponent } from './features/index/index.component';
-import { LoginComponent } from './features/login/login.component';
-
-import { MainLayoutComponent } from './layout/components/main/main-layout.component';
-import { authGuard } from './core/auth/guards/auth.guard';
-import { authorityGuard } from './core/auth/guards/authority.guard';
+import {
+  authGuard,
+  authorityGuard,
+  LoginPage,
+} from '@angular-modulith/auth';
+import { DashboardPage } from '@angular-modulith/dashboard';
+import { ShellContainer } from '@angular-modulith/shell';
 
 export const routes: Routes = [
-  /**
-   * Authenticated area
-   */
   {
     path: '',
-    component: MainLayoutComponent,
+    component: ShellContainer,
     canActivate: [authGuard],
     children: [
-      /**
-       * Index route
-       */
-      { 
-        path: '',
-        component: IndexComponent,
-      },
-
-      /**
-       * Users
-       */
       {
-        path: 'usersmanagement',
+        path: '',
+        component: DashboardPage,
+      },
+      {
+        path: 'users',
         canActivate: [authorityGuard('MODULE_USERS')],
-        loadChildren: () => import('./features/users/users.routes').then((m) => m.USERS_ROUTES),
+        loadChildren: () => import('@angular-modulith/users').then((m) => m.USERS_ROUTES),
       },
     ],
   },
-
-  /**
-   * Public login page route
-   */
-  { path: 'login', component: LoginComponent },
-
-  /**
-   * Wildcard route
-   * Javadoc: Redirect unknown paths to the root (auth area).
-   */
+  { path: 'login', component: LoginPage },
   { path: '**', redirectTo: '' },
 ];

@@ -3,6 +3,7 @@
 {
   "compileOnSave": false,
   "compilerOptions": {
+    "baseUrl": ".",
     "strict": true,
     "noImplicitOverride": true,
     "noPropertyAccessFromIndexSignature": true,
@@ -13,7 +14,14 @@
     "experimentalDecorators": true,
     "importHelpers": true,
     "target": "ES2022",
-    "module": "preserve"
+    "module": "preserve",
+    "paths": {
+      "@angular-modulith/auth": ["src/app/auth/index.ts"],
+      "@angular-modulith/dashboard": ["src/app/dashboard/index.ts"],
+      "@angular-modulith/shared/ui": ["src/app/shared/ui/index.ts"],
+      "@angular-modulith/shell": ["src/app/shell/index.ts"],
+      "@angular-modulith/users": ["src/app/users/index.ts"]
+    }
   },
   "angularCompilerOptions": {
     "enableI18nLegacyMessageIdFormat": false,
