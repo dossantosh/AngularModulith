@@ -14,7 +14,7 @@ import { MainLayoutComponent } from '../ui/main-layout.component';
       [companyName]="companyName"
       [userName]="userName()"
       [dataSource]="dataSource()"
-      [canAccessUsers]="canAccessUsers()"
+      [canReadUsers]="canReadUsers()"
       [isDark]="isDark()"
       (logout)="logout()"
       (toggleTheme)="toggleTheme()"
@@ -32,7 +32,7 @@ export class ShellContainer {
   readonly username = this.auth.username;
   readonly userName = computed(() => this.username() ?? 'Guest');
   readonly dataSource = this.auth.dataSource;
-  readonly canAccessUsers = computed(() => this.auth.canAccessUsers());
+  readonly canReadUsers = computed(() => this.auth.canReadUsers());
   readonly isDark = this.theme.isDark;
 
   constructor() {

@@ -4,12 +4,12 @@ import { firstValueFrom, from, isObservable, of, throwError } from 'rxjs';
 import { vi } from 'vitest';
 
 import { AuthFacade } from '../application/auth.facade';
-import { canAccessUsersGuard } from './users-access.guard';
+import { canReadUsersGuard } from './users-read.guard';
 
-describe('canAccessUsersGuard', () => {
+describe('canReadUsersGuard', () => {
   const route = {} as ActivatedRouteSnapshot;
   const state = {} as RouterStateSnapshot;
-  const createUrlTree = vi.fn(() => ({ redirected: true } as unknown as UrlTree));
+  const createUrlTree = vi.fn(() => ({ redirected: true }) as unknown as UrlTree);
 
   beforeEach(() => {
     createUrlTree.mockReset();
@@ -19,7 +19,7 @@ describe('canAccessUsersGuard', () => {
           provide: AuthFacade,
           useValue: {
             loadSession: vi.fn(),
-            canAccessUsers: vi.fn(),
+            canReadUsers: vi.fn(),
           },
         },
         {
@@ -33,33 +33,33 @@ describe('canAccessUsersGuard', () => {
   });
 
   async function runGuard() {
-    const result = TestBed.runInInjectionContext(() => canAccessUsersGuard(route, state));
+    const result = TestBed.runInInjectionContext(() => canReadUsersGuard(route, state));
     return isObservable(result) ? firstValueFrom(result) : from(Promise.resolve(result));
   }
 
-  it('should allow navigation when the user can access users', async () => {
+  it('should allow navigation when the user can read users', async () => {
     const auth = TestBed.inject(AuthFacade) as unknown as {
       loadSession: ReturnType<typeof vi.fn>;
-      canAccessUsers: ReturnType<typeof vi.fn>;
+      canReadUsers: ReturnType<typeof vi.fn>;
     };
 
     auth.loadSession.mockReturnValue(of({ username: 'john' }));
-    auth.canAccessUsers.mockReturnValue(true);
+    auth.canReadUsers.mockReturnValue(true);
 
     await expect(runGuard()).resolves.toBe(true);
     expect(createUrlTree).not.toHaveBeenCalled();
   });
 
-  it('should redirect to forbidden when the user cannot access users', async () => {
+  it('should redirect to forbidden when the user cannot read users', async () => {
     const auth = TestBed.inject(AuthFacade) as unknown as {
       loadSession: ReturnType<typeof vi.fn>;
-      canAccessUsers: ReturnType<typeof vi.fn>;
+      canReadUsers: ReturnType<typeof vi.fn>;
     };
     const forbiddenTree = { redirected: true } as unknown as UrlTree;
 
     createUrlTree.mockReturnValue(forbiddenTree);
     auth.loadSession.mockReturnValue(of({ username: 'john' }));
-    auth.canAccessUsers.mockReturnValue(false);
+    auth.canReadUsers.mockReturnValue(false);
 
     await expect(runGuard()).resolves.toBe(forbiddenTree);
     expect(createUrlTree).toHaveBeenCalledWith(['/forbidden']);
@@ -68,7 +68,7 @@ describe('canAccessUsersGuard', () => {
   it('should redirect to login when the session cannot be loaded', async () => {
     const auth = TestBed.inject(AuthFacade) as unknown as {
       loadSession: ReturnType<typeof vi.fn>;
-      canAccessUsers: ReturnType<typeof vi.fn>;
+      canReadUsers: ReturnType<typeof vi.fn>;
     };
     const loginTree = { redirected: true } as unknown as UrlTree;
 

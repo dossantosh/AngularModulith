@@ -15,4 +15,5 @@ export class DashboardPage {
 
   readonly username = this.auth.username;
   readonly userName = computed(() => this.username() ?? 'Guest');
+  readonly canReadUsers = computed(() => this.auth.canReadUsers());
 }

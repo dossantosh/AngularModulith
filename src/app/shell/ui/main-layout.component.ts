@@ -16,7 +16,7 @@ type ShellDataSource = 'prod' | 'historic';
         [companyName]="companyName"
         [userName]="userName"
         [dataSource]="dataSource"
-        [canAccessUsers]="canAccessUsers"
+        [canReadUsers]="canReadUsers"
         [isDark]="isDark"
         (logout)="logout.emit()"
         (toggleTheme)="toggleTheme.emit()"
@@ -36,7 +36,7 @@ export class MainLayoutComponent {
   @Input() companyName = 'My Company';
   @Input() userName = 'User';
   @Input() dataSource: ShellDataSource = 'prod';
-  @Input() canAccessUsers = false;
+  @Input() canReadUsers = false;
   @Input() isDark = false;
 
   @Output() logout = new EventEmitter<void>();

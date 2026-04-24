@@ -27,7 +27,7 @@ type ShellDataSource = 'prod' | 'historic';
             Dashboard
           </a>
 
-          @if (canAccessUsers) {
+          @if (canReadUsers) {
             <a
               routerLink="/users/search"
               routerLinkActive="bg-gray-100 text-gray-900 dark:bg-gray-800 dark:text-gray-100"
@@ -82,7 +82,7 @@ export class HeaderComponent {
   @Input() companyName = 'My Company';
   @Input() userName = 'User';
   @Input() dataSource: ShellDataSource = 'prod';
-  @Input() canAccessUsers = false;
+  @Input() canReadUsers = false;
   @Input() isDark = false;
 
   @Output() logout = new EventEmitter<void>();

@@ -4,13 +4,13 @@ import { catchError, map, of } from 'rxjs';
 
 import { AuthFacade } from '../application/auth.facade';
 
-export const canAccessUsersGuard: CanActivateFn = () => {
+export const canReadUsersGuard: CanActivateFn = () => {
   const auth = inject(AuthFacade);
   const router = inject(Router);
 
   return auth.loadSession().pipe(
     map(() => {
-      if (auth.canAccessUsers()) return true;
+      if (auth.canReadUsers()) return true;
       return router.createUrlTree(['/forbidden']);
     }),
     catchError(() => of(router.createUrlTree(['/login'])))

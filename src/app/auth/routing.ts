@@ -1,2 +1,2 @@
 export { authGuard } from './routing/auth.guard';
-export { canAccessUsersGuard } from './routing/users-access.guard';
+export { canReadUsersGuard } from './routing/users-read.guard';

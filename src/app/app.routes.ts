@@ -1,7 +1,7 @@
 import { Routes } from '@angular/router';
 
 import { ForbiddenPage, LoginPage } from '@angular-modulith/auth/pages';
-import { authGuard, canAccessUsersGuard } from '@angular-modulith/auth/routing';
+import { authGuard, canReadUsersGuard } from '@angular-modulith/auth/routing';
 import { DashboardPage } from '@angular-modulith/dashboard';
 import { ShellContainer } from '@angular-modulith/shell';
 
@@ -21,7 +21,7 @@ export const routes: Routes = [
       },
       {
         path: 'users',
-        canActivate: [canAccessUsersGuard],
+        canActivate: [canReadUsersGuard],
         loadChildren: () => import('@angular-modulith/users').then((m) => m.USERS_ROUTES),
       },
     ],
