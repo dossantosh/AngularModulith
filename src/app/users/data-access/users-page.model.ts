@@ -1,4 +1,4 @@
-export interface UserPage<T> {
+export interface UsersPage<T> {
   content: T[];
   hasNext: boolean;
   hasPrevious: boolean;

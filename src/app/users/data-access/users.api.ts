@@ -2,8 +2,8 @@ import { HttpClient, HttpParams } from '@angular/common/http';
 import { Injectable, inject } from '@angular/core';
 import { map } from 'rxjs';
 
-import { UserSearchQuery } from '../domain/user-search-filters';
 import { mapUserPageDto } from './users.mapper';
+import { UsersSearchRequest } from './users-search.request';
 import { UserPageDto } from './users.dto';
 
 @Injectable({ providedIn: 'root' })
@@ -11,7 +11,7 @@ export class UsersApi {
   private readonly http = inject(HttpClient);
   private readonly baseUrl = '/api/';
 
-  search(query: UserSearchQuery) {
+  search(query: UsersSearchRequest) {
     let params = new HttpParams()
       .set('limit', String(query.limit))
       .set('direction', query.direction);

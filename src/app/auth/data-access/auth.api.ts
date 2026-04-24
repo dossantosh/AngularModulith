@@ -2,15 +2,14 @@ import { HttpClient } from '@angular/common/http';
 import { Injectable, inject } from '@angular/core';
 import { catchError, map, of } from 'rxjs';
 
-import { LoginRequest } from '../domain/login-request';
-import { LoginResponseDto, MeResponseDto } from './auth.dto';
+import { LoginRequestDto, LoginResponseDto, MeResponseDto } from './auth.dto';
 
 @Injectable({ providedIn: 'root' })
 export class AuthApi {
   private readonly http = inject(HttpClient);
   private readonly baseUrl = '/api/';
 
-  login(body: LoginRequest) {
+  login(body: LoginRequestDto) {
     return this.http.post<LoginResponseDto>(`${this.baseUrl}auth/login`, body);
   }
 

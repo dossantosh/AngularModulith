@@ -6,13 +6,6 @@ export interface UserSearchFilters {
   email: string;
 }
 
-export interface UserSearchQuery {
-  limit: number;
-  direction: PageDirection;
-  lastId: number | null;
-  filters: UserSearchFilters;
-}
-
 export const DEFAULT_USER_SEARCH_FILTERS: UserSearchFilters = {
   id: null,
   username: '',

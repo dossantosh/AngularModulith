@@ -1,8 +1,8 @@
 import { Injectable, inject } from '@angular/core';
 
 import { UsersQueryStore } from '../data-access/users-query.store';
-import { UserSearchFilters } from '../domain/user-search-filters';
 import { UsersSearchFlowStore } from '../state/users-search-flow.store';
+import { UserSearchFilters } from '../state/users-search-flow.model';
 import { ClearUserFiltersUseCase } from './clear-user-filters.use-case';
 import { PaginateUsersUseCase } from './paginate-users.use-case';
 import { SearchUsersUseCase } from './search-users.use-case';

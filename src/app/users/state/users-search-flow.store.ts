@@ -4,7 +4,7 @@ import {
   DEFAULT_USER_SEARCH_FILTERS,
   PageDirection,
   UserSearchFilters,
-} from '../domain/user-search-filters';
+} from './users-search-flow.model';
 
 @Injectable({ providedIn: 'root' })
 export class UsersSearchFlowStore {

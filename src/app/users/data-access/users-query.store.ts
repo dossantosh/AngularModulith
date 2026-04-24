@@ -1,7 +1,7 @@
 import { Injectable, computed, signal } from '@angular/core';
 
-import { UserPage } from '../domain/user-page';
-import { UserSummary } from '../domain/user-summary';
+import { UserListItem } from './user-list-item.model';
+import { UsersPage } from './users-page.model';
 
 type LoadStatus = 'idle' | 'loading' | 'success' | 'error';
 
@@ -9,7 +9,7 @@ type LoadStatus = 'idle' | 'loading' | 'success' | 'error';
 export class UsersQueryStore {
   private readonly _status = signal<LoadStatus>('idle');
   private readonly _error = signal<string | null>(null);
-  private readonly _page = signal<UserPage<UserSummary> | null>(null);
+  private readonly _page = signal<UsersPage<UserListItem> | null>(null);
 
   readonly status = this._status.asReadonly();
   readonly error = this._error.asReadonly();
@@ -26,7 +26,7 @@ export class UsersQueryStore {
     this._error.set(null);
   }
 
-  setPage(page: UserPage<UserSummary>): void {
+  setPage(page: UsersPage<UserListItem>): void {
     this._page.set(page);
     this._status.set('success');
     this._error.set(null);

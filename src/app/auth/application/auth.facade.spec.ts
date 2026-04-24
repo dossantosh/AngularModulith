@@ -3,6 +3,7 @@ import { TestBed } from '@angular/core/testing';
 import { HttpTestingController, provideHttpClientTesting } from '@angular/common/http/testing';
 
 import { AuthenticatedUser } from '../domain/authenticated-user';
+import { AUTHORITY } from '../domain/authority';
 import { AuthFacade } from './auth.facade';
 
 describe('AuthFacade', () => {
@@ -37,13 +38,13 @@ describe('AuthFacade', () => {
     request.flush({ username: 'john' });
     http.expectOne((req) => req.url === '/api/auth/me').flush({
       username: 'john',
-      authorities: ['MODULE_USERS'],
+      authorities: [AUTHORITY.moduleUsers],
       dataSource: 'historic',
     });
 
     expect(result).toBe('john');
     expect(facade.username()).toBe('john');
-    expect(facade.authorities()).toEqual(['MODULE_USERS']);
+    expect(facade.authorities()).toEqual([AUTHORITY.moduleUsers]);
     expect(facade.dataSource()).toBe('historic');
   });
 
@@ -52,7 +53,7 @@ describe('AuthFacade', () => {
     facade.loadSession().subscribe((value) => (firstResult = value));
 
     const firstRequest = http.expectOne((req) => req.url === '/api/auth/me');
-    firstRequest.flush({ username: 'john', authorities: ['MODULE_USERS'], dataSource: 'historic' });
+    firstRequest.flush({ username: 'john', authorities: [AUTHORITY.moduleUsers], dataSource: 'historic' });
 
     expect(firstResult?.username).toBe('john');
     expect(facade.dataSource()).toBe('historic');
@@ -76,7 +77,7 @@ describe('AuthFacade', () => {
     http.expectOne((req) => req.url === '/api/auth/login').flush({ username: 'john' });
     http.expectOne((req) => req.url === '/api/auth/me').flush({
       username: 'john',
-      authorities: ['MODULE_USERS'],
+      authorities: [AUTHORITY.moduleUsers],
       dataSource: 'historic',
     });
 

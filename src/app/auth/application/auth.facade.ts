@@ -1,9 +1,10 @@
 import { Injectable, inject } from '@angular/core';
 
+import { canAccessUsers } from '../domain/access.policy';
 import { Authority } from '../domain/authority';
-import { LoginRequest } from '../domain/login-request';
 import { AuthSessionStore } from '../state/auth-session.store';
 import { LoadSessionUseCase } from './load-session.use-case';
+import { LoginCommand } from './login.command';
 import { LoginUseCase } from './login.use-case';
 import { LogoutUseCase } from './logout.use-case';
 
@@ -26,11 +27,15 @@ export class AuthFacade {
     return this.sessionStore.hasAnyAuthority(...authorities);
   }
 
+  canAccessUsers(): boolean {
+    return canAccessUsers(this.authorities());
+  }
+
   loadSession() {
     return this.loadSessionUseCase.execute();
   }
 
-  login(command: LoginRequest) {
+  login(command: LoginCommand) {
     return this.loginUseCase.execute(command);
   }
 

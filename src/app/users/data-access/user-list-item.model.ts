@@ -1,4 +1,4 @@
-export interface UserSummary {
+export interface UserListItem {
   id: number;
   username: string;
   email: string;

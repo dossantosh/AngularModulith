@@ -3,6 +3,7 @@ import { ActivatedRouteSnapshot, Router, RouterStateSnapshot, UrlTree } from '@a
 import { firstValueFrom, from, isObservable, of, throwError } from 'rxjs';
 import { vi } from 'vitest';
 
+import { AUTHORITY } from '../domain/authority';
 import { AuthFacade } from '../application/auth.facade';
 import { authorityGuard } from './authority.guard';
 
@@ -46,7 +47,7 @@ describe('authorityGuard', () => {
     auth.loadSession.mockReturnValue(of({ username: 'john' }));
     auth.hasAnyAuthority.mockReturnValue(true);
 
-    await expect(runGuard(['MODULE_USERS'])).resolves.toBe(true);
+    await expect(runGuard([AUTHORITY.moduleUsers])).resolves.toBe(true);
     expect(createUrlTree).not.toHaveBeenCalled();
   });
 
@@ -61,7 +62,7 @@ describe('authorityGuard', () => {
     auth.loadSession.mockReturnValue(of({ username: 'john' }));
     auth.hasAnyAuthority.mockReturnValue(false);
 
-    await expect(runGuard(['MODULE_USERS'])).resolves.toBe(forbiddenTree);
+    await expect(runGuard([AUTHORITY.moduleUsers])).resolves.toBe(forbiddenTree);
     expect(createUrlTree).toHaveBeenCalledWith(['/forbidden']);
   });
 
@@ -75,7 +76,7 @@ describe('authorityGuard', () => {
     createUrlTree.mockReturnValue(loginTree);
     auth.loadSession.mockReturnValue(throwError(() => new Error('unauthorized')));
 
-    await expect(runGuard(['MODULE_USERS'])).resolves.toBe(loginTree);
+    await expect(runGuard([AUTHORITY.moduleUsers])).resolves.toBe(loginTree);
     expect(createUrlTree).toHaveBeenCalledWith(['/login']);
   });
 });

@@ -1,5 +1,6 @@
 import { Routes } from '@angular/router';
 
+import { AUTHORITY } from '@angular-modulith/auth';
 import { ForbiddenPage, LoginPage } from '@angular-modulith/auth/pages';
 import { authGuard, authorityGuard } from '@angular-modulith/auth/routing';
 import { DashboardPage } from '@angular-modulith/dashboard';
@@ -21,7 +22,7 @@ export const routes: Routes = [
       },
       {
         path: 'users',
-        canActivate: [authorityGuard('MODULE_USERS')],
+        canActivate: [authorityGuard(AUTHORITY.moduleUsers)],
         loadChildren: () => import('@angular-modulith/users').then((m) => m.USERS_ROUTES),
       },
     ],
