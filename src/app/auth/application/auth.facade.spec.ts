@@ -1,9 +1,8 @@
 import { HttpClient, provideHttpClient } from '@angular/common/http';
-import { TestBed } from '@angular/core/testing';
 import { HttpTestingController, provideHttpClientTesting } from '@angular/common/http/testing';
+import { TestBed } from '@angular/core/testing';
 
 import { AuthenticatedUser } from '../domain/authenticated-user';
-import { AUTHORITY } from '../domain/authority';
 import { AuthFacade } from './auth.facade';
 
 describe('AuthFacade', () => {
@@ -25,7 +24,7 @@ describe('AuthFacade', () => {
     TestBed.resetTestingModule();
   });
 
-  it('login() loads the full session, stores authorities and preserves the selected data source', () => {
+  it('login() loads the full session, stores capabilities and preserves the selected data source', () => {
     let result: string | undefined;
 
     facade
@@ -38,7 +37,6 @@ describe('AuthFacade', () => {
     request.flush({ username: 'john' });
     http.expectOne((req) => req.url === '/api/auth/me').flush({
       username: 'john',
-      authorities: [AUTHORITY.moduleUsers],
       dataSource: 'historic',
       capabilities: {
         users: { access: true, read: true, write: false },
@@ -48,7 +46,6 @@ describe('AuthFacade', () => {
 
     expect(result).toBe('john');
     expect(facade.username()).toBe('john');
-    expect(facade.authorities()).toEqual([AUTHORITY.moduleUsers]);
     expect(facade.dataSource()).toBe('historic');
     expect(facade.canAccessUsers()).toBe(true);
     expect(facade.canReadUsers()).toBe(true);
@@ -62,7 +59,6 @@ describe('AuthFacade', () => {
     const firstRequest = http.expectOne((req) => req.url === '/api/auth/me');
     firstRequest.flush({
       username: 'john',
-      authorities: [AUTHORITY.moduleUsers],
       dataSource: 'historic',
       capabilities: {
         users: { access: true, read: false, write: false },
@@ -84,15 +80,21 @@ describe('AuthFacade', () => {
 
     facade.loadSession().subscribe();
     const secondMeRequest = http.expectOne((req) => req.url === '/api/auth/me');
-    secondMeRequest.flush({ username: 'john', authorities: [], dataSource: 'prod' });
+    secondMeRequest.flush({
+      username: 'john',
+      dataSource: 'prod',
+      capabilities: {
+        users: { access: false, read: false, write: false },
+        perfumes: { access: false, read: false, write: false },
+      },
+    });
   });
 
-  it('logout() resets username, authorities, and data source', () => {
+  it('logout() resets username, capabilities, and data source', () => {
     facade.login({ username: 'john', password: 'pw', dataSource: 'historic' }).subscribe();
     http.expectOne((req) => req.url === '/api/auth/login').flush({ username: 'john' });
     http.expectOne((req) => req.url === '/api/auth/me').flush({
       username: 'john',
-      authorities: [AUTHORITY.moduleUsers],
       dataSource: 'historic',
       capabilities: {
         users: { access: true, read: false, write: false },
@@ -107,18 +109,20 @@ describe('AuthFacade', () => {
     request.flush(null);
 
     expect(facade.username()).toBe(null);
-    expect(facade.authorities()).toEqual([]);
     expect(facade.dataSource()).toBe('prod');
     expect(facade.canAccessUsers()).toBe(false);
   });
 
-  it('loadSession() derives capabilities from authorities when the backend does not send capabilities yet', () => {
+  it('loadSession() reads capabilities as the permission contract', () => {
     facade.loadSession().subscribe();
 
     http.expectOne((req) => req.url === '/api/auth/me').flush({
       username: 'john',
-      authorities: [AUTHORITY.moduleUsers, AUTHORITY.submoduleWriteUsers],
       dataSource: 'prod',
+      capabilities: {
+        users: { access: true, read: false, write: true },
+        perfumes: { access: false, read: false, write: false },
+      },
     });
 
     expect(facade.canAccessUsers()).toBe(true);
