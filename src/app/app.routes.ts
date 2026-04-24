@@ -1,48 +1,31 @@
 import { Routes } from '@angular/router';
 
-import { IndexComponent } from './features/index/index.component';
-import { LoginComponent } from './features/login/login.component';
-
-import { MainLayoutComponent } from './layout/components/main/main-layout.component';
-import { authGuard } from './core/auth/guards/auth.guard';
-import { authorityGuard } from './core/auth/guards/authority.guard';
+import { ForbiddenPage, LoginPage } from '@angular-modulith/auth/pages';
+import { authGuard, canReadUsersGuard } from '@angular-modulith/auth/routing';
+import { DashboardPage } from '@angular-modulith/dashboard';
+import { ShellContainer } from '@angular-modulith/shell';
 
 export const routes: Routes = [
-  /**
-   * Authenticated area
-   */
   {
     path: '',
-    component: MainLayoutComponent,
+    component: ShellContainer,
     canActivate: [authGuard],
     children: [
-      /**
-       * Index route
-       */
-      { 
-        path: '',
-        component: IndexComponent,
-      },
-
-      /**
-       * Users
-       */
       {
-        path: 'usersmanagement',
-        canActivate: [authorityGuard('MODULE_USERS')],
-        loadChildren: () => import('./features/users/users.routes').then((m) => m.USERS_ROUTES),
+        path: '',
+        component: DashboardPage,
+      },
+      {
+        path: 'forbidden',
+        component: ForbiddenPage,
+      },
+      {
+        path: 'users',
+        canActivate: [canReadUsersGuard],
+        loadChildren: () => import('@angular-modulith/users').then((m) => m.USERS_ROUTES),
       },
     ],
   },
-
-  /**
-   * Public login page route
-   */
-  { path: 'login', component: LoginComponent },
-
-  /**
-   * Wildcard route
-   * Javadoc: Redirect unknown paths to the root (auth area).
-   */
-  { path: '**', redirectTo: '' },
+  { path: 'login', component: LoginPage },
+  { path: '**', redirectTo: 'forbidden' },
 ];

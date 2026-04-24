@@ -12,5 +12,4 @@ import { RouterModule } from '@angular/router';
   template: `<router-outlet></router-outlet>`,
 })
 export class App {
-  protected title = 'Modulith Application';
 }
