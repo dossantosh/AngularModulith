@@ -3,6 +3,7 @@ import { Observable, map, shareReplay, tap } from 'rxjs';
 
 import { AuthApi } from '../data-access/auth.api';
 import { AuthenticatedUser } from '../domain/authenticated-user';
+import { capabilitiesFromAuthorities } from '../domain/auth-capabilities';
 import { AuthSessionStore } from '../state/auth-session.store';
 
 @Injectable({ providedIn: 'root' })
@@ -14,7 +15,14 @@ export class LoadSessionUseCase {
 
   execute(): Observable<AuthenticatedUser> {
     this.sessionOnce$ ??= this.api.me().pipe(
-      tap((response) => this.sessionStore.setDataSource(response.dataSource ?? 'prod')),
+      tap((response) => {
+        const authorities = response.authorities ?? [];
+
+        this.sessionStore.setDataSource(response.dataSource ?? 'prod');
+        this.sessionStore.setCapabilities(
+          response.capabilities ?? capabilitiesFromAuthorities(authorities)
+        );
+      }),
       map((response) => ({
         username: response.username,
         authorities: response.authorities ?? [],

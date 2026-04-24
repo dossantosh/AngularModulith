@@ -1,17 +1,17 @@
-import { AUTHORITY, Authority } from './authority';
+import { AuthCapabilities } from './auth-capabilities';
 
-export function canAccessUsers(authorities: readonly Authority[]): boolean {
-  return authorities.includes(AUTHORITY.moduleUsers);
+export function canAccessUsers(capabilities: AuthCapabilities): boolean {
+  return capabilities.users.access;
 }
 
-export function canReadUsers(authorities: readonly Authority[]): boolean {
-  return authorities.includes(AUTHORITY.submoduleReadUsers);
+export function canReadUsers(capabilities: AuthCapabilities): boolean {
+  return capabilities.users.read;
 }
 
-export function canWriteUsers(authorities: readonly Authority[]): boolean {
-  return authorities.includes(AUTHORITY.submoduleWriteUsers);
+export function canWriteUsers(capabilities: AuthCapabilities): boolean {
+  return capabilities.users.write;
 }
 
-export function canAccessPerfumes(authorities: readonly Authority[]): boolean {
-  return authorities.includes(AUTHORITY.modulePerfumes);
+export function canAccessPerfumes(capabilities: AuthCapabilities): boolean {
+  return capabilities.perfumes.access;
 }

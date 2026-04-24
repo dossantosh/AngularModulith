@@ -40,12 +40,19 @@ describe('AuthFacade', () => {
       username: 'john',
       authorities: [AUTHORITY.moduleUsers],
       dataSource: 'historic',
+      capabilities: {
+        users: { access: true, read: true, write: false },
+        perfumes: { access: false, read: false, write: false },
+      },
     });
 
     expect(result).toBe('john');
     expect(facade.username()).toBe('john');
     expect(facade.authorities()).toEqual([AUTHORITY.moduleUsers]);
     expect(facade.dataSource()).toBe('historic');
+    expect(facade.canAccessUsers()).toBe(true);
+    expect(facade.canReadUsers()).toBe(true);
+    expect(facade.canWriteUsers()).toBe(false);
   });
 
   it('loadSession() caches until logout resets it', () => {
@@ -53,7 +60,15 @@ describe('AuthFacade', () => {
     facade.loadSession().subscribe((value) => (firstResult = value));
 
     const firstRequest = http.expectOne((req) => req.url === '/api/auth/me');
-    firstRequest.flush({ username: 'john', authorities: [AUTHORITY.moduleUsers], dataSource: 'historic' });
+    firstRequest.flush({
+      username: 'john',
+      authorities: [AUTHORITY.moduleUsers],
+      dataSource: 'historic',
+      capabilities: {
+        users: { access: true, read: false, write: false },
+        perfumes: { access: false, read: false, write: false },
+      },
+    });
 
     expect(firstResult?.username).toBe('john');
     expect(facade.dataSource()).toBe('historic');
@@ -79,6 +94,10 @@ describe('AuthFacade', () => {
       username: 'john',
       authorities: [AUTHORITY.moduleUsers],
       dataSource: 'historic',
+      capabilities: {
+        users: { access: true, read: false, write: false },
+        perfumes: { access: false, read: false, write: false },
+      },
     });
 
     facade.logout().subscribe();
@@ -90,5 +109,20 @@ describe('AuthFacade', () => {
     expect(facade.username()).toBe(null);
     expect(facade.authorities()).toEqual([]);
     expect(facade.dataSource()).toBe('prod');
+    expect(facade.canAccessUsers()).toBe(false);
+  });
+
+  it('loadSession() derives capabilities from authorities when the backend does not send capabilities yet', () => {
+    facade.loadSession().subscribe();
+
+    http.expectOne((req) => req.url === '/api/auth/me').flush({
+      username: 'john',
+      authorities: [AUTHORITY.moduleUsers, AUTHORITY.submoduleWriteUsers],
+      dataSource: 'prod',
+    });
+
+    expect(facade.canAccessUsers()).toBe(true);
+    expect(facade.canReadUsers()).toBe(false);
+    expect(facade.canWriteUsers()).toBe(true);
   });
 });
