@@ -55,8 +55,8 @@ This prevents:
 - CSRF bootstrap via backend cookie endpoint
 - Route protection via guards:
   - `authGuard` → authenticated access
-  - `authorityGuard('MODULE_X')` → module/permission access
-- Authority‑aware UI rendering via `HasAuthorityDirective`
+  - `canAccessUsersGuard` → semantic capability access
+- Capability-aware UI rendering through the auth facade
 
 Expected backend endpoints:
 
@@ -367,7 +367,7 @@ This frontend assumes the backend:
 - Relies on **cookies**, not JWT
 - Exposes APIs under `/api`
 - Supports CSRF bootstrap
-- Returns authorities from `/api/auth/me`
+- Returns semantic capabilities from `/api/auth/me`
 
 Without the backend running, protected routes will return `401`.
 
@@ -401,7 +401,7 @@ src/app/features/<feature-name>/
 4️⃣ Protect if needed:
 
 ```ts
-canActivate: [authorityGuard('MODULE_SOMETHING')];
+canActivate: [canAccessUsersGuard];
 ```
 
 This enforces **explicit dependencies and clean boundaries**.
