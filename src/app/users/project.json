@@ -1,0 +1,7 @@
+{
+  "$schema": "../../../node_modules/nx/schemas/project-schema.json",
+  "name": "users",
+  "projectType": "library",
+  "sourceRoot": "src/app/users",
+  "tags": ["scope:users", "type:slice"]
+}

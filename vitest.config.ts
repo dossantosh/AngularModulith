@@ -12,14 +12,11 @@ export default defineConfig({
       optimizer: {
         client: {
           include: [
-            // core Angular
             '@angular/core',
             '@angular/common',
             '@angular/platform-browser',
             '@angular/platform-browser/testing',
             '@angular/router',
-
-            // ✅ IMPORTANT: HttpClient + testing
             '@angular/common/http',
             '@angular/common/http/testing',
 
