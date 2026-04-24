@@ -17,6 +17,10 @@
     "module": "preserve",
     "paths": {
       "@angular-modulith/auth": ["src/app/auth/index.ts"],
+      "@angular-modulith/auth/bootstrap": ["src/app/auth/bootstrap.ts"],
+      "@angular-modulith/auth/http": ["src/app/auth/http.ts"],
+      "@angular-modulith/auth/pages": ["src/app/auth/pages.ts"],
+      "@angular-modulith/auth/routing": ["src/app/auth/routing.ts"],
       "@angular-modulith/dashboard": ["src/app/dashboard/index.ts"],
       "@angular-modulith/shared/ui": ["src/app/shared/ui/index.ts"],
       "@angular-modulith/shell": ["src/app/shell/index.ts"],

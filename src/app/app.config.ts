@@ -5,7 +5,8 @@ import {
 import { provideRouter } from '@angular/router';
 import { provideHttpClient, withInterceptors, withXsrfConfiguration } from '@angular/common/http';
 
-import { authInterceptor, provideAuthBootstrap } from '@angular-modulith/auth';
+import { provideAuthBootstrap } from '@angular-modulith/auth/bootstrap';
+import { authInterceptor } from '@angular-modulith/auth/http';
 
 import { routes } from './app.routes';
 

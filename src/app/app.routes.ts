@@ -1,11 +1,7 @@
 import { Routes } from '@angular/router';
 
-import {
-  authGuard,
-  authorityGuard,
-  ForbiddenPage,
-  LoginPage,
-} from '@angular-modulith/auth';
+import { ForbiddenPage, LoginPage } from '@angular-modulith/auth/pages';
+import { authGuard, authorityGuard } from '@angular-modulith/auth/routing';
 import { DashboardPage } from '@angular-modulith/dashboard';
 import { ShellContainer } from '@angular-modulith/shell';
 
