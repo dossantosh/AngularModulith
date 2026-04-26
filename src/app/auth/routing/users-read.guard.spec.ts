@@ -19,7 +19,7 @@ describe('canReadUsersGuard', () => {
           provide: AuthFacade,
           useValue: {
             loadSession: vi.fn(),
-            canReadUsers: vi.fn(),
+            hasAllScopes: vi.fn(),
           },
         },
         {
@@ -40,11 +40,11 @@ describe('canReadUsersGuard', () => {
   it('should allow navigation when the user can read users', async () => {
     const auth = TestBed.inject(AuthFacade) as unknown as {
       loadSession: ReturnType<typeof vi.fn>;
-      canReadUsers: ReturnType<typeof vi.fn>;
+      hasAllScopes: ReturnType<typeof vi.fn>;
     };
 
     auth.loadSession.mockReturnValue(of({ username: 'john' }));
-    auth.canReadUsers.mockReturnValue(true);
+    auth.hasAllScopes.mockReturnValue(true);
 
     await expect(runGuard()).resolves.toBe(true);
     expect(createUrlTree).not.toHaveBeenCalled();
@@ -53,13 +53,13 @@ describe('canReadUsersGuard', () => {
   it('should redirect to forbidden when the user cannot read users', async () => {
     const auth = TestBed.inject(AuthFacade) as unknown as {
       loadSession: ReturnType<typeof vi.fn>;
-      canReadUsers: ReturnType<typeof vi.fn>;
+      hasAllScopes: ReturnType<typeof vi.fn>;
     };
     const forbiddenTree = { redirected: true } as unknown as UrlTree;
 
     createUrlTree.mockReturnValue(forbiddenTree);
     auth.loadSession.mockReturnValue(of({ username: 'john' }));
-    auth.canReadUsers.mockReturnValue(false);
+    auth.hasAllScopes.mockReturnValue(false);
 
     await expect(runGuard()).resolves.toBe(forbiddenTree);
     expect(createUrlTree).toHaveBeenCalledWith(['/forbidden']);
@@ -68,7 +68,7 @@ describe('canReadUsersGuard', () => {
   it('should redirect to login when the session cannot be loaded', async () => {
     const auth = TestBed.inject(AuthFacade) as unknown as {
       loadSession: ReturnType<typeof vi.fn>;
-      canReadUsers: ReturnType<typeof vi.fn>;
+      hasAllScopes: ReturnType<typeof vi.fn>;
     };
     const loginTree = { redirected: true } as unknown as UrlTree;
 

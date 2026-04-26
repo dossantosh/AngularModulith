@@ -367,9 +367,45 @@ This frontend assumes the backend:
 - Relies on **cookies**, not JWT
 - Exposes APIs under `/api`
 - Supports CSRF bootstrap
-- Returns semantic capabilities from `/api/auth/me`
+- Returns roles, effective scopes, and semantic capabilities from `/api/auth/me`
 
 Without the backend running, protected routes will return `401`.
+
+### Authorization UX
+
+The frontend consumes backend-calculated scopes and capabilities for user experience only. It can hide routes, menus, buttons, and actions, but every protected operation must still be validated by the backend.
+
+Known scopes live in `src/app/auth/domain/auth-scopes.ts`:
+
+```ts
+AUTH_SCOPES.users.read; // "user:read"
+AUTH_SCOPES.users.create; // "user:create"
+```
+
+Use the auth facade for checks:
+
+```ts
+auth.hasScope('user:read');
+auth.hasAnyScope(['user:create', 'user:update']);
+auth.hasAllScopes(['user:read']);
+auth.can('users', 'read');
+```
+
+Routes can declare required scopes:
+
+```ts
+{
+  path: 'users',
+  canActivate: [scopeGuard],
+  data: { requiredScopes: [AUTH_SCOPES.users.read] },
+}
+```
+
+Templates can hide UI with the structural directive:
+
+```html
+<button *appHasScope="scopes.users.create">Crear usuario</button>
+```
 
 ---
 

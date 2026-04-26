@@ -16,9 +16,12 @@ export class LoadSessionUseCase {
     this.sessionOnce$ ??= this.api.me().pipe(
       tap((response) => {
         this.sessionStore.setDataSource(response.dataSource ?? 'prod');
+        this.sessionStore.setRoles(response.roles ?? []);
+        this.sessionStore.setScopes(response.scopes ?? []);
         this.sessionStore.setCapabilities(response.capabilities);
       }),
       map((response) => ({
+        userId: response.userId,
         username: response.username,
       })),
       tap((user) => this.sessionStore.setAuthenticatedUser(user)),
