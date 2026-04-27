@@ -25,8 +25,20 @@ export function can(
     return false;
   }
 
-  if (action === 'access' || action === 'read' || action === 'write') {
-    return resourceCapabilities[action];
+  if (action === 'access') {
+    return resourceCapabilities.canAccess;
+  }
+
+  if (action === 'read') {
+    return resourceCapabilities.canRead;
+  }
+
+  if (action === 'write') {
+    return (
+      resourceCapabilities.canCreate ||
+      resourceCapabilities.canUpdate ||
+      resourceCapabilities.canDelete
+    );
   }
 
   const capabilityName = `can${action.charAt(0).toUpperCase()}${action.slice(1)}`;
@@ -34,17 +46,19 @@ export function can(
 }
 
 export function canAccessUsers(capabilities: AuthCapabilities): boolean {
-  return capabilities.users.access;
+  return capabilities.users.canAccess;
 }
 
 export function canReadUsers(capabilities: AuthCapabilities): boolean {
-  return capabilities.users.read;
+  return capabilities.users.canRead;
 }
 
 export function canWriteUsers(capabilities: AuthCapabilities): boolean {
-  return capabilities.users.write;
+  return (
+    capabilities.users.canCreate || capabilities.users.canUpdate || capabilities.users.canDelete
+  );
 }
 
 export function canAccessPerfumes(capabilities: AuthCapabilities): boolean {
-  return capabilities.perfumes.access;
+  return capabilities.perfumes.canAccess;
 }

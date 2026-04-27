@@ -5,9 +5,16 @@ import { catchError, map, of } from 'rxjs';
 import { AuthFacade } from '../application/auth.facade';
 
 export const scopeGuard: CanActivateFn = (route: ActivatedRouteSnapshot) => {
+  return canActivateWithScopes(route.data['requiredScopes']);
+};
+
+export function scopeGuardFor(requiredScopes: readonly string[]): CanActivateFn {
+  return () => canActivateWithScopes(requiredScopes);
+}
+
+function canActivateWithScopes(requiredScopes: unknown) {
   const auth = inject(AuthFacade);
   const router = inject(Router);
-  const requiredScopes = route.data['requiredScopes'];
 
   return auth.loadSession().pipe(
     map(() => {
@@ -18,4 +25,4 @@ export const scopeGuard: CanActivateFn = (route: ActivatedRouteSnapshot) => {
     }),
     catchError(() => of(router.createUrlTree(['/login'])))
   );
-};
+}

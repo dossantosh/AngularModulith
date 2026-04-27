@@ -11,6 +11,14 @@ export const AUTH_SCOPES = {
     update: 'perfume:update',
     delete: 'perfume:delete',
   },
+  roles: {
+    read: 'role:read',
+    assign: 'role:assign',
+  },
+  scopes: {
+    read: 'scope:read',
+    assign: 'scope:assign',
+  },
 } as const;
 
 type ScopeGroup = (typeof AUTH_SCOPES)[keyof typeof AUTH_SCOPES];

@@ -1,7 +1,5 @@
 export interface FeatureCapability {
-  access: boolean;
-  read: boolean;
-  write: boolean;
+  canAccess: boolean;
   canRead: boolean;
   canCreate: boolean;
   canUpdate: boolean;
@@ -15,18 +13,14 @@ export interface AuthCapabilities extends Record<string, FeatureCapability> {
 
 export const EMPTY_AUTH_CAPABILITIES: AuthCapabilities = {
   users: {
-    access: false,
-    read: false,
-    write: false,
+    canAccess: false,
     canRead: false,
     canCreate: false,
     canUpdate: false,
     canDelete: false,
   },
   perfumes: {
-    access: false,
-    read: false,
-    write: false,
+    canAccess: false,
     canRead: false,
     canCreate: false,
     canUpdate: false,
