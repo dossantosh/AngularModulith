@@ -1,15 +1,15 @@
 export const AUTH_SCOPES = {
   users: {
-    read: 'user:read',
-    create: 'user:create',
-    update: 'user:update',
-    delete: 'user:delete',
+    read: 'users:read',
+    create: 'users:create',
+    update: 'users:update',
+    delete: 'users:delete',
   },
   perfumes: {
-    read: 'perfume:read',
-    create: 'perfume:create',
-    update: 'perfume:update',
-    delete: 'perfume:delete',
+    read: 'perfumes:read',
+    create: 'perfumes:create',
+    update: 'perfumes:update',
+    delete: 'perfumes:delete',
   },
   roles: {
     read: 'role:read',

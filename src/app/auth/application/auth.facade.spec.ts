@@ -40,7 +40,7 @@ describe('AuthFacade', () => {
       username: 'john',
       dataSource: 'historic',
       roles: ['USER'],
-      scopes: ['user:read'],
+      scopes: ['users:read'],
       capabilities: {
         users: {
           canAccess: true,
@@ -65,9 +65,9 @@ describe('AuthFacade', () => {
     expect(facade.canAccessUsers()).toBe(true);
     expect(facade.canReadUsers()).toBe(true);
     expect(facade.canWriteUsers()).toBe(false);
-    expect(facade.hasScope('user:read')).toBe(true);
-    expect(facade.hasAnyScope(['user:create', 'user:read'])).toBe(true);
-    expect(facade.hasAllScopes(['user:read'])).toBe(true);
+    expect(facade.hasScope('users:read')).toBe(true);
+    expect(facade.hasAnyScope(['users:create', 'users:read'])).toBe(true);
+    expect(facade.hasAllScopes(['users:read'])).toBe(true);
     expect(facade.can('users', 'read')).toBe(true);
   });
 
@@ -144,7 +144,7 @@ describe('AuthFacade', () => {
       username: 'john',
       dataSource: 'historic',
       roles: ['USER'],
-      scopes: ['user:read'],
+      scopes: ['users:read'],
       capabilities: {
         users: {
           canAccess: true,
@@ -172,7 +172,7 @@ describe('AuthFacade', () => {
     expect(facade.username()).toBe(null);
     expect(facade.dataSource()).toBe('prod');
     expect(facade.canAccessUsers()).toBe(false);
-    expect(facade.hasScope('user:read')).toBe(false);
+    expect(facade.hasScope('users:read')).toBe(false);
   });
 
   it('loadSession() reads capabilities as the permission contract', () => {
@@ -182,7 +182,7 @@ describe('AuthFacade', () => {
       username: 'john',
       dataSource: 'prod',
       roles: ['ADMIN'],
-      scopes: ['user:update'],
+      scopes: ['users:update'],
       capabilities: {
         users: {
           canAccess: true,
@@ -204,7 +204,7 @@ describe('AuthFacade', () => {
     expect(facade.canAccessUsers()).toBe(true);
     expect(facade.canReadUsers()).toBe(false);
     expect(facade.canWriteUsers()).toBe(true);
-    expect(facade.hasScope('user:update')).toBe(true);
+    expect(facade.hasScope('users:update')).toBe(true);
     expect(facade.can('users', 'update')).toBe(true);
   });
 });
