@@ -1,44 +1,57 @@
 import { Injectable, inject } from '@angular/core';
 
-import { UsersQueryStore } from '../data-access/users-query.store';
-import { UsersSearchFlowStore } from '../state/users-search-flow.store';
-import { UserSearchFilters } from '../state/users-search-flow.model';
-import { ClearUserFiltersUseCase } from './clear-user-filters.use-case';
-import { PaginateUsersUseCase } from './paginate-users.use-case';
-import { SearchUsersUseCase } from './search-users.use-case';
+import { UsersApi } from '../data-access/users.api';
+import { UserSearchFilters, UsersSearchFlowStore } from '../state/users-search-flow.store';
 
 @Injectable({ providedIn: 'root' })
 export class UsersFacade {
-  private readonly flowStore = inject(UsersSearchFlowStore);
-  private readonly queryStore = inject(UsersQueryStore);
-  private readonly searchUsersUseCase = inject(SearchUsersUseCase);
-  private readonly clearUserFiltersUseCase = inject(ClearUserFiltersUseCase);
-  private readonly paginateUsersUseCase = inject(PaginateUsersUseCase);
+  private readonly api = inject(UsersApi);
+  private readonly store = inject(UsersSearchFlowStore);
 
-  readonly filters = this.flowStore.filters;
-  readonly error = this.queryStore.error;
-  readonly loading = this.queryStore.loading;
-  readonly users = this.queryStore.users;
-  readonly hasNext = this.queryStore.hasNext;
-  readonly hasPrevious = this.queryStore.hasPrevious;
+  readonly filters = this.store.filters;
+  readonly error = this.store.error;
+  readonly loading = this.store.loading;
+  readonly users = this.store.users;
+  readonly hasNext = this.store.hasNext;
+  readonly hasPrevious = this.store.hasPrevious;
 
   setFilters(partial: Partial<UserSearchFilters>): void {
-    this.flowStore.setFilters(partial);
+    this.store.setFilters(partial);
   }
 
   search(): void {
-    this.searchUsersUseCase.execute();
+    this.store.startLoading();
+
+    this.api.search({
+      limit: this.store.limit(),
+      direction: this.store.direction(),
+      lastId: this.store.lastId(),
+      filters: this.store.filters(),
+    }).subscribe({
+      next: (page) => this.store.setPage(page),
+      error: () => this.store.setError('Failed to load users'),
+    });
   }
 
   clearFiltersAndSearch(): void {
-    this.clearUserFiltersUseCase.execute();
+    this.store.resetFilters();
+    this.store.resetPagination();
+    this.search();
   }
 
   loadNext(): void {
-    this.paginateUsersUseCase.loadNext();
+    const nextId = this.store.nextId();
+    if (!this.store.hasNext() || nextId == null) return;
+
+    this.store.setPagination('NEXT', nextId);
+    this.search();
   }
 
   loadPrevious(): void {
-    this.paginateUsersUseCase.loadPrevious();
+    const previousId = this.store.previousId();
+    if (!this.store.hasPrevious() || previousId == null) return;
+
+    this.store.setPagination('PREVIOUS', previousId);
+    this.search();
   }
 }

@@ -3,8 +3,18 @@ import { Injectable, inject } from '@angular/core';
 import { map } from 'rxjs';
 
 import { mapUserPageDto } from './users.mapper';
-import { UsersSearchRequest } from './users-search.request';
 import { UserPageDto } from './users.dto';
+
+interface UsersSearchRequest {
+  limit: number;
+  direction: 'NEXT' | 'PREVIOUS';
+  lastId: number | null;
+  filters: {
+    id: number | null;
+    username: string;
+    email: string;
+  };
+}
 
 @Injectable({ providedIn: 'root' })
 export class UsersApi {
