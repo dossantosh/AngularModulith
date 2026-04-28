@@ -1,8 +1,10 @@
 import { Component, computed, inject } from '@angular/core';
 import { RouterLink } from '@angular/router';
 
-import { AUTH_SCOPES, AuthFacade, HasScopeDirective } from '@angular-modulith/auth';
-import { CardComponent, PageComponent } from '@angular-modulith/shared/ui';
+import { AuthFacade } from '../../auth/application/auth.facade';
+import { HasScopeDirective } from '../../auth/directives/has-scope.directive';
+import { AUTH_SCOPES } from '../../auth/domain/auth-scopes';
+import { CardComponent, PageComponent } from '../../../shared/ui';
 
 @Component({
   standalone: true,

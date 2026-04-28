@@ -8,7 +8,7 @@ import {
   CardComponent,
   InputComponent,
   PageComponent,
-} from '@angular-modulith/shared/ui';
+} from '../../../shared/ui';
 import { UsersFacade } from '../application/users.facade';
 
 @Component({

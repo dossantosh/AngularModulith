@@ -1,13 +1,14 @@
 import { Component, inject } from '@angular/core';
+import { MatButtonModule } from '@angular/material/button';
 import { Router, RouterLink } from '@angular/router';
 
-import { CardComponent, PageComponent } from '@angular-modulith/shared/ui';
+import { CardComponent, PageComponent } from '../../../shared/ui';
 import { AuthFacade } from '../application/auth.facade';
 
 @Component({
   selector: 'app-forbidden-page',
   standalone: true,
-  imports: [CardComponent, PageComponent, RouterLink],
+  imports: [CardComponent, MatButtonModule, PageComponent, RouterLink],
   template: `
     <ui-page>
       <div class="flex min-h-[60vh] items-center justify-center">
@@ -30,16 +31,16 @@ import { AuthFacade } from '../application/auth.facade';
 
             <div class="flex flex-col justify-center gap-3 sm:flex-row">
               <a
+                matButton="filled"
                 routerLink="/"
-                class="rounded-lg bg-blue-600 px-4 py-2 text-sm font-semibold text-white shadow-sm transition hover:bg-blue-700 active:bg-blue-800"
               >
                 Volver al inicio
               </a>
 
               <button
+                matButton="outlined"
                 type="button"
                 (click)="changeUser()"
-                class="rounded-lg border border-gray-300 px-4 py-2 text-sm font-semibold text-gray-700 transition hover:bg-gray-100 dark:border-gray-600 dark:text-gray-200 dark:hover:bg-gray-800"
               >
                 Cambiar de usuario
               </button>

@@ -1,7 +1,7 @@
 import { Component, computed, inject } from '@angular/core';
 import { Router, RouterOutlet } from '@angular/router';
 
-import { AuthFacade } from '@angular-modulith/auth';
+import { AuthFacade } from '../../auth/application/auth.facade';
 import { ThemeFacade } from '../application/theme.facade';
 import { MainLayoutComponent } from '../ui/main-layout.component';
 

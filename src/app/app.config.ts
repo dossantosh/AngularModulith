@@ -1,12 +1,9 @@
-import {
-  ApplicationConfig,
-  provideBrowserGlobalErrorListeners
-} from '@angular/core';
+import { ApplicationConfig, provideBrowserGlobalErrorListeners } from '@angular/core';
 import { provideRouter } from '@angular/router';
 import { provideHttpClient, withInterceptors, withXsrfConfiguration } from '@angular/common/http';
 
-import { provideAuthBootstrap } from '@angular-modulith/auth/bootstrap';
-import { authInterceptor } from '@angular-modulith/auth/http';
+import { provideAuthBootstrap } from './domains/auth/application/provide-auth-bootstrap';
+import { authInterceptor } from './domains/auth/data-access/auth.interceptor';
 
 import { routes } from './app.routes';
 
@@ -21,6 +18,6 @@ export const appConfig: ApplicationConfig = {
       }),
       withInterceptors([authInterceptor])
     ),
-    provideBrowserGlobalErrorListeners()
+    provideBrowserGlobalErrorListeners(),
   ],
 };

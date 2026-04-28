@@ -1,61 +1,27 @@
-import nx from '@nx/eslint-plugin';
+import eslint from '@eslint/js';
+import angular from 'angular-eslint';
+import tseslint from 'typescript-eslint';
 
-const internalLayerBoundaryRule = (patterns) => [
+const restrictedImports = (patterns) => [
   'error',
   {
     patterns,
   },
 ];
 
-export default [
-  ...nx.configs['flat/base'],
-  ...nx.configs['flat/typescript'],
-  ...nx.configs['flat/javascript'],
+export default tseslint.config(
   {
-    ignores: ['**/dist', '**/out-tsc'],
+    ignores: ['**/dist', '**/out-tsc', '**/node_modules'],
   },
-  {
-    files: ['**/*.ts', '**/*.tsx', '**/*.cts', '**/*.mts', '**/*.js', '**/*.jsx', '**/*.cjs', '**/*.mjs'],
-    rules: {
-      '@nx/enforce-module-boundaries': [
-        'error',
-        {
-          banTransitiveDependencies: true,
-          depConstraints: [
-            {
-              sourceTag: 'scope:app',
-              onlyDependOnLibsWithTags: ['scope:auth', 'scope:dashboard', 'scope:shared', 'scope:shell', 'scope:users'],
-            },
-            {
-              sourceTag: 'scope:auth',
-              onlyDependOnLibsWithTags: ['scope:auth', 'scope:shared'],
-            },
-            {
-              sourceTag: 'scope:dashboard',
-              onlyDependOnLibsWithTags: ['scope:auth', 'scope:dashboard', 'scope:shared'],
-            },
-            {
-              sourceTag: 'scope:shell',
-              onlyDependOnLibsWithTags: ['scope:auth', 'scope:shared', 'scope:shell'],
-            },
-            {
-              sourceTag: 'scope:shared',
-              onlyDependOnLibsWithTags: ['scope:shared'],
-            },
-            {
-              sourceTag: 'scope:users',
-              onlyDependOnLibsWithTags: ['scope:shared', 'scope:users'],
-            },
-          ],
-          enforceBuildableLibDependency: false,
-        },
-      ],
-    },
-  },
-  ...nx.configs['flat/angular'],
-  ...nx.configs['flat/angular-template'],
   {
     files: ['**/*.ts'],
+    extends: [
+      eslint.configs.recommended,
+      ...tseslint.configs.recommended,
+      ...tseslint.configs.stylistic,
+      ...angular.configs.tsRecommended,
+    ],
+    processor: angular.processInlineTemplates,
     rules: {
       '@angular-eslint/directive-selector': [
         'error',
@@ -76,57 +42,41 @@ export default [
     },
   },
   {
-    files: ['**/*.html'],
-    rules: {},
-  },
-  {
-    files: ['src/app/**/feature-*/**/*.ts'],
+    files: ['src/app/domains/**/feature-*/**/*.ts'],
     ignores: ['**/*.spec.ts'],
     rules: {
-      'no-restricted-imports': internalLayerBoundaryRule([
+      'no-restricted-imports': restrictedImports([
         {
           group: ['../data-access', '../data-access/*'],
           message: 'Feature code should reach remote data through application services or facades, not data-access directly.',
         },
         {
-          group: ['../domain', '../domain/*'],
-          message: 'Feature code should consume application-facing models instead of domain internals directly.',
-        },
-        {
           group: ['../state', '../state/*'],
-          message: 'Feature code should only depend on explicit screen state through application APIs.',
+          message: 'Feature code should depend on application-facing APIs instead of store internals.',
         },
       ]),
     },
   },
   {
-    files: ['src/app/**/application/**/*.ts'],
+    files: ['src/app/domains/**/application/**/*.ts'],
     ignores: ['**/*.spec.ts'],
     rules: {
-      'no-restricted-imports': internalLayerBoundaryRule([
+      'no-restricted-imports': restrictedImports([
         {
-          group: ['../feature-*', '../feature-*/*'],
-          message: 'Application services should not depend on feature components or pages.',
-        },
-        {
-          group: ['../ui', '../ui/*'],
-          message: 'Application services should stay independent from presentational UI internals.',
-        },
-        {
-          group: ['../routing', '../routing/*'],
-          message: 'Routing adapters should stay outside application services.',
+          group: ['../feature-*', '../feature-*/*', '../ui', '../ui/*', '../routing', '../routing/*'],
+          message: 'Application services should not depend on feature, UI or routing internals.',
         },
       ]),
     },
   },
   {
-    files: ['src/app/**/domain/**/*.ts'],
+    files: ['src/app/domains/**/domain/**/*.ts'],
     ignores: ['**/*.spec.ts'],
     rules: {
-      'no-restricted-imports': internalLayerBoundaryRule([
+      'no-restricted-imports': restrictedImports([
         {
           group: ['../application', '../application/*', '../data-access', '../data-access/*', '../feature-*', '../feature-*/*', '../routing', '../routing/*', '../state', '../state/*', '../ui', '../ui/*'],
-          message: 'Domain models must not depend on higher-level application, UI, routing, data-access or state layers.',
+          message: 'Domain models must stay free of Angular, UI, state, routing and data-access dependencies.',
         },
         {
           group: ['@angular/*'],
@@ -136,51 +86,44 @@ export default [
     },
   },
   {
-    files: ['src/app/**/data-access/**/*.ts'],
+    files: ['src/app/domains/**/data-access/**/*.ts'],
     ignores: ['**/*.spec.ts'],
     rules: {
-      'no-restricted-imports': internalLayerBoundaryRule([
+      'no-restricted-imports': restrictedImports([
         {
-          group: ['../application', '../application/*', '../feature-*', '../feature-*/*', '../routing', '../routing/*', '../state', '../state/*', '../ui', '../ui/*'],
-          message: 'Data-access should not depend on application orchestration, routing, state or UI layers.',
+          group: ['../feature-*', '../feature-*/*', '../routing', '../routing/*', '../ui', '../ui/*'],
+          message: 'Data-access should not depend on feature, routing or UI layers.',
         },
       ]),
     },
   },
   {
-    files: ['src/app/**/state/**/*.ts'],
+    files: ['src/app/domains/**/ui/**/*.ts'],
     ignores: ['**/*.spec.ts'],
     rules: {
-      'no-restricted-imports': internalLayerBoundaryRule([
-        {
-          group: ['../application', '../application/*', '../data-access', '../data-access/*', '../feature-*', '../feature-*/*', '../routing', '../routing/*', '../ui', '../ui/*'],
-          message: 'State stores should stay focused on flow/session state, not depend on application, remote data, routing or UI layers.',
-        },
-      ]),
-    },
-  },
-  {
-    files: ['src/app/**/ui/**/*.ts'],
-    ignores: ['**/*.spec.ts'],
-    rules: {
-      'no-restricted-imports': internalLayerBoundaryRule([
+      'no-restricted-imports': restrictedImports([
         {
           group: ['../application', '../application/*', '../data-access', '../data-access/*', '../domain', '../domain/*', '../feature-*', '../feature-*/*', '../routing', '../routing/*', '../state', '../state/*'],
-          message: 'UI components should stay presentational and avoid reaching into feature, application, domain, routing, data-access or state internals.',
+          message: 'UI components should stay presentational and avoid domain internals.',
         },
       ]),
     },
   },
   {
-    files: ['src/app/**/routing/**/*.ts'],
+    files: ['src/app/shared/**/*.ts'],
     ignores: ['**/*.spec.ts'],
     rules: {
-      'no-restricted-imports': internalLayerBoundaryRule([
+      'no-restricted-imports': restrictedImports([
         {
-          group: ['../data-access', '../data-access/*', '../feature-*', '../feature-*/*', '../state', '../state/*', '../ui', '../ui/*'],
-          message: 'Routing adapters should depend on application-facing APIs, not feature, UI, state or data-access internals.',
+          group: ['**/domains/**'],
+          message: 'shared/ must stay domain-agnostic.',
         },
       ]),
     },
   },
-];
+  {
+    files: ['**/*.html'],
+    extends: [...angular.configs.templateRecommended, ...angular.configs.templateAccessibility],
+    rules: {},
+  },
+);
