@@ -367,9 +367,52 @@ This frontend assumes the backend:
 - Relies on **cookies**, not JWT
 - Exposes APIs under `/api`
 - Supports CSRF bootstrap
-- Returns semantic capabilities from `/api/auth/me`
+- Returns roles, effective scopes, and semantic capabilities from `/api/auth/me`
 
 Without the backend running, protected routes will return `401`.
+
+### Authorization UX
+
+The frontend consumes backend-calculated scopes and capabilities for user experience only. It can hide routes, menus, buttons, and actions, but every protected operation must still be validated by the backend.
+
+- Scopes are the only permission contract consumed by the frontend.
+- Roles may be displayed for auditing or admin screens, but are not UI security checks.
+- Modules and submodules may be used later as optional navigation metadata: labels, menu grouping, icons, or visual order.
+- Access to a route, button, or action must still come from scopes/capabilities.
+
+Known scopes live in `src/app/auth/domain/auth-scopes.ts`:
+
+```ts
+AUTH_SCOPES.users.read; // "users:read"
+AUTH_SCOPES.users.create; // "users:create"
+```
+
+Use the auth facade for checks:
+
+```ts
+auth.hasScope('users:read');
+auth.hasAnyScope(['users:create', 'users:update']);
+auth.hasAllScopes(['users:read']);
+auth.can('users', 'read');
+```
+
+Routes can declare required scopes:
+
+```ts
+{
+  path: 'users',
+  canActivate: [scopeGuard],
+  data: { requiredScopes: [AUTH_SCOPES.users.read] },
+}
+```
+
+Templates can hide UI with the structural directive:
+
+```html
+<button *appHasScope="scopes.users.create">Crear usuario</button>
+```
+
+When adding a new permission, add the backend scope first, expose it through `/api/auth/me`, mirror it in `AUTH_SCOPES`, and then use `scopeGuard`, `appHasScope`, or `AuthFacade.hasScope(...)` only for UX visibility.
 
 ---
 

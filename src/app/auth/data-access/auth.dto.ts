@@ -12,7 +12,10 @@ export interface LoginResponseDto {
 }
 
 export interface MeResponseDto {
+  userId?: number | null;
   username: string;
   dataSource: BackendDataSource;
+  roles?: string[];
+  scopes?: string[];
   capabilities: AuthCapabilities;
 }

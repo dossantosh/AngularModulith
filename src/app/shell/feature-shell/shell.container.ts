@@ -32,7 +32,7 @@ export class ShellContainer {
   readonly username = this.auth.username;
   readonly userName = computed(() => this.username() ?? 'Guest');
   readonly dataSource = this.auth.dataSource;
-  readonly canReadUsers = computed(() => this.auth.canReadUsers());
+  readonly canReadUsers = computed(() => this.auth.can('users', 'read'));
   readonly isDark = this.theme.isDark;
 
   constructor() {

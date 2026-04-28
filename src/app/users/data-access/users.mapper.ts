@@ -1,8 +1,6 @@
-import { UserListItem } from './user-list-item.model';
-import { UsersPage } from './users-page.model';
 import { UserPageDto, UserSummaryDto } from './users.dto';
 
-function mapUserSummaryDto(dto: UserSummaryDto): UserListItem {
+function mapUserSummaryDto(dto: UserSummaryDto) {
   return {
     id: dto.id,
     username: dto.username,
@@ -12,7 +10,7 @@ function mapUserSummaryDto(dto: UserSummaryDto): UserListItem {
   };
 }
 
-export function mapUserPageDto(dto: UserPageDto): UsersPage<UserListItem> {
+export function mapUserPageDto(dto: UserPageDto) {
   return {
     ...dto,
     content: dto.content.map((user) => mapUserSummaryDto(user)),

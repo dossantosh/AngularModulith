@@ -1,18 +1,6 @@
-import { inject } from '@angular/core';
-import { CanActivateFn, Router } from '@angular/router';
-import { catchError, map, of } from 'rxjs';
+import { CanActivateFn } from '@angular/router';
 
-import { AuthFacade } from '../application/auth.facade';
+import { AUTH_SCOPES } from '../domain/auth-scopes';
+import { scopeGuardFor } from './scope.guard';
 
-export const canReadUsersGuard: CanActivateFn = () => {
-  const auth = inject(AuthFacade);
-  const router = inject(Router);
-
-  return auth.loadSession().pipe(
-    map(() => {
-      if (auth.canReadUsers()) return true;
-      return router.createUrlTree(['/forbidden']);
-    }),
-    catchError(() => of(router.createUrlTree(['/login'])))
-  );
-};
+export const canReadUsersGuard: CanActivateFn = scopeGuardFor([AUTH_SCOPES.users.read]);

@@ -34,16 +34,14 @@
       <p class="mt-2 text-sm text-gray-600 dark:text-gray-400">
         La busqueda de usuarios ahora pasa por facade, casos de uso, store y API.
       </p>
-      @if (canReadUsers()) {
-        <div class="mt-4">
-          <a
-            routerLink="/users/search"
-            class="inline-flex rounded-lg bg-blue-600 px-4 py-2 text-sm font-semibold text-white shadow-sm transition hover:bg-blue-700 active:bg-blue-800"
-          >
-            Ir a usuarios
-          </a>
-        </div>
-      }
+      <div *appHasScope="scopes.users.read" class="mt-4">
+        <a
+          routerLink="/users/search"
+          class="inline-flex rounded-lg bg-blue-600 px-4 py-2 text-sm font-semibold text-white shadow-sm transition hover:bg-blue-700 active:bg-blue-800"
+        >
+          Ir a usuarios
+        </a>
+      </div>
     </ui-card>
 
     <ui-card>

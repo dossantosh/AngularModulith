@@ -36,11 +36,26 @@ describe('AuthFacade', () => {
 
     request.flush({ username: 'john' });
     http.expectOne((req) => req.url === '/api/auth/me').flush({
+      userId: 1,
       username: 'john',
       dataSource: 'historic',
+      roles: ['USER'],
+      scopes: ['users:read'],
       capabilities: {
-        users: { access: true, read: true, write: false },
-        perfumes: { access: false, read: false, write: false },
+        users: {
+          canAccess: true,
+          canRead: true,
+          canCreate: false,
+          canUpdate: false,
+          canDelete: false,
+        },
+        perfumes: {
+          canAccess: false,
+          canRead: false,
+          canCreate: false,
+          canUpdate: false,
+          canDelete: false,
+        },
       },
     });
 
@@ -50,6 +65,10 @@ describe('AuthFacade', () => {
     expect(facade.canAccessUsers()).toBe(true);
     expect(facade.canReadUsers()).toBe(true);
     expect(facade.canWriteUsers()).toBe(false);
+    expect(facade.hasScope('users:read')).toBe(true);
+    expect(facade.hasAnyScope(['users:create', 'users:read'])).toBe(true);
+    expect(facade.hasAllScopes(['users:read'])).toBe(true);
+    expect(facade.can('users', 'read')).toBe(true);
   });
 
   it('loadSession() caches until logout resets it', () => {
@@ -60,9 +79,23 @@ describe('AuthFacade', () => {
     firstRequest.flush({
       username: 'john',
       dataSource: 'historic',
+      roles: [],
+      scopes: [],
       capabilities: {
-        users: { access: true, read: false, write: false },
-        perfumes: { access: false, read: false, write: false },
+        users: {
+          canAccess: true,
+          canRead: false,
+          canCreate: false,
+          canUpdate: false,
+          canDelete: false,
+        },
+        perfumes: {
+          canAccess: false,
+          canRead: false,
+          canCreate: false,
+          canUpdate: false,
+          canDelete: false,
+        },
       },
     });
 
@@ -83,9 +116,23 @@ describe('AuthFacade', () => {
     secondMeRequest.flush({
       username: 'john',
       dataSource: 'prod',
+      roles: [],
+      scopes: [],
       capabilities: {
-        users: { access: false, read: false, write: false },
-        perfumes: { access: false, read: false, write: false },
+        users: {
+          canAccess: false,
+          canRead: false,
+          canCreate: false,
+          canUpdate: false,
+          canDelete: false,
+        },
+        perfumes: {
+          canAccess: false,
+          canRead: false,
+          canCreate: false,
+          canUpdate: false,
+          canDelete: false,
+        },
       },
     });
   });
@@ -96,9 +143,23 @@ describe('AuthFacade', () => {
     http.expectOne((req) => req.url === '/api/auth/me').flush({
       username: 'john',
       dataSource: 'historic',
+      roles: ['USER'],
+      scopes: ['users:read'],
       capabilities: {
-        users: { access: true, read: false, write: false },
-        perfumes: { access: false, read: false, write: false },
+        users: {
+          canAccess: true,
+          canRead: false,
+          canCreate: false,
+          canUpdate: false,
+          canDelete: false,
+        },
+        perfumes: {
+          canAccess: false,
+          canRead: false,
+          canCreate: false,
+          canUpdate: false,
+          canDelete: false,
+        },
       },
     });
 
@@ -111,6 +172,7 @@ describe('AuthFacade', () => {
     expect(facade.username()).toBe(null);
     expect(facade.dataSource()).toBe('prod');
     expect(facade.canAccessUsers()).toBe(false);
+    expect(facade.hasScope('users:read')).toBe(false);
   });
 
   it('loadSession() reads capabilities as the permission contract', () => {
@@ -119,14 +181,30 @@ describe('AuthFacade', () => {
     http.expectOne((req) => req.url === '/api/auth/me').flush({
       username: 'john',
       dataSource: 'prod',
+      roles: ['ADMIN'],
+      scopes: ['users:update'],
       capabilities: {
-        users: { access: true, read: false, write: true },
-        perfumes: { access: false, read: false, write: false },
+        users: {
+          canAccess: true,
+          canRead: false,
+          canCreate: false,
+          canUpdate: true,
+          canDelete: false,
+        },
+        perfumes: {
+          canAccess: false,
+          canRead: false,
+          canCreate: false,
+          canUpdate: false,
+          canDelete: false,
+        },
       },
     });
 
     expect(facade.canAccessUsers()).toBe(true);
     expect(facade.canReadUsers()).toBe(false);
     expect(facade.canWriteUsers()).toBe(true);
+    expect(facade.hasScope('users:update')).toBe(true);
+    expect(facade.can('users', 'update')).toBe(true);
   });
 });
