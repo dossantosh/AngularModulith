@@ -3,7 +3,6 @@ import { Subject, of, throwError } from 'rxjs';
 import { vi } from 'vitest';
 
 import { UsersApi } from '../data-access/users.api';
-import { UsersSearchFlowStore } from '../state/users-search-flow.store';
 import { UsersFacade } from './users.facade';
 
 function userPage(overrides = {}) {
@@ -20,7 +19,7 @@ function userPage(overrides = {}) {
 
 function setup(api: Pick<UsersApi, 'search'>) {
   TestBed.configureTestingModule({
-    providers: [UsersFacade, UsersSearchFlowStore, { provide: UsersApi, useValue: api }],
+    providers: [UsersFacade, { provide: UsersApi, useValue: api }],
   });
 
   return TestBed.inject(UsersFacade);

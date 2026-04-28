@@ -4,10 +4,10 @@ import { firstValueFrom, from, isObservable, of, throwError } from 'rxjs';
 import { vi } from 'vitest';
 
 import { AuthFacade } from '../application/auth.facade';
-import { canReadUsersGuard } from './users-read.guard';
+import { AUTH_SCOPES } from '../domain/auth-scopes';
+import { scopeGuard } from './scope.guard';
 
-describe('canReadUsersGuard', () => {
-  const route = {} as ActivatedRouteSnapshot;
+describe('scopeGuard', () => {
   const state = {} as RouterStateSnapshot;
   const createUrlTree = vi.fn(() => ({ redirected: true }) as unknown as UrlTree);
 
@@ -32,50 +32,77 @@ describe('canReadUsersGuard', () => {
     });
   });
 
-  async function runGuard() {
-    const result = TestBed.runInInjectionContext(() => canReadUsersGuard(route, state));
+  afterEach(() => {
+    TestBed.resetTestingModule();
+  });
+
+  async function runGuard(route: ActivatedRouteSnapshot) {
+    const result = TestBed.runInInjectionContext(() => scopeGuard(route, state));
     return isObservable(result) ? firstValueFrom(result) : from(Promise.resolve(result));
   }
 
-  it('should allow navigation when the user can read users', async () => {
+  it('allows navigation when the user has every required scope', async () => {
     const auth = TestBed.inject(AuthFacade) as unknown as {
       loadSession: ReturnType<typeof vi.fn>;
       hasAllScopes: ReturnType<typeof vi.fn>;
     };
+    const route = {
+      data: { requiredScopes: [AUTH_SCOPES.users.read] },
+    } as unknown as ActivatedRouteSnapshot;
 
     auth.loadSession.mockReturnValue(of({ username: 'john' }));
     auth.hasAllScopes.mockReturnValue(true);
 
-    await expect(runGuard()).resolves.toBe(true);
+    await expect(runGuard(route)).resolves.toBe(true);
+    expect(auth.hasAllScopes).toHaveBeenCalledWith([AUTH_SCOPES.users.read]);
     expect(createUrlTree).not.toHaveBeenCalled();
   });
 
-  it('should redirect to forbidden when the user cannot read users', async () => {
+  it('allows navigation when the route has no explicit scopes', async () => {
+    const auth = TestBed.inject(AuthFacade) as unknown as {
+      loadSession: ReturnType<typeof vi.fn>;
+      hasAllScopes: ReturnType<typeof vi.fn>;
+    };
+    const route = { data: {} } as ActivatedRouteSnapshot;
+
+    auth.loadSession.mockReturnValue(of({ username: 'john' }));
+
+    await expect(runGuard(route)).resolves.toBe(true);
+    expect(auth.hasAllScopes).not.toHaveBeenCalled();
+  });
+
+  it('redirects to forbidden when a required scope is missing', async () => {
     const auth = TestBed.inject(AuthFacade) as unknown as {
       loadSession: ReturnType<typeof vi.fn>;
       hasAllScopes: ReturnType<typeof vi.fn>;
     };
     const forbiddenTree = { redirected: true } as unknown as UrlTree;
+    const route = {
+      data: { requiredScopes: [AUTH_SCOPES.users.read] },
+    } as unknown as ActivatedRouteSnapshot;
 
     createUrlTree.mockReturnValue(forbiddenTree);
     auth.loadSession.mockReturnValue(of({ username: 'john' }));
     auth.hasAllScopes.mockReturnValue(false);
 
-    await expect(runGuard()).resolves.toBe(forbiddenTree);
+    await expect(runGuard(route)).resolves.toBe(forbiddenTree);
     expect(createUrlTree).toHaveBeenCalledWith(['/forbidden']);
   });
 
-  it('should redirect to login when the session cannot be loaded', async () => {
+  it('redirects to login when the session cannot be loaded', async () => {
     const auth = TestBed.inject(AuthFacade) as unknown as {
       loadSession: ReturnType<typeof vi.fn>;
       hasAllScopes: ReturnType<typeof vi.fn>;
     };
     const loginTree = { redirected: true } as unknown as UrlTree;
+    const route = {
+      data: { requiredScopes: [AUTH_SCOPES.users.read] },
+    } as unknown as ActivatedRouteSnapshot;
 
     createUrlTree.mockReturnValue(loginTree);
     auth.loadSession.mockReturnValue(throwError(() => new Error('unauthorized')));
 
-    await expect(runGuard()).resolves.toBe(loginTree);
+    await expect(runGuard(route)).resolves.toBe(loginTree);
     expect(createUrlTree).toHaveBeenCalledWith(['/login']);
   });
 });

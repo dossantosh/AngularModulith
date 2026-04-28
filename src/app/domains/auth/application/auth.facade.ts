@@ -1,27 +1,24 @@
 import { Injectable, inject } from '@angular/core';
+import { Observable, map, shareReplay, switchMap, tap } from 'rxjs';
 
-import {
-  canAccessPerfumes,
-  canAccessUsers,
-  can,
-  canReadUsers,
-  canWriteUsers,
-  hasAllScopes,
-  hasAnyScope,
-  hasScope,
-} from '../domain/access.policy';
+import { AuthApi } from '../data-access/auth.api';
+import { CapabilityAction, can, hasAllScopes, hasAnyScope, hasScope } from '../domain/access.policy';
+import { AuthenticatedUser } from '../domain/authenticated-user';
+import { BackendDataSource } from '../domain/backend-data-source';
 import { AuthSessionStore } from '../state/auth-session.store';
-import { LoadSessionUseCase } from './load-session.use-case';
-import { LoginCommand } from './login.command';
-import { LoginUseCase } from './login.use-case';
-import { LogoutUseCase } from './logout.use-case';
+
+export interface LoginCommand {
+  username: string;
+  password: string;
+  dataSource: BackendDataSource;
+}
 
 @Injectable({ providedIn: 'root' })
 export class AuthFacade {
+  private readonly api = inject(AuthApi);
   private readonly sessionStore = inject(AuthSessionStore);
-  private readonly loadSessionUseCase = inject(LoadSessionUseCase);
-  private readonly loginUseCase = inject(LoginUseCase);
-  private readonly logoutUseCase = inject(LogoutUseCase);
+
+  private sessionOnce$?: Observable<AuthenticatedUser>;
 
   readonly userId = this.sessionStore.userId;
   readonly username = this.sessionStore.username;
@@ -42,35 +39,47 @@ export class AuthFacade {
     return hasAllScopes(this.scopes(), scopes);
   }
 
-  can(resource: string, action: 'access' | 'read' | 'write' | 'create' | 'update' | 'delete'): boolean {
+  can(resource: string, action: CapabilityAction): boolean {
     return can(this.capabilities(), resource, action);
   }
 
-  canAccessUsers(): boolean {
-    return canAccessUsers(this.capabilities());
-  }
+  loadSession(): Observable<AuthenticatedUser> {
+    this.sessionOnce$ ??= this.api.me().pipe(
+      tap((response) => {
+        this.sessionStore.setDataSource(response.dataSource ?? 'prod');
+        this.sessionStore.setRoles(response.roles ?? []);
+        this.sessionStore.setScopes(response.scopes ?? []);
+        this.sessionStore.setCapabilities(response.capabilities);
+      }),
+      map((response) => ({
+        userId: response.userId,
+        username: response.username,
+      })),
+      tap((user) => this.sessionStore.setAuthenticatedUser(user)),
+      shareReplay({ bufferSize: 1, refCount: true })
+    );
 
-  canReadUsers(): boolean {
-    return canReadUsers(this.capabilities());
-  }
-
-  canWriteUsers(): boolean {
-    return canWriteUsers(this.capabilities());
-  }
-
-  canAccessPerfumes(): boolean {
-    return canAccessPerfumes(this.capabilities());
-  }
-
-  loadSession() {
-    return this.loadSessionUseCase.execute();
+    return this.sessionOnce$;
   }
 
   login(command: LoginCommand) {
-    return this.loginUseCase.execute(command);
+    return this.api.login(command).pipe(
+      tap(() => this.resetSessionCache()),
+      switchMap(() => this.loadSession()),
+      map((user) => user.username)
+    );
   }
 
   logout() {
-    return this.logoutUseCase.execute();
+    return this.api.logout().pipe(
+      tap(() => {
+        this.sessionStore.clear();
+        this.resetSessionCache();
+      })
+    );
+  }
+
+  private resetSessionCache(): void {
+    this.sessionOnce$ = undefined;
   }
 }

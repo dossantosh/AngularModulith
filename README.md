@@ -1,393 +1,69 @@
 # AngularModulith
 
-A **feature‑modular Angular application** designed to pair with the **SpringFirstModulith** backend (session‑based auth + multi‑datasource _view_ routing).
+AngularModulith is an Angular 21 frontend for the SpringFirstModulith backend. The app uses a lightweight modulith structure: code is grouped by domain, shared UI primitives stay domain-agnostic, and route-level boundaries keep features isolated without extra architectural layers.
 
-This repository demonstrates a **frontend modulith** approach: strong boundaries between **core infrastructure**, **shared primitives**, **layout**, and **feature modules**, with **lazy loading at the route level**.
+## Tech Stack
 
-The goal mirrors the backend philosophy: **scale by structure, not by fragmentation**.
+- Angular 21 with standalone components
+- Angular Router with lazy routes
+- RxJS and Angular signals
+- Vitest + JSDOM for unit tests
+- Playwright for E2E tests
+- TailwindCSS for app styling
+- Angular Material available for isolated Material-based UI where it is useful
 
----
+## Project Structure
 
-## 📖 Table of Contents
+```text
+src/app
+|-- app.config.ts
+|-- app.routes.ts
+|-- domains
+|   |-- auth
+|   |   |-- application
+|   |   |-- data-access
+|   |   |-- directives
+|   |   |-- domain
+|   |   |-- feature-forbidden
+|   |   |-- feature-login
+|   |   |-- routing
+|   |   `-- state
+|   |-- dashboard
+|   |-- shell
+|   `-- users
+`-- shared
+    `-- ui
+```
 
-- [📌 Project Overview](#-project-overview)
-- [✨ Features](#-features)
-  - [🔐 Auth & Security](#-auth--security)
-  - [🧩 Frontend Modulith Structure](#-frontend-modulith-structure)
-  - [🧪 Testing](#-testing)
-- [🗂️ Project Structure](#️-project-structure)
-- [🛠️ Tech Stack](#️-tech-stack)
-- [⚙️ Configuration](#️-configuration)
-  - [Proxy to Backend (Dev)](#proxy-to-backend-dev)
-  - [Nginx Reverse Proxy (Docker)](#nginx-reverse-proxy-docker)
-- [🚀 Getting Started](#-getting-started)
-- [🐳 Docker Setup](#-docker-setup)
-- [📡 Backend Contract](#-backend-contract)
-- [🧭 Adding a New Feature Module](#-adding-a-new-feature-module)
-- [👤 Author](#-author)
+The intended dependency direction is:
 
----
+```text
+feature/page -> application facade -> data-access
+feature/page -> domain constants/models
+shell -> auth facade
+shared/ui -> no domain dependencies
+```
 
-## 📌 Project Overview
+Avoid adding facades, stores, use-cases, factories, or adapters by default. Add a layer only when it removes real complexity from more than one place.
 
-**AngularModulith** is an **Angular 21** application structured around **feature‑level bounded contexts**.
+## Auth And Authorization
 
-High‑level layering:
-
-- **core** → cross‑cutting infrastructure (auth, guards, interceptors, error handling)
-- **shared** → pure, domain‑agnostic primitives (DTOs, helpers)
-- **layout** → reusable UI shell and components
-- **features** → the _only_ place where business pages and routes live
-
-This prevents:
-
-- a single growing `app.module.ts`
-- feature‑to‑feature coupling
-- security rules leaking into UI code
-
----
-
-## ✨ Features
-
-### 🔐 Auth & Security
-
-- **Session‑based authentication** (cookies, not JWT)
-- CSRF bootstrap via backend cookie endpoint
-- Route protection via guards:
-  - `authGuard` → authenticated access
-  - `canAccessUsersGuard` → semantic capability access
-- Capability-aware UI rendering through the auth facade
+The app uses session-based authentication with cookies. The backend remains the security authority. The frontend only uses backend-calculated scopes and capabilities to improve UX by hiding routes, menus, buttons, and actions.
 
 Expected backend endpoints:
 
 - `POST /api/auth/login`
 - `POST /api/auth/logout`
-- `GET  /api/auth/me`
-- `GET  /api/auth/csrf`
+- `GET /api/auth/me`
+- `GET /api/auth/csrf`
 
-Login supports backend datasource routing:
+Known frontend scopes live in:
 
-```ts
-export interface LoginRequest {
-  username: string;
-  password: string;
-  dataSource: 'prod' | 'historic';
-}
+```text
+src/app/domains/auth/domain/auth-scopes.ts
 ```
 
-This maps directly to the **prod / historic datasource routing** in SpringFirstModulith.
-
----
-
-### 🧩 Frontend Modulith Structure
-
-- Feature modules are **lazy loaded**
-- Guards are applied at the **routing boundary**
-- Features do not import other features
-- UI primitives live in `layout/components`, not in features
-
-This keeps features thin, replaceable, and independently evolvable.
-
----
-
-### 🧪 Testing
-
-- **Unit tests**: Vitest + JSDOM
-- **E2E tests**: Playwright
-- Test setup mirrors real session‑based auth behavior
-
----
-
-## 🗂️ Project Structure
-
-```
-src/app
-├── core
-│   ├── auth
-│   │   ├── directives
-│   │   ├── guards
-│   │   ├── interceptors
-│   │   └── auth.service.ts
-│   └── errors
-│       ├── api-error.model.ts
-│       └── app-error.model.ts
-│
-├── shared
-│   └── keyset-page.dto.ts
-│
-├── layout
-│   └── components
-│       ├── main
-│       |   ├── footer.cmponent.ts
-│       |   ├── header.component.ts
-│       |   └── main-layout.component.ts
-│       ├── button.component.ts
-│       ├── card.component.ts
-│       ├── input.component.ts
-│       ├── page.component.ts
-│       └── ui-nav-link.component.ts
-│
-└── features
-    ├── index
-    ├── login
-    └── users
-        ├── data-access
-        ├── models
-        ├── pages
-        └── users.routes.ts
-```
-
-Routing entry point: `src/app/app.routes.ts`
-
-- Public route: `/login`
-- Authenticated shell: `MainLayoutComponent`
-- Lazy features mounted under the shell
-
----
-
-## 🛠️ Tech Stack
-
-| Tech           | Purpose                     |
-| -------------- | --------------------------- |
-| Angular 21     | App framework               |
-| Angular Router | Routing + lazy loading      |
-| RxJS           | Reactive state + HTTP flows |
-| Vitest + JSDOM | Unit testing                |
-| Playwright     | End-to-end testing          |
-| TailwindCSS    | Styling                     |
-| TypeScript     | Language                    |
-| Nginx          | Production reverse proxy    |
-
----
-
-## ⚙️ Configuration
-
-### Proxy to Backend (Dev)
-
-In development, the Angular dev server proxies API calls.
-
-`proxy.conf.json`:
-
-```json
-{
-  "/api/": {
-    "target": "http://localhost:7070/api/",
-    "secure": false,
-    "changeOrigin": true,
-    "logLevel": "debug",
-    "pathRewrite": { "^/api/": "" }
-  }
-}
-```
-
-This avoids CORS and keeps frontend code backend‑agnostic.
-
----
-
-### Nginx Reverse Proxy (Docker)
-
-In Docker, API routing is handled by **Nginx**, not Angular.
-
-`nginx.conf`:
-
-```nginx
-server {
-  listen 80;
-
-  root /usr/share/nginx/html;
-  index index.html;
-
-  location /api/ {
-    proxy_pass http://backend:7070/api/;
-    proxy_http_version 1.1;
-
-    proxy_set_header Host $host;
-    proxy_set_header X-Real-IP $remote_addr;
-    proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
-    proxy_set_header X-Forwarded-Proto $scheme;
-  }
-
-  location / {
-    try_files $uri $uri/ /index.html;
-  }
-}
-```
-
-This setup:
-
-- Preserves session cookies
-- Supports CSRF
-- Works behind reverse proxies
-
----
-
-## 🚀 Getting Started
-
-### Prerequisites
-
-- Node.js + npm
-- Running **SpringFirstModulith** backend on `http://localhost:7070`
-
-### Install
-
-```bash
-npm install
-```
-
-### Run (Dev)
-
-```bash
-npm start
-```
-
-Frontend:
-
-- http://localhost:4200
-
----
-
-## 🐳 Docker Setup
-
-This repository includes Docker Compose files for production‑like runs.
-
-Relevant files:
-
-```
-docker/modulithApp/
-├── docker-compose.yml
-├── docker-compose.dev.yml
-└── 01-create-historic-db.sql
-```
-
-### docker-compose.yml
-
-```yaml
-services:
-  db:
-    image: postgres:17
-    environment:
-      POSTGRES_DB: SpringFirstModulithDB
-      POSTGRES_USER: postgres
-      POSTGRES_PASSWORD: Sb202582
-    ports:
-      - '5432:5432'
-    volumes:
-      - db_data:/var/lib/postgresql/data
-      - ./01-create-historic-db.sql:/docker-entrypoint-initdb.d/01-create-historic-db.sql:ro
-
-  backend:
-    #image: ghcr.io/dossantosh/springfirstmodulith:main
-    image: ghcr.io/dossantosh/springfirstmodulith:flywayImplementation
-    environment:
-      #SPRING_SESSION_JDBC_INITIALIZE_SCHEMA: never
-      DB_HOST: db
-      DB_PORT: 5432
-      DB_NAME: SpringFirstModulithDB
-      DB_HIST_NAME: SpringFirstModulithDBHistoric
-      DB_USER: postgres
-      DB_PASSWORD: Sb202582
-  SERVER_PORT: 7070
-    ports:
-      - '7070:7070'
-    depends_on:
-      - db
-
-  frontend:
-    image: ghcr.io/dossantosh/angularmodulith:main
-    #image: ghcr.io/dossantosh/angularmodulith:Database-Runtime-Routing
-    ports:
-      - '4200:80'
-    depends_on:
-      - backend
-
-volumes:
-  db_data:
-```
-
-### docker-compose.dev.yml
-
-```yaml
-services:
-  backend:
-    build:
-      context: ../../SpringFirstModulith
-    image: springfirstmodulith:dev
-
-  frontend:
-    build:
-      context: ../../AngularModulith
-    image: angularmodulith:dev
-```
-
-### Init script for historic DB
-
-**docker/initdb/01-create-historic-db.sql**
-
-```sql
--- Create historic DB (only if it doesn't exist)
-SELECT 'CREATE DATABASE "SpringFirstModulithDBHistoric"'
-WHERE NOT EXISTS (SELECT FROM pg_database WHERE datname = 'SpringFirstModulithDBHistoric')\gexec
-```
-
-Run everything:
-
-```sh
-docker compose up --build
-```
-
-Run in dev
-
-```sh
-docker compose -f docker-compose.yml -f docker-compose.dev.yml up -d --build
-```
-
-Stop containers:
-
-```sh
-docker compose down
-```
-
-Reset volumes:
-
-```sh
-docker compose down -v
-```
-
-- Nginx serves Angular
-- Backend is reverse‑proxied under `/api`
-- Sessions and CSRF work end‑to‑end
-
----
-
-## 📡 Backend Contract
-
-This frontend assumes the backend:
-
-- Uses **Spring Session (JDBC)**
-- Relies on **cookies**, not JWT
-- Exposes APIs under `/api`
-- Supports CSRF bootstrap
-- Returns roles, effective scopes, and semantic capabilities from `/api/auth/me`
-
-Without the backend running, protected routes will return `401`.
-
-### Authorization UX
-
-The frontend consumes backend-calculated scopes and capabilities for user experience only. It can hide routes, menus, buttons, and actions, but every protected operation must still be validated by the backend.
-
-- Scopes are the only permission contract consumed by the frontend.
-- Roles may be displayed for auditing or admin screens, but are not UI security checks.
-- Modules and submodules may be used later as optional navigation metadata: labels, menu grouping, icons, or visual order.
-- Access to a route, button, or action must still come from scopes/capabilities.
-
-Known scopes live in `src/app/auth/domain/auth-scopes.ts`:
-
-```ts
-AUTH_SCOPES.users.read; // "users:read"
-AUTH_SCOPES.users.create; // "users:create"
-```
-
-Use the auth facade for checks:
+Use `AuthFacade` for permission checks:
 
 ```ts
 auth.hasScope('users:read');
@@ -396,7 +72,7 @@ auth.hasAllScopes(['users:read']);
 auth.can('users', 'read');
 ```
 
-Routes can declare required scopes:
+Protect routes with `scopeGuard` and route data:
 
 ```ts
 {
@@ -406,51 +82,47 @@ Routes can declare required scopes:
 }
 ```
 
-Templates can hide UI with the structural directive:
+Hide UI with the structural directive:
 
 ```html
 <button *appHasScope="scopes.users.create">Crear usuario</button>
 ```
 
-When adding a new permission, add the backend scope first, expose it through `/api/auth/me`, mirror it in `AUTH_SCOPES`, and then use `scopeGuard`, `appHasScope`, or `AuthFacade.hasScope(...)` only for UX visibility.
+## Adding A Domain
 
----
+1. Create `src/app/domains/<domain-name>/`.
+2. Add `feature-*` pages/components for route-level UI.
+3. Add `data-access` only for HTTP or persistence adapters.
+4. Add an `application` facade only when the page needs orchestration or state.
+5. Add domain constants/models in `domain` when they are shared inside that domain.
+6. Lazy-load the domain from `src/app/app.routes.ts` when it has child routes.
+7. Keep reusable, domain-agnostic UI in `src/app/shared/ui`.
 
-## 🧭 Adding a New Feature Module
+## Commands
 
-1️⃣ Create a feature folder:
-
-```
-src/app/features/<feature-name>/
-```
-
-2️⃣ Add routes:
-
-```
-<feature-name>.routes.ts
-```
-
-3️⃣ Lazy‑load in `app.routes.ts`:
-
-```ts
-{
-  path: 'my-feature',
-  loadChildren: () =>
-    import('./features/my-feature/my-feature.routes')
-      .then(m => m.MY_FEATURE_ROUTES),
-}
+```bash
+npm install
+npm start
+npm run test:run
+npm run lint
+npm run build
 ```
 
-4️⃣ Protect if needed:
+## Backend Contract
 
-```ts
-canActivate: [canAccessUsersGuard];
-```
+`GET /api/auth/me` should return the authenticated user, selected datasource, roles if needed for display/admin screens, effective scopes, and semantic capabilities. Roles and technical authorities are not used by the frontend for authorization decisions.
 
-This enforces **explicit dependencies and clean boundaries**.
+When adding a new permission:
 
----
+1. Add and enforce the backend scope first.
+2. Expose the effective scope and derived capability through `/api/auth/me`.
+3. Mirror the stable frontend scope in `AUTH_SCOPES`.
+4. Use `scopeGuard`, `appHasScope`, or `AuthFacade` checks only for UX visibility.
 
-## 👤 Author
+## Docker Notes
 
-Sebastián Dos Santos
+The production image is expected to be served behind Nginx with `/api` proxied to the backend. Sessions and CSRF depend on the browser receiving and sending the backend cookies correctly.
+
+## Author
+
+Sebastian Dos Santos

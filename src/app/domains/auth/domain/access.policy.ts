@@ -1,6 +1,6 @@
 import { AuthCapabilities } from './auth-capabilities';
 
-type CapabilityAction = 'access' | 'read' | 'write' | 'create' | 'update' | 'delete';
+export type CapabilityAction = 'access' | 'read' | 'write' | 'create' | 'update' | 'delete';
 
 export function hasScope(scopes: readonly string[], scope: string): boolean {
   return scopes.includes(scope);
@@ -43,22 +43,4 @@ export function can(
 
   const capabilityName = `can${action.charAt(0).toUpperCase()}${action.slice(1)}`;
   return Boolean(resourceCapabilities[capabilityName as keyof typeof resourceCapabilities]);
-}
-
-export function canAccessUsers(capabilities: AuthCapabilities): boolean {
-  return capabilities.users.canAccess;
-}
-
-export function canReadUsers(capabilities: AuthCapabilities): boolean {
-  return capabilities.users.canRead;
-}
-
-export function canWriteUsers(capabilities: AuthCapabilities): boolean {
-  return (
-    capabilities.users.canCreate || capabilities.users.canUpdate || capabilities.users.canDelete
-  );
-}
-
-export function canAccessPerfumes(capabilities: AuthCapabilities): boolean {
-  return capabilities.perfumes.canAccess;
 }

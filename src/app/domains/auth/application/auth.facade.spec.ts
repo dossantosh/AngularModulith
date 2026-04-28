@@ -62,9 +62,9 @@ describe('AuthFacade', () => {
     expect(result).toBe('john');
     expect(facade.username()).toBe('john');
     expect(facade.dataSource()).toBe('historic');
-    expect(facade.canAccessUsers()).toBe(true);
-    expect(facade.canReadUsers()).toBe(true);
-    expect(facade.canWriteUsers()).toBe(false);
+    expect(facade.can('users', 'access')).toBe(true);
+    expect(facade.can('users', 'read')).toBe(true);
+    expect(facade.can('users', 'write')).toBe(false);
     expect(facade.hasScope('users:read')).toBe(true);
     expect(facade.hasAnyScope(['users:create', 'users:read'])).toBe(true);
     expect(facade.hasAllScopes(['users:read'])).toBe(true);
@@ -171,7 +171,7 @@ describe('AuthFacade', () => {
 
     expect(facade.username()).toBe(null);
     expect(facade.dataSource()).toBe('prod');
-    expect(facade.canAccessUsers()).toBe(false);
+    expect(facade.can('users', 'access')).toBe(false);
     expect(facade.hasScope('users:read')).toBe(false);
   });
 
@@ -201,9 +201,9 @@ describe('AuthFacade', () => {
       },
     });
 
-    expect(facade.canAccessUsers()).toBe(true);
-    expect(facade.canReadUsers()).toBe(false);
-    expect(facade.canWriteUsers()).toBe(true);
+    expect(facade.can('users', 'access')).toBe(true);
+    expect(facade.can('users', 'read')).toBe(false);
+    expect(facade.can('users', 'write')).toBe(true);
     expect(facade.hasScope('users:update')).toBe(true);
     expect(facade.can('users', 'update')).toBe(true);
   });

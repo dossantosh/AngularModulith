@@ -1,8 +1,6 @@
 import { HttpClient, HttpParams } from '@angular/common/http';
 import { Injectable, inject } from '@angular/core';
-import { map } from 'rxjs';
 
-import { mapUserPageDto } from './users.mapper';
 import { UserPageDto } from './users.dto';
 
 interface UsersSearchRequest {
@@ -33,8 +31,6 @@ export class UsersApi {
     if (filters.email.trim()) params = params.set('email', filters.email.trim());
     if (lastId != null) params = params.set('lastId', String(lastId));
 
-    return this.http
-      .get<UserPageDto>(`${this.baseUrl}users`, { params })
-      .pipe(map((page) => mapUserPageDto(page)));
+    return this.http.get<UserPageDto>(`${this.baseUrl}users`, { params });
   }
 }
