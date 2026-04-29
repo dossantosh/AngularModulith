@@ -12,7 +12,7 @@ import { MatIconModule } from '@angular/material/icon';
       }
 
       <div>
-        <h3 class="text-sm font-semibold app-text">
+        <h3 class="text-sm font-medium app-text">
           {{ title }}
         </h3>
         <p class="mt-1 max-w-md text-sm app-text-muted">

@@ -8,6 +8,21 @@ type AppPageLayout = 'default' | 'wide' | 'full';
   selector: 'app-page',
   standalone: true,
   imports: [AppBreadcrumbComponent],
+  styles: `
+    .app-page__eyebrow {
+      color: var(--color-primary);
+      font: var(--mat-sys-label-medium);
+      font-weight: 500;
+      letter-spacing: 0;
+    }
+
+    .app-page__title {
+      color: var(--color-text);
+      font: var(--mat-sys-headline-small);
+      font-weight: 500;
+      letter-spacing: 0;
+    }
+  `,
   template: `
     <div class="min-h-full app-bg-background">
       <main class="mx-auto w-full px-4 py-4 md:px-6 md:py-5" [style.max-width]="maxWidth">
@@ -17,13 +32,13 @@ type AppPageLayout = 'default' | 'wide' | 'full';
           <header class="mb-4 flex flex-col gap-3 border-b app-border pb-4 md:flex-row md:items-end md:justify-between">
             <div class="min-w-0">
               @if (eyebrow) {
-                <p class="text-xs font-semibold uppercase tracking-wide app-text-primary">
+                <p class="app-page__eyebrow uppercase">
                   {{ eyebrow }}
                 </p>
               }
 
               @if (title) {
-                <h1 class="text-2xl font-semibold tracking-tight app-text">
+                <h1 class="app-page__title">
                   {{ title }}
                 </h1>
               }

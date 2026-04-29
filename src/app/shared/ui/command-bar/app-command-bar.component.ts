@@ -9,7 +9,7 @@ import { Component, Input } from '@angular/core';
         <header class="flex flex-col gap-1 border-b app-border px-4 py-3 md:flex-row md:items-center md:justify-between">
           <div>
             @if (title) {
-              <h2 class="text-sm font-semibold app-text">{{ title }}</h2>
+              <h2 class="text-sm app-text">{{ title }}</h2>
             }
 
             @if (subtitle) {

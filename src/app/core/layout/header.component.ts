@@ -33,7 +33,7 @@ type ShellDataSource = 'prod' | 'historic';
         </button>
 
         <div class="min-w-0">
-          <p class="truncate text-sm font-semibold app-text">{{ companyName }}</p>
+          <p class="truncate text-sm app-text">{{ companyName }}</p>
           <p class="hidden text-xs app-text-muted sm:block">Workspace operativo</p>
         </div>
       </div>

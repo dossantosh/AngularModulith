@@ -17,7 +17,7 @@ import { AppButtonComponent } from '../button/app-button.component';
         <div class="flex gap-3">
           <mat-icon aria-hidden="true">error</mat-icon>
           <div>
-            <h3 class="text-sm font-semibold">{{ title }}</h3>
+            <h3 class="text-sm font-medium">{{ title }}</h3>
             <p class="mt-1 text-sm">{{ message }}</p>
           </div>
         </div>

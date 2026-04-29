@@ -8,22 +8,40 @@ import { MatCardModule } from '@angular/material/card';
   host: {
     class: 'block',
   },
+  styles: `
+    .app-card__header {
+      background: color-mix(in srgb, var(--color-surface-container) 55%, transparent);
+      border-color: var(--color-border);
+    }
+
+    .app-card__title {
+      color: var(--color-text);
+      font: var(--mat-sys-title-small);
+      font-weight: 500;
+      letter-spacing: 0;
+    }
+
+    .app-card__subtitle {
+      color: var(--color-text-muted);
+      font: var(--mat-sys-body-small);
+    }
+  `,
   template: `
     <mat-card
       appearance="outlined"
       [class.overflow-hidden]="overflowHidden"
     >
       @if (title || subtitle) {
-        <header class="flex flex-col gap-2 border-b app-border px-4 py-3 sm:flex-row sm:items-center sm:justify-between">
+        <header class="app-card__header flex flex-col gap-2 border-b px-4 py-3 sm:flex-row sm:items-center sm:justify-between">
           <div>
             @if (title) {
-              <h2 class="text-sm font-semibold app-text">
+              <h2 class="app-card__title">
                 {{ title }}
               </h2>
             }
 
             @if (subtitle) {
-              <p class="mt-1 text-xs app-text-muted">
+              <p class="app-card__subtitle mt-1">
                 {{ subtitle }}
               </p>
             }

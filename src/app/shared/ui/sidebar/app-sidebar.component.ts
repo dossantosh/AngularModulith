@@ -23,7 +23,7 @@ export interface AppSidebarItem {
       <div class="flex h-16 items-center gap-3 border-b app-border px-4">
         <img src="/favicon.ico" alt="" class="h-8 w-8 app-rounded-md" />
         <div class="min-w-0">
-          <p class="truncate text-sm font-semibold">{{ productName }}</p>
+          <p class="truncate text-sm">{{ productName }}</p>
           <p class="text-xs app-sidebar-muted">ERP workspace</p>
         </div>
       </div>
