@@ -1,4 +1,5 @@
 import { Component, EventEmitter, Input, Output } from '@angular/core';
+import { MatButtonModule } from '@angular/material/button';
 import { RouterLink, RouterLinkActive } from '@angular/router';
 
 import { ThemeToggleComponent } from '../theme/theme-toggle.component';
@@ -8,7 +9,7 @@ type ShellDataSource = 'prod' | 'historic';
 @Component({
   selector: 'app-header',
   standalone: true,
-  imports: [RouterLink, RouterLinkActive, ThemeToggleComponent],
+  imports: [MatButtonModule, RouterLink, RouterLinkActive, ThemeToggleComponent],
   template: `
     <header class="sticky top-0 z-40 bg-white ring-1 ring-gray-200 shadow-sm dark:bg-gray-900 dark:ring-gray-800">
       <div class="mx-auto flex h-16 max-w-7xl items-center justify-between gap-4 px-4">
@@ -60,9 +61,10 @@ type ShellDataSource = 'prod' | 'historic';
           }
 
           <button
+            matButton="filled"
             type="button"
             (click)="logout.emit()"
-            class="rounded-lg bg-red-600 px-3 py-1.5 text-sm font-semibold text-white shadow-sm transition hover:bg-red-700 active:bg-red-800 focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-red-600/25"
+            class="whitespace-nowrap"
           >
             Salir
           </button>

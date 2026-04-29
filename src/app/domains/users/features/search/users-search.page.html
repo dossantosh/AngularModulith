@@ -9,33 +9,29 @@
       (ngSubmit)="searchUsers()"
       class="grid gap-3 grid-cols-1 sm:grid-cols-2 sm:items-center lg:grid-cols-[1fr_1fr_1fr_auto_auto]"
     >
-      <ui-input id="user-search-id" label="ID" type="number" placeholder="ID" formControlName="id" />
-      <ui-input
-        id="user-search-username"
-        label="Username"
-        type="text"
-        placeholder="Username"
-        formControlName="username"
-      />
+      <mat-form-field class="w-full" appearance="outline">
+        <mat-label>ID</mat-label>
+        <input matInput type="number" inputmode="numeric" formControlName="id" />
+      </mat-form-field>
 
-      <div class="sm:col-span-2 lg:col-span-1">
-        <ui-input
-          id="user-search-email"
-          label="Email"
-          type="email"
-          placeholder="Email"
-          formControlName="email"
-        />
-      </div>
+      <mat-form-field class="w-full" appearance="outline">
+        <mat-label>Username</mat-label>
+        <input matInput type="text" autocomplete="username" formControlName="username" />
+      </mat-form-field>
+
+      <mat-form-field class="w-full sm:col-span-2 lg:col-span-1" appearance="outline">
+        <mat-label>Email</mat-label>
+        <input matInput type="email" autocomplete="email" formControlName="email" />
+      </mat-form-field>
 
       <div class="sm:col-span-2 lg:col-span-2 flex gap-3 sm:justify-end">
-        <ui-button type="submit" variant="primary" [disabled]="facade.loading()">
+        <button matButton="filled" type="submit" [disabled]="facade.loading()">
           Buscar
-        </ui-button>
+        </button>
 
-        <ui-button type="button" variant="warning" [disabled]="facade.loading()" (clicked)="clearFilters()">
+        <button matButton="outlined" type="button" [disabled]="facade.loading()" (click)="clearFilters()">
           Limpiar
-        </ui-button>
+        </button>
       </div>
     </form>
   </ui-card>
@@ -95,23 +91,23 @@
       </div>
 
       <div class="flex items-center justify-between gap-3 border-t border-gray-200 px-4 py-3 dark:border-gray-700">
-        <ui-button
+        <button
+          matButton="outlined"
           type="button"
-          variant="primary"
-          (clicked)="loadPrevious()"
+          (click)="loadPrevious()"
           [disabled]="!facade.hasPrevious() || facade.loading()"
         >
           Anterior
-        </ui-button>
+        </button>
 
-        <ui-button
+        <button
+          matButton="outlined"
           type="button"
-          variant="primary"
-          (clicked)="loadNext()"
+          (click)="loadNext()"
           [disabled]="!facade.hasNext() || facade.loading()"
         >
           Siguiente
-        </ui-button>
+        </button>
       </div>
     </ui-card>
   </div>
