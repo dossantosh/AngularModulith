@@ -1,0 +1,63 @@
+import { Component, EventEmitter, Input, Output } from '@angular/core';
+import { MatIconModule } from '@angular/material/icon';
+import { RouterLink, RouterLinkActive } from '@angular/router';
+
+export interface AppSidebarItem {
+  label: string;
+  icon: string;
+  routerLink?: string;
+  exact?: boolean;
+  disabled?: boolean;
+  hint?: string;
+}
+
+@Component({
+  selector: 'app-sidebar',
+  standalone: true,
+  imports: [MatIconModule, RouterLink, RouterLinkActive],
+  template: `
+    <nav
+      aria-label="Modulos principales"
+      class="flex h-full w-60 flex-col border-r border-[var(--app-border)] bg-[var(--app-sidebar)] text-white"
+    >
+      <div class="flex h-16 items-center gap-3 border-b border-white/10 px-4">
+        <img src="/favicon.ico" alt="" class="h-8 w-8 rounded-md" />
+        <div class="min-w-0">
+          <p class="truncate text-sm font-semibold">{{ productName }}</p>
+          <p class="text-xs text-[var(--app-sidebar-muted)]">ERP workspace</p>
+        </div>
+      </div>
+
+      <div class="flex-1 space-y-1 overflow-y-auto px-3 py-4">
+        @for (item of items; track item.label) {
+          @if (item.disabled) {
+            <span
+              class="flex cursor-not-allowed items-center gap-3 rounded-lg px-3 py-2 text-sm font-medium text-[var(--app-sidebar-muted)] opacity-60"
+              [attr.title]="item.hint || null"
+            >
+              <mat-icon aria-hidden="true">{{ item.icon }}</mat-icon>
+              <span>{{ item.label }}</span>
+            </span>
+          } @else {
+            <a
+              [routerLink]="item.routerLink"
+              routerLinkActive="bg-white/10 text-white"
+              [routerLinkActiveOptions]="{ exact: item.exact ?? false }"
+              class="flex items-center gap-3 rounded-lg px-3 py-2 text-sm font-medium text-slate-300 transition hover:bg-white/10 hover:text-white focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--app-focus)]"
+              (click)="navigated.emit()"
+            >
+              <mat-icon aria-hidden="true">{{ item.icon }}</mat-icon>
+              <span>{{ item.label }}</span>
+            </a>
+          }
+        }
+      </div>
+    </nav>
+  `,
+})
+export class AppSidebarComponent {
+  @Input() productName = 'Workspace';
+  @Input() items: readonly AppSidebarItem[] = [];
+
+  @Output() navigated = new EventEmitter<void>();
+}

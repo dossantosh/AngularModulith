@@ -1,9 +1,14 @@
-<main class="flex min-h-screen items-center justify-center bg-gray-100 px-4 py-8 dark:bg-slate-950">
-  <section class="w-full max-w-sm rounded-xl bg-white p-6 shadow-sm ring-1 ring-gray-200 dark:bg-gray-900 dark:ring-gray-800">
-    <h1 class="text-center text-2xl font-semibold text-gray-950 dark:text-gray-50">
+<main class="flex min-h-screen items-center justify-center bg-[var(--app-bg)] px-4 py-8">
+  <section class="w-full max-w-sm rounded-xl bg-[var(--app-surface)] p-6 shadow-sm ring-1 ring-[var(--app-border)]">
+    <div class="mb-5 flex flex-col items-center gap-2">
+      <img src="/favicon.ico" alt="" class="h-10 w-10 rounded-lg" />
+      <p class="text-sm font-semibold text-[var(--app-text)]">Seb's Perfumes</p>
+    </div>
+
+    <h1 class="text-center text-2xl font-semibold text-[var(--app-text)]">
       Iniciar sesion
     </h1>
-    <p class="mt-1 text-center text-sm text-gray-500 dark:text-gray-400">
+    <p class="mt-1 text-center text-sm text-[var(--app-text-muted)]">
       Accede con tu usuario y contrasena
     </p>
 
@@ -11,7 +16,8 @@
       @if (loginError) {
         <p
           role="alert"
-          class="rounded-lg bg-red-50 px-3 py-2 text-sm text-red-700 ring-1 ring-red-200"
+          aria-live="assertive"
+          class="rounded-lg bg-[var(--app-danger-surface)] px-3 py-2 text-sm text-[var(--app-danger)] ring-1 ring-[var(--app-danger)]"
         >
           {{ loginError }}
         </p>

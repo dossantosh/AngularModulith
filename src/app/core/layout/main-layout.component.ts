@@ -1,6 +1,6 @@
-import { Component, EventEmitter, Input, Output } from '@angular/core';
+import { Component, EventEmitter, Input, Output, signal } from '@angular/core';
 
-import { FooterComponent } from './footer.component';
+import { AppSidebarComponent, AppSidebarItem } from '../../shared/ui';
 import { HeaderComponent } from './header.component';
 
 type ShellDataSource = 'prod' | 'historic';
@@ -8,24 +8,44 @@ type ShellDataSource = 'prod' | 'historic';
 @Component({
   selector: 'app-main-layout',
   standalone: true,
-  imports: [FooterComponent, HeaderComponent],
+  imports: [AppSidebarComponent, HeaderComponent],
   template: `
-    <div class="flex h-dvh flex-col overflow-hidden">
-      <app-header
-        class="shrink-0"
-        [companyName]="companyName"
-        [userName]="userName"
-        [dataSource]="dataSource"
-        [canReadUsers]="canReadUsers"
-        (logout)="logout.emit()"
-      />
+    <div class="flex h-dvh overflow-hidden bg-[var(--app-bg)] text-[var(--app-text)]">
+      <aside class="hidden shrink-0 lg:block">
+        <app-sidebar [productName]="companyName" [items]="navigationItems" />
+      </aside>
 
-      <main class="flex-1 overflow-y-auto bg-gray-50 dark:bg-slate-950">
-        <ng-content></ng-content>
-      </main>
+      @if (sidebarOpen()) {
+        <div class="fixed inset-0 z-50 lg:hidden">
+          <button
+            type="button"
+            class="absolute inset-0 bg-black/50"
+            aria-label="Cerrar navegacion"
+            (click)="closeSidebar()"
+          ></button>
+          <aside class="relative h-full">
+            <app-sidebar
+              [productName]="companyName"
+              [items]="navigationItems"
+              (navigated)="closeSidebar()"
+            />
+          </aside>
+        </div>
+      }
 
-      <div class="sticky bottom-0 z-20 shrink-0">
-        <app-footer [companyName]="companyName" [year]="year"></app-footer>
+      <div class="flex min-w-0 flex-1 flex-col">
+        <app-header
+          class="shrink-0"
+          [companyName]="companyName"
+          [userName]="userName"
+          [dataSource]="dataSource"
+          (menuToggle)="toggleSidebar()"
+          (logout)="logout.emit()"
+        />
+
+        <main class="min-h-0 flex-1 overflow-y-auto bg-[var(--app-bg)]">
+          <ng-content></ng-content>
+        </main>
       </div>
     </div>
   `,
@@ -38,5 +58,28 @@ export class MainLayoutComponent {
 
   @Output() logout = new EventEmitter<void>();
 
-  readonly year = new Date().getFullYear();
+  readonly sidebarOpen = signal(false);
+
+  get navigationItems(): readonly AppSidebarItem[] {
+    return [
+      { label: 'Dashboard', icon: 'dashboard', routerLink: '/', exact: true },
+      ...(this.canReadUsers
+        ? [{ label: 'Usuarios', icon: 'group', routerLink: '/users/search' }]
+        : []),
+      {
+        label: 'Perfumes',
+        icon: 'local_florist',
+        disabled: true,
+        hint: 'Modulo previsto para proximas fases',
+      },
+    ];
+  }
+
+  toggleSidebar(): void {
+    this.sidebarOpen.update((open) => !open);
+  }
+
+  closeSidebar(): void {
+    this.sidebarOpen.set(false);
+  }
 }

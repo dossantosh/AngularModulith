@@ -42,18 +42,23 @@ describe('UsersSearchPage', () => {
     expect(facade.search).toHaveBeenCalledOnce();
   });
 
-  it('syncs form changes into the facade filters', () => {
+  it('syncs form changes into the facade filters after debounce', async () => {
     fixture.componentInstance.filtersForm.patchValue({
       id: 7,
       username: 'ana',
       email: 'ana@example.com',
     });
 
+    expect(facade.setFilters).not.toHaveBeenCalled();
+
+    await new Promise((resolve) => setTimeout(resolve, 450));
+
     expect(facade.setFilters).toHaveBeenCalledWith({
       id: 7,
       username: 'ana',
       email: 'ana@example.com',
     });
+    expect(facade.search).toHaveBeenCalledTimes(2);
   });
 
   it('clears filters through the facade without emitting intermediate form changes', () => {

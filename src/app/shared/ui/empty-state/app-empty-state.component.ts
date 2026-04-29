@@ -8,14 +8,14 @@ import { MatIconModule } from '@angular/material/icon';
   template: `
     <div class="flex flex-col items-center justify-center gap-3 px-4 py-10 text-center">
       @if (icon) {
-        <mat-icon class="text-gray-400 dark:text-gray-500" aria-hidden="true">{{ icon }}</mat-icon>
+        <mat-icon class="text-[var(--app-text-subtle)]" aria-hidden="true">{{ icon }}</mat-icon>
       }
 
       <div>
-        <h3 class="text-sm font-semibold text-gray-950 dark:text-gray-50">
+        <h3 class="text-sm font-semibold text-[var(--app-text)]">
           {{ title }}
         </h3>
-        <p class="mt-1 max-w-md text-sm text-gray-600 dark:text-gray-300">
+        <p class="mt-1 max-w-md text-sm text-[var(--app-text-muted)]">
           {{ message }}
         </p>
       </div>

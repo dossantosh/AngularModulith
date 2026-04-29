@@ -1,14 +1,19 @@
 <app-page
   title="Usuarios"
-  subtitle="Busqueda operativa de usuarios con filtros, paginacion y estados de carga claros."
+  subtitle="List report operativo con busqueda incremental, estados claros y tabla compacta."
   eyebrow="Administracion"
+  layout="full"
+  [breadcrumbs]="breadcrumbs"
 >
-  <app-card title="Filtros" subtitle="Ajusta los criterios y pulsa Enter para buscar.">
+  <app-command-bar title="Filtros" subtitle="La busqueda se actualiza automaticamente al escribir.">
+    <span command-actions class="text-xs text-[var(--app-text-subtle)]">
+      Debounce 400ms
+    </span>
+
     <form
       aria-label="Filtros de busqueda de usuarios"
       [formGroup]="filtersForm"
-      (ngSubmit)="searchUsers()"
-      class="grid gap-3 grid-cols-1 sm:grid-cols-2 sm:items-center lg:grid-cols-[1fr_1fr_1fr_auto_auto]"
+      class="grid gap-3 grid-cols-1 sm:grid-cols-2 lg:grid-cols-[180px_1fr_1fr_auto]"
     >
       <app-text-field label="ID" type="number" inputMode="numeric" [control]="filtersForm.controls.id" />
 
@@ -22,17 +27,13 @@
         [control]="filtersForm.controls.email"
       />
 
-      <div class="sm:col-span-2 lg:col-span-2 flex gap-3 sm:justify-end">
-        <app-button type="submit" [loading]="facade.loading()">
-          Buscar
-        </app-button>
-
+      <div class="flex items-start sm:col-span-2 lg:col-span-1 lg:justify-end">
         <app-button variant="secondary" type="button" [disabled]="facade.loading()" (clicked)="clearFilters()">
           Limpiar
         </app-button>
       </div>
     </form>
-  </app-card>
+  </app-command-bar>
 
   @if (facade.error()) {
     <div class="mt-4">
@@ -48,7 +49,7 @@
   <div class="mt-4">
     <app-card
       title="Resultados"
-      subtitle="Listado compacto para consulta rapida."
+      subtitle="Tabla densa para lectura rapida y acciones futuras."
       [padded]="false"
       [overflowHidden]="true"
     >
@@ -84,43 +85,37 @@
               Listado de usuarios encontrados
             </caption>
 
-            <thead class="bg-gray-100 dark:bg-gray-950">
+            <thead class="bg-[var(--app-surface-container)]">
               <tr>
-                <th scope="col" class="px-4 py-2.5 text-left text-xs font-semibold text-gray-600 dark:text-gray-400">ID</th>
-                <th scope="col" class="px-4 py-2.5 text-left text-xs font-semibold text-gray-600 dark:text-gray-400">Username</th>
-                <th scope="col" class="px-4 py-2.5 text-left text-xs font-semibold text-gray-600 dark:text-gray-400">Email</th>
-                <th scope="col" class="px-4 py-2.5 text-left text-xs font-semibold text-gray-600 dark:text-gray-400">Enabled</th>
-                <th scope="col" class="px-4 py-2.5 text-left text-xs font-semibold text-gray-600 dark:text-gray-400">Admin</th>
+                <th scope="col" class="px-4 py-2.5 text-left text-xs font-semibold text-[var(--app-text-muted)]">ID</th>
+                <th scope="col" class="px-4 py-2.5 text-left text-xs font-semibold text-[var(--app-text-muted)]">Username</th>
+                <th scope="col" class="px-4 py-2.5 text-left text-xs font-semibold text-[var(--app-text-muted)]">Email</th>
+                <th scope="col" class="px-4 py-2.5 text-left text-xs font-semibold text-[var(--app-text-muted)]">Enabled</th>
+                <th scope="col" class="px-4 py-2.5 text-left text-xs font-semibold text-[var(--app-text-muted)]">Admin</th>
               </tr>
             </thead>
 
-            <tbody class="divide-y divide-gray-100 dark:divide-gray-800">
+            <tbody class="divide-y divide-[var(--app-border)]">
               @for (user of facade.users(); track user.id) {
-                <tr class="hover:bg-gray-50 dark:hover:bg-gray-800/60">
-                  <td class="px-4 py-2.5 text-sm text-gray-700 dark:text-gray-300">{{ user.id }}</td>
-                  <td class="px-4 py-2.5 text-sm font-medium text-gray-950 dark:text-gray-50">{{ user.username }}</td>
-                  <td class="px-4 py-2.5 text-sm text-gray-700 dark:text-gray-300">{{ user.email }}</td>
+                <tr class="hover:bg-[var(--app-surface-container)]">
+                  <td class="px-4 py-2.5 text-sm text-[var(--app-text-muted)]">{{ user.id }}</td>
+                  <td class="px-4 py-2.5 text-sm font-medium text-[var(--app-text)]">{{ user.username }}</td>
+                  <td class="px-4 py-2.5 text-sm text-[var(--app-text-muted)]">{{ user.email }}</td>
 
                   <td class="px-4 py-2.5">
-                    <span
-                      class="inline-flex rounded-full px-2.5 py-0.5 text-xs font-medium"
-                      [ngClass]="user.enabled
-                        ? 'bg-green-100 text-green-700 dark:bg-green-900/40 dark:text-green-300'
-                        : 'bg-red-100 text-red-700 dark:bg-red-900/40 dark:text-red-300'"
-                    >
-                      {{ user.enabled ? 'Si' : 'No' }}
-                    </span>
+                    <app-status-badge
+                      [label]="user.enabled ? 'Activo' : 'Inactivo'"
+                      [icon]="user.enabled ? 'check_circle' : 'cancel'"
+                      [variant]="user.enabled ? 'success' : 'danger'"
+                    />
                   </td>
 
                   <td class="px-4 py-2.5">
-                    <span
-                      class="inline-flex rounded-full px-2.5 py-0.5 text-xs font-medium"
-                      [ngClass]="user.isAdmin
-                        ? 'bg-blue-100 text-blue-700 dark:bg-blue-900/40 dark:text-blue-300'
-                        : 'bg-gray-100 text-gray-500 dark:bg-gray-800 dark:text-gray-300'"
-                    >
-                      {{ user.isAdmin ? 'Si' : 'No' }}
-                    </span>
+                    <app-status-badge
+                      [label]="user.isAdmin ? 'Admin' : 'Usuario'"
+                      [icon]="user.isAdmin ? 'shield_person' : 'person'"
+                      [variant]="user.isAdmin ? 'info' : 'neutral'"
+                    />
                   </td>
                 </tr>
               }

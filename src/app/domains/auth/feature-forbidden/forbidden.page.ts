@@ -2,35 +2,31 @@ import { Component, inject } from '@angular/core';
 import { Router } from '@angular/router';
 
 import { AuthFacade } from '../../../core/auth/session/auth.facade';
-import { AppButtonComponent, AppCardComponent, AppPageComponent } from '../../../shared/ui';
+import {
+  AppButtonComponent,
+  AppCardComponent,
+  AppErrorStateComponent,
+  AppPageComponent,
+} from '../../../shared/ui';
 
 @Component({
   selector: 'app-forbidden-page',
   standalone: true,
-  imports: [AppButtonComponent, AppCardComponent, AppPageComponent],
+  imports: [AppButtonComponent, AppCardComponent, AppErrorStateComponent, AppPageComponent],
   template: `
     <app-page
       title="Acceso denegado"
       subtitle="Tu sesion esta activa, pero faltan permisos para entrar en esta zona."
       eyebrow="Seguridad"
+      [breadcrumbs]="breadcrumbs"
     >
       <div class="flex min-h-[60vh] items-center justify-center">
         <app-card class="w-full max-w-xl" [spacious]="true">
           <div class="space-y-4 text-center">
-            <span
-              class="inline-flex rounded-full bg-amber-100 px-3 py-1 text-xs font-semibold uppercase tracking-wide text-amber-800 dark:bg-amber-900/40 dark:text-amber-200"
-            >
-              403
-            </span>
-
-            <div class="space-y-2">
-              <h1 class="text-2xl font-semibold text-gray-900 dark:text-gray-100">
-                Acceso denegado
-              </h1>
-              <p class="text-sm text-gray-600 dark:text-gray-300">
-                Tu sesion esta activa, pero no tienes permisos para entrar en este modulo.
-              </p>
-            </div>
+            <app-error-state
+              title="No tienes acceso a este modulo"
+              message="La sesion es valida, pero tus capabilities no permiten abrir esta pantalla."
+            />
 
             <div class="flex flex-col justify-center gap-3 sm:flex-row">
               <app-button variant="primary" routerLink="/">
@@ -54,6 +50,11 @@ import { AppButtonComponent, AppCardComponent, AppPageComponent } from '../../..
 export class ForbiddenPage {
   private readonly auth = inject(AuthFacade);
   private readonly router = inject(Router);
+  readonly breadcrumbs = [
+    { label: 'Inicio', routerLink: '/' },
+    { label: 'Seguridad' },
+    { label: '403' },
+  ];
 
   changeUser(): void {
     this.auth.logout().subscribe({
