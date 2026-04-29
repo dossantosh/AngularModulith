@@ -1,15 +1,22 @@
-import { ApplicationConfig, provideBrowserGlobalErrorListeners } from '@angular/core';
+import {
+  ApplicationConfig,
+  inject,
+  provideAppInitializer,
+  provideBrowserGlobalErrorListeners,
+} from '@angular/core';
 import { provideRouter } from '@angular/router';
 import { provideHttpClient, withInterceptors, withXsrfConfiguration } from '@angular/common/http';
 
 import { provideAuthBootstrap } from './core/auth/bootstrap/provide-auth-bootstrap';
 import { authInterceptor } from './core/auth/http/auth.interceptor';
+import { ThemeService } from './core/theme/theme.service';
 
 import { routes } from './app.routes';
 
 export const appConfig: ApplicationConfig = {
   providers: [
     provideRouter(routes),
+    provideAppInitializer(() => void inject(ThemeService)),
     provideAuthBootstrap(),
     provideHttpClient(
       withXsrfConfiguration({

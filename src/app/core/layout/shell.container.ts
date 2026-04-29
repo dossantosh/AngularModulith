@@ -2,7 +2,6 @@ import { Component, computed, inject } from '@angular/core';
 import { Router, RouterOutlet } from '@angular/router';
 
 import { AuthFacade } from '../auth/session/auth.facade';
-import { ThemeService } from '../theme/theme.service';
 import { MainLayoutComponent } from './main-layout.component';
 
 @Component({
@@ -15,9 +14,7 @@ import { MainLayoutComponent } from './main-layout.component';
       [userName]="userName()"
       [dataSource]="dataSource()"
       [canReadUsers]="canReadUsers()"
-      [isDark]="isDark()"
       (logout)="logout()"
-      (toggleTheme)="toggleTheme()"
     >
       <router-outlet></router-outlet>
     </app-main-layout>
@@ -26,27 +23,17 @@ import { MainLayoutComponent } from './main-layout.component';
 export class ShellContainer {
   private readonly auth = inject(AuthFacade);
   private readonly router = inject(Router);
-  private readonly theme = inject(ThemeService);
 
   readonly companyName = "Seb's Perfumes";
   readonly username = this.auth.username;
   readonly userName = computed(() => this.username() ?? 'Guest');
   readonly dataSource = this.auth.dataSource;
   readonly canReadUsers = computed(() => this.auth.can('users', 'read'));
-  readonly isDark = this.theme.isDark;
-
-  constructor() {
-    this.theme.initialize();
-  }
 
   logout(): void {
     this.auth.logout().subscribe({
       next: () => void this.router.navigateByUrl('/login'),
       error: () => void this.router.navigateByUrl('/login'),
     });
-  }
-
-  toggleTheme(): void {
-    this.theme.toggle();
   }
 }

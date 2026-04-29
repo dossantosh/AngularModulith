@@ -1,67 +1,61 @@
-<div class="min-h-screen bg-gray-100 flex items-center justify-center px-4">
-  <div class="w-full max-w-sm rounded-2xl bg-white p-8 shadow-lg ring-1 ring-gray-200">
-    <h2 class="text-center text-2xl font-semibold text-gray-900">
+<main class="flex min-h-screen items-center justify-center bg-[var(--app-bg)] px-4 py-8">
+  <section class="w-full max-w-sm rounded-xl bg-[var(--app-surface)] p-6 shadow-sm ring-1 ring-[var(--app-border)]">
+    <div class="mb-5 flex flex-col items-center gap-2">
+      <img src="/favicon.ico" alt="" class="h-10 w-10 rounded-lg" />
+      <p class="text-sm font-semibold text-[var(--app-text)]">Seb's Perfumes</p>
+    </div>
+
+    <h1 class="text-center text-2xl font-semibold text-[var(--app-text)]">
       Iniciar sesion
-    </h2>
-    <p class="mt-1 text-center text-sm text-gray-500">
+    </h1>
+    <p class="mt-1 text-center text-sm text-[var(--app-text-muted)]">
       Accede con tu usuario y contrasena
     </p>
 
     <form [formGroup]="loginForm" (ngSubmit)="onSubmit()" class="mt-6 space-y-4">
-      <div>
-        <label for="dataSource" class="mb-1 block text-sm font-medium text-gray-700">Origen de datos</label>
-        <select
-          id="dataSource"
-          formControlName="dataSource"
-          class="w-full rounded-lg border border-gray-300 bg-white px-3 py-2 text-sm text-gray-900 shadow-sm outline-none transition focus:border-blue-600 focus:ring-4 focus:ring-blue-600/15"
+      @if (loginError) {
+        <p
+          role="alert"
+          aria-live="assertive"
+          class="rounded-lg bg-[var(--app-danger-surface)] px-3 py-2 text-sm text-[var(--app-danger)] ring-1 ring-[var(--app-danger)]"
         >
-          <option value="prod">Produccion</option>
-          <option value="historic">Historico</option>
-        </select>
-      </div>
+          {{ loginError }}
+        </p>
+      }
 
-      <div>
-        <label for="username" class="mb-1 block text-sm font-medium text-gray-700">Usuario</label>
-        <input
-          id="username"
-          type="text"
-          placeholder="Usuario"
-          formControlName="username"
-          class="w-full rounded-lg border border-gray-300 bg-white px-3 py-2 text-sm text-gray-900 placeholder:text-gray-400 shadow-sm outline-none transition focus:border-blue-600 focus:ring-4 focus:ring-blue-600/15"
-          [class.border-red-500]="submitted && formControls['username'].invalid"
-          [class.focus:border-red-500]="submitted && formControls['username'].invalid"
-          [class.focus:ring-red-500/15]="submitted && formControls['username'].invalid"
-        />
+      <mat-form-field class="w-full" appearance="outline">
+        <mat-label>Origen de datos</mat-label>
+        <mat-select formControlName="dataSource" [disabled]="isSubmitting()">
+          <mat-option value="prod">Produccion</mat-option>
+          <mat-option value="historic">Historico</mat-option>
+        </mat-select>
+      </mat-form-field>
 
-        @if (submitted && formControls['username'].errors?.['required']) {
-          <p class="mt-1 text-sm text-red-600">Usuario es obligatorio.</p>
-        }
-      </div>
+      <app-text-field
+        label="Usuario"
+        autocomplete="username"
+        [control]="loginForm.controls.username"
+        [showErrors]="submitted"
+        [errorMessages]="{ required: 'Usuario es obligatorio.' }"
+      />
 
-      <div>
-        <label for="password" class="mb-1 block text-sm font-medium text-gray-700">Contrasena</label>
-        <input
-          id="password"
-          type="password"
-          placeholder="Contrasena"
-          formControlName="password"
-          class="w-full rounded-lg border border-gray-300 bg-white px-3 py-2 text-sm text-gray-900 placeholder:text-gray-400 shadow-sm outline-none transition focus:border-blue-600 focus:ring-4 focus:ring-blue-600/15"
-          [class.border-red-500]="submitted && formControls['password'].invalid"
-          [class.focus:border-red-500]="submitted && formControls['password'].invalid"
-          [class.focus:ring-red-500/15]="submitted && formControls['password'].invalid"
-        />
+      <app-text-field
+        label="Contrasena"
+        type="password"
+        autocomplete="current-password"
+        [control]="loginForm.controls.password"
+        [showErrors]="submitted"
+        [errorMessages]="{ required: 'Contrasena es obligatoria.' }"
+      />
 
-        @if (submitted && formControls['password'].errors?.['required']) {
-          <p class="mt-1 text-sm text-red-600">Contrasena es obligatoria.</p>
-        }
-      </div>
-
-      <button
+      <app-button
+        variant="primary"
         type="submit"
-        class="mt-2 w-full rounded-lg bg-blue-600 px-4 py-2.5 text-sm font-semibold text-white shadow-sm transition hover:bg-blue-700 active:bg-blue-800 focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-blue-600/25"
+        [fullWidth]="true"
+        [loading]="isSubmitting()"
       >
         Entrar
-      </button>
+      </app-button>
     </form>
-  </div>
-</div>
+  </section>
+</main>

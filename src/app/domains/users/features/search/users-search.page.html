@@ -1,106 +1,153 @@
-<ui-page>
-  <ui-card>
-    <h2 class="mb-4 text-lg font-semibold text-gray-900 dark:text-gray-100">
-      Buscar usuarios
-    </h2>
+<app-page
+  title="Usuarios"
+  subtitle="List report operativo con busqueda incremental, estados claros y tabla compacta."
+  eyebrow="Administracion"
+  layout="full"
+  [breadcrumbs]="breadcrumbs"
+>
+  <app-command-bar title="Filtros" subtitle="La busqueda se actualiza automaticamente al escribir.">
+    <span command-actions class="text-xs text-[var(--app-text-subtle)]">
+      Debounce 400ms
+    </span>
 
     <form
+      aria-label="Filtros de busqueda de usuarios"
       [formGroup]="filtersForm"
-      (ngSubmit)="searchUsers()"
-      class="grid gap-3 grid-cols-1 sm:grid-cols-2 sm:items-center lg:grid-cols-[1fr_1fr_1fr_auto_auto]"
+      class="grid gap-3 grid-cols-1 sm:grid-cols-2 lg:grid-cols-[180px_1fr_1fr_auto]"
     >
-      <ui-input type="number" placeholder="ID" formControlName="id" />
-      <ui-input type="text" placeholder="Username" formControlName="username" />
+      <app-text-field label="ID" type="number" inputMode="numeric" [control]="filtersForm.controls.id" />
 
-      <div class="sm:col-span-2 lg:col-span-1">
-        <ui-input type="email" placeholder="Email" formControlName="email" />
-      </div>
+      <app-text-field label="Username" autocomplete="username" [control]="filtersForm.controls.username" />
 
-      <div class="sm:col-span-2 lg:col-span-2 flex gap-3 sm:justify-end">
-        <ui-button type="submit" variant="primary" [disabled]="facade.loading()">
-          Buscar
-        </ui-button>
+      <app-text-field
+        class="sm:col-span-2 lg:col-span-1"
+        label="Email"
+        type="email"
+        autocomplete="email"
+        [control]="filtersForm.controls.email"
+      />
 
-        <ui-button type="button" variant="warning" [disabled]="facade.loading()" (clicked)="clearFilters()">
+      <div class="flex items-start sm:col-span-2 lg:col-span-1 lg:justify-end">
+        <app-button variant="secondary" type="button" [disabled]="facade.loading()" (clicked)="clearFilters()">
           Limpiar
-        </ui-button>
+        </app-button>
       </div>
     </form>
-  </ui-card>
+  </app-command-bar>
 
   @if (facade.error()) {
-    <p class="mt-4 text-sm text-red-600 dark:text-red-400">
-      {{ facade.error() }}
-    </p>
+    <div class="mt-4">
+      <app-error-state
+        title="No se pudieron cargar los usuarios"
+        [message]="facade.error()!"
+        actionLabel="Reintentar"
+        (retry)="searchUsers()"
+      />
+    </div>
   }
 
-  <div class="mt-6">
-    <ui-card [padded]="false" [overflowHidden]="true">
-      <div class="overflow-x-auto">
-        <table class="min-w-full border-collapse">
-          <thead class="bg-gray-100 dark:bg-gray-900">
-            <tr>
-              <th class="px-4 py-3 text-left text-xs font-semibold text-gray-600 dark:text-gray-400">ID</th>
-              <th class="px-4 py-3 text-left text-xs font-semibold text-gray-600 dark:text-gray-400">Username</th>
-              <th class="px-4 py-3 text-left text-xs font-semibold text-gray-600 dark:text-gray-400">Email</th>
-              <th class="px-4 py-3 text-left text-xs font-semibold text-gray-600 dark:text-gray-400">Enabled</th>
-              <th class="px-4 py-3 text-left text-xs font-semibold text-gray-600 dark:text-gray-400">Admin</th>
-            </tr>
-          </thead>
+  <div class="mt-4">
+    <app-card
+      title="Resultados"
+      subtitle="Tabla densa para lectura rapida y acciones futuras."
+      [padded]="false"
+      [overflowHidden]="true"
+    >
+      <span card-actions>
+        @if (facade.loading()) {
+          <span role="status" aria-live="polite" class="text-sm text-gray-600 dark:text-gray-300">
+            Cargando usuarios...
+          </span>
+        }
+      </span>
 
-          <tbody class="divide-y divide-gray-100 dark:divide-gray-700">
-            @for (user of facade.users(); track user.id) {
-              <tr class="hover:bg-gray-100 dark:hover:bg-gray-700/40">
-                <td class="px-4 py-3 text-sm text-gray-700 dark:text-gray-300">{{ user.id }}</td>
-                <td class="px-4 py-3 text-sm font-medium text-gray-900 dark:text-gray-100">{{ user.username }}</td>
-                <td class="px-4 py-3 text-sm text-gray-700 dark:text-gray-300">{{ user.email }}</td>
+      @if (facade.loading() && facade.users().length === 0) {
+        <app-loading-state message="Cargando usuarios..." />
+      } @else if (!facade.error() && facade.users().length === 0) {
+        <app-empty-state
+          icon="person_search"
+          title="Sin usuarios"
+          message="No hay usuarios para los filtros actuales."
+        >
+          <app-button variant="secondary" type="button" (clicked)="clearFilters()">
+            Limpiar filtros
+          </app-button>
+        </app-empty-state>
+      } @else if (facade.users().length > 0) {
+        <div class="overflow-x-auto">
+          <table
+            id="users-results-table"
+            aria-label="Listado de usuarios encontrados"
+            [attr.aria-busy]="facade.loading()"
+            class="min-w-full border-collapse"
+          >
+            <caption class="sr-only">
+              Listado de usuarios encontrados
+            </caption>
 
-                <td class="px-4 py-3">
-                  <span
-                    class="inline-flex rounded-full px-2.5 py-0.5 text-xs font-medium"
-                    [ngClass]="user.enabled
-                      ? 'bg-green-100 text-green-700 dark:bg-green-900/40 dark:text-green-300'
-                      : 'bg-red-100 text-red-700 dark:bg-red-900/40 dark:text-red-300'"
-                  >
-                    {{ user.enabled ? 'Si' : 'No' }}
-                  </span>
-                </td>
-
-                <td class="px-4 py-3">
-                  <span
-                    class="inline-flex rounded-full px-2.5 py-0.5 text-xs font-medium"
-                    [ngClass]="user.isAdmin
-                      ? 'bg-blue-100 text-blue-700 dark:bg-blue-900/40 dark:text-blue-300'
-                      : 'bg-gray-100 text-gray-500 dark:bg-gray-700 dark:text-gray-300'"
-                  >
-                    {{ user.isAdmin ? 'Yes' : 'No' }}
-                  </span>
-                </td>
+            <thead class="bg-[var(--app-surface-container)]">
+              <tr>
+                <th scope="col" class="px-4 py-2.5 text-left text-xs font-semibold text-[var(--app-text-muted)]">ID</th>
+                <th scope="col" class="px-4 py-2.5 text-left text-xs font-semibold text-[var(--app-text-muted)]">Username</th>
+                <th scope="col" class="px-4 py-2.5 text-left text-xs font-semibold text-[var(--app-text-muted)]">Email</th>
+                <th scope="col" class="px-4 py-2.5 text-left text-xs font-semibold text-[var(--app-text-muted)]">Enabled</th>
+                <th scope="col" class="px-4 py-2.5 text-left text-xs font-semibold text-[var(--app-text-muted)]">Admin</th>
               </tr>
-            }
-          </tbody>
-        </table>
-      </div>
+            </thead>
 
-      <div class="flex items-center justify-between gap-3 border-t border-gray-200 px-4 py-3 dark:border-gray-700">
-        <ui-button
+            <tbody class="divide-y divide-[var(--app-border)]">
+              @for (user of facade.users(); track user.id) {
+                <tr class="hover:bg-[var(--app-surface-container)]">
+                  <td class="px-4 py-2.5 text-sm text-[var(--app-text-muted)]">{{ user.id }}</td>
+                  <td class="px-4 py-2.5 text-sm font-medium text-[var(--app-text)]">{{ user.username }}</td>
+                  <td class="px-4 py-2.5 text-sm text-[var(--app-text-muted)]">{{ user.email }}</td>
+
+                  <td class="px-4 py-2.5">
+                    <app-status-badge
+                      [label]="user.enabled ? 'Activo' : 'Inactivo'"
+                      [icon]="user.enabled ? 'check_circle' : 'cancel'"
+                      [variant]="user.enabled ? 'success' : 'danger'"
+                    />
+                  </td>
+
+                  <td class="px-4 py-2.5">
+                    <app-status-badge
+                      [label]="user.isAdmin ? 'Admin' : 'Usuario'"
+                      [icon]="user.isAdmin ? 'shield_person' : 'person'"
+                      [variant]="user.isAdmin ? 'info' : 'neutral'"
+                    />
+                  </td>
+                </tr>
+              }
+            </tbody>
+          </table>
+        </div>
+      }
+
+      <nav
+        aria-label="Paginacion de usuarios"
+        class="flex items-center justify-between gap-3 border-t border-gray-200 px-4 py-3 dark:border-gray-700"
+      >
+        <app-button
+          variant="secondary"
           type="button"
-          variant="primary"
+          ariaLabel="Cargar pagina anterior de usuarios"
           (clicked)="loadPrevious()"
           [disabled]="!facade.hasPrevious() || facade.loading()"
         >
           Anterior
-        </ui-button>
+        </app-button>
 
-        <ui-button
+        <app-button
+          variant="secondary"
           type="button"
-          variant="primary"
+          ariaLabel="Cargar pagina siguiente de usuarios"
           (clicked)="loadNext()"
           [disabled]="!facade.hasNext() || facade.loading()"
         >
           Siguiente
-        </ui-button>
-      </div>
-    </ui-card>
+        </app-button>
+      </nav>
+    </app-card>
   </div>
-</ui-page>
+</app-page>

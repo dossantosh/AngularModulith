@@ -1,20 +1,36 @@
-import { CommonModule } from '@angular/common';
 import { Component, DestroyRef, OnInit, inject } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { FormBuilder, ReactiveFormsModule } from '@angular/forms';
+import { debounceTime, distinctUntilChanged } from 'rxjs';
 
 import {
-  ButtonComponent,
-  CardComponent,
-  InputComponent,
-  PageComponent,
+  AppButtonComponent,
+  AppCardComponent,
+  AppCommandBarComponent,
+  AppEmptyStateComponent,
+  AppErrorStateComponent,
+  AppLoadingStateComponent,
+  AppPageComponent,
+  AppStatusBadgeComponent,
+  AppTextFieldComponent,
 } from '../../../../shared/ui';
 import { UsersFacade } from '../../application/users.facade';
 
 @Component({
   standalone: true,
   selector: 'app-users-search-page',
-  imports: [ButtonComponent, CardComponent, CommonModule, InputComponent, PageComponent, ReactiveFormsModule],
+  imports: [
+    AppButtonComponent,
+    AppCardComponent,
+    AppCommandBarComponent,
+    AppEmptyStateComponent,
+    AppErrorStateComponent,
+    AppLoadingStateComponent,
+    AppPageComponent,
+    AppStatusBadgeComponent,
+    AppTextFieldComponent,
+    ReactiveFormsModule,
+  ],
   templateUrl: './users-search.page.html',
 })
 export class UsersSearchPage implements OnInit {
@@ -27,18 +43,28 @@ export class UsersSearchPage implements OnInit {
     username: this.fb.control<string>(''),
     email: this.fb.control<string>(''),
   });
+  readonly breadcrumbs = [
+    { label: 'Inicio', routerLink: '/' },
+    { label: 'Administracion' },
+    { label: 'Usuarios' },
+  ];
 
   ngOnInit(): void {
     this.filtersForm.patchValue(this.facade.filters(), { emitEvent: false });
 
     this.filtersForm.valueChanges
-      .pipe(takeUntilDestroyed(this.destroyRef))
+      .pipe(
+        debounceTime(400),
+        distinctUntilChanged((previous, current) => JSON.stringify(previous) === JSON.stringify(current)),
+        takeUntilDestroyed(this.destroyRef)
+      )
       .subscribe((value) => {
         this.facade.setFilters({
           id: value.id ?? null,
           username: value.username ?? '',
           email: value.email ?? '',
         });
+        this.facade.search();
       });
 
     this.facade.search();
