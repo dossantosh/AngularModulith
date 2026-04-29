@@ -14,9 +14,17 @@ type InputType = 'text' | 'number' | 'email' | 'password' | 'search';
     },
   ],
   template: `
+    @if (label) {
+      <label [attr.for]="id || null" class="mb-1 block text-sm font-medium text-gray-700 dark:text-gray-300">
+        {{ label }}
+      </label>
+    }
+
     <input
+      [attr.id]="id || null"
       [attr.type]="type"
       [attr.placeholder]="placeholder"
+      [attr.aria-describedby]="ariaDescribedBy || null"
       [disabled]="disabled"
       [value]="value"
       (input)="onInput($event)"
@@ -26,8 +34,11 @@ type InputType = 'text' | 'number' | 'email' | 'password' | 'search';
   `,
 })
 export class InputComponent implements ControlValueAccessor {
+  @Input() id = '';
+  @Input() label = '';
   @Input() type: InputType = 'text';
   @Input() placeholder = '';
+  @Input() ariaDescribedBy = '';
   @Input() class = '';
 
   disabled = false;

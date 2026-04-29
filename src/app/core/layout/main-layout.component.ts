@@ -17,9 +17,7 @@ type ShellDataSource = 'prod' | 'historic';
         [userName]="userName"
         [dataSource]="dataSource"
         [canReadUsers]="canReadUsers"
-        [isDark]="isDark"
         (logout)="logout.emit()"
-        (toggleTheme)="toggleTheme.emit()"
       />
 
       <main class="flex-1 overflow-y-auto bg-gray-50 dark:bg-slate-950">
@@ -37,10 +35,8 @@ export class MainLayoutComponent {
   @Input() userName = 'User';
   @Input() dataSource: ShellDataSource = 'prod';
   @Input() canReadUsers = false;
-  @Input() isDark = false;
 
   @Output() logout = new EventEmitter<void>();
-  @Output() toggleTheme = new EventEmitter<void>();
 
   readonly year = new Date().getFullYear();
 }

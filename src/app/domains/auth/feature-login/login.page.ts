@@ -13,6 +13,7 @@ import { BackendDataSource } from '../../../core/auth/session/session.model';
 })
 export class LoginPage {
   submitted = false;
+  loginError: string | null = null;
 
   private readonly fb = inject(FormBuilder);
   private readonly auth = inject(AuthFacade);
@@ -26,10 +27,14 @@ export class LoginPage {
 
   onSubmit(): void {
     this.submitted = true;
+    this.loginError = null;
     if (this.loginForm.invalid) return;
 
     this.auth.login(this.loginForm.getRawValue()).subscribe({
       next: () => void this.router.navigateByUrl('/'),
+      error: () => {
+        this.loginError = 'No se pudo iniciar sesion. Revisa tus credenciales e intentalo de nuevo.';
+      },
     });
   }
 

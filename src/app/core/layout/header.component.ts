@@ -1,12 +1,14 @@
 import { Component, EventEmitter, Input, Output } from '@angular/core';
 import { RouterLink, RouterLinkActive } from '@angular/router';
 
+import { ThemeToggleComponent } from '../theme/theme-toggle.component';
+
 type ShellDataSource = 'prod' | 'historic';
 
 @Component({
   selector: 'app-header',
   standalone: true,
-  imports: [RouterLink, RouterLinkActive],
+  imports: [RouterLink, RouterLinkActive, ThemeToggleComponent],
   template: `
     <header class="sticky top-0 z-40 bg-white ring-1 ring-gray-200 shadow-sm dark:bg-gray-900 dark:ring-gray-800">
       <div class="mx-auto flex h-16 max-w-7xl items-center justify-between gap-4 px-4">
@@ -39,16 +41,7 @@ type ShellDataSource = 'prod' | 'historic';
         </nav>
 
         <div class="flex items-center gap-3">
-          <button
-            type="button"
-            (click)="toggleTheme.emit()"
-            class="inline-flex items-center justify-center rounded-lg p-2 text-gray-600 transition hover:bg-gray-100 hover:text-gray-900 focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-gray-300/40 dark:text-gray-300 dark:hover:bg-gray-800 dark:hover:text-gray-100 dark:focus-visible:ring-gray-700/40"
-            [attr.aria-pressed]="isDark"
-            [attr.aria-label]="isDark ? 'Activar modo claro' : 'Activar modo oscuro'"
-            title="Cambiar tema"
-          >
-            <span class="text-base">{{ isDark ? 'Light' : 'Dark' }}</span>
-          </button>
+          <app-theme-toggle />
 
           <span class="hidden text-sm text-gray-600 dark:text-gray-300 sm:block">
             Hola,
@@ -83,8 +76,6 @@ export class HeaderComponent {
   @Input() userName = 'User';
   @Input() dataSource: ShellDataSource = 'prod';
   @Input() canReadUsers = false;
-  @Input() isDark = false;
 
   @Output() logout = new EventEmitter<void>();
-  @Output() toggleTheme = new EventEmitter<void>();
 }

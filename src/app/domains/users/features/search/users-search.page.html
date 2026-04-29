@@ -9,11 +9,23 @@
       (ngSubmit)="searchUsers()"
       class="grid gap-3 grid-cols-1 sm:grid-cols-2 sm:items-center lg:grid-cols-[1fr_1fr_1fr_auto_auto]"
     >
-      <ui-input type="number" placeholder="ID" formControlName="id" />
-      <ui-input type="text" placeholder="Username" formControlName="username" />
+      <ui-input id="user-search-id" label="ID" type="number" placeholder="ID" formControlName="id" />
+      <ui-input
+        id="user-search-username"
+        label="Username"
+        type="text"
+        placeholder="Username"
+        formControlName="username"
+      />
 
       <div class="sm:col-span-2 lg:col-span-1">
-        <ui-input type="email" placeholder="Email" formControlName="email" />
+        <ui-input
+          id="user-search-email"
+          label="Email"
+          type="email"
+          placeholder="Email"
+          formControlName="email"
+        />
       </div>
 
       <div class="sm:col-span-2 lg:col-span-2 flex gap-3 sm:justify-end">

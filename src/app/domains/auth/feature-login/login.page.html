@@ -8,6 +8,15 @@
     </p>
 
     <form [formGroup]="loginForm" (ngSubmit)="onSubmit()" class="mt-6 space-y-4">
+      @if (loginError) {
+        <p
+          role="alert"
+          class="rounded-lg bg-red-50 px-3 py-2 text-sm text-red-700 ring-1 ring-red-200"
+        >
+          {{ loginError }}
+        </p>
+      }
+
       <div>
         <label for="dataSource" class="mb-1 block text-sm font-medium text-gray-700">Origen de datos</label>
         <select
