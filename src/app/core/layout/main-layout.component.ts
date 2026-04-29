@@ -10,7 +10,7 @@ type ShellDataSource = 'prod' | 'historic';
   standalone: true,
   imports: [AppSidebarComponent, HeaderComponent],
   template: `
-    <div class="flex h-dvh overflow-hidden bg-background text-text">
+    <div class="flex h-dvh overflow-hidden app-bg-background app-text">
       <aside class="hidden shrink-0 lg:block">
         <app-sidebar [productName]="companyName" [items]="navigationItems" />
       </aside>
@@ -19,7 +19,7 @@ type ShellDataSource = 'prod' | 'historic';
         <div class="fixed inset-0 z-50 lg:hidden">
           <button
             type="button"
-            class="absolute inset-0 bg-overlay"
+            class="absolute inset-0 app-overlay"
             aria-label="Cerrar navegacion"
             (click)="closeSidebar()"
           ></button>
@@ -43,7 +43,7 @@ type ShellDataSource = 'prod' | 'historic';
           (logout)="logout.emit()"
         />
 
-        <main class="min-h-0 flex-1 overflow-y-auto bg-background">
+        <main class="min-h-0 flex-1 overflow-y-auto app-bg-background">
           <ng-content></ng-content>
         </main>
       </div>

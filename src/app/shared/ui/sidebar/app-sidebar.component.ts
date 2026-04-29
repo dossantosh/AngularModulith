@@ -18,13 +18,13 @@ export interface AppSidebarItem {
   template: `
     <nav
       aria-label="Modulos principales"
-      class="flex h-full w-60 flex-col border-r border-border bg-sidebar text-sidebar-foreground"
+      class="flex h-full w-60 flex-col border-r app-border app-sidebar"
     >
-      <div class="flex h-16 items-center gap-3 border-b border-border px-4">
-        <img src="/favicon.ico" alt="" class="h-8 w-8 rounded-md" />
+      <div class="flex h-16 items-center gap-3 border-b app-border px-4">
+        <img src="/favicon.ico" alt="" class="h-8 w-8 app-rounded-md" />
         <div class="min-w-0">
           <p class="truncate text-sm font-semibold">{{ productName }}</p>
-          <p class="text-xs text-sidebar-muted">ERP workspace</p>
+          <p class="text-xs app-sidebar-muted">ERP workspace</p>
         </div>
       </div>
 
@@ -32,7 +32,7 @@ export interface AppSidebarItem {
         @for (item of items; track item.label) {
           @if (item.disabled) {
             <span
-              class="flex cursor-not-allowed items-center gap-3 rounded-md px-3 py-2 text-sm font-medium text-sidebar-muted opacity-60"
+              class="flex cursor-not-allowed items-center gap-3 app-rounded-md px-3 py-2 text-sm font-medium app-sidebar-muted opacity-60"
               [attr.title]="item.hint || null"
             >
               <mat-icon aria-hidden="true">{{ item.icon }}</mat-icon>
@@ -41,9 +41,9 @@ export interface AppSidebarItem {
           } @else {
             <a
               [routerLink]="item.routerLink"
-              routerLinkActive="bg-sidebar-active text-on-primary"
+              routerLinkActive="app-sidebar-active"
               [routerLinkActiveOptions]="{ exact: item.exact ?? false }"
-              class="flex items-center gap-3 rounded-md px-3 py-2 text-sm font-medium text-sidebar-muted transition hover:bg-sidebar-hover hover:text-sidebar-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-focus"
+              class="flex items-center gap-3 app-rounded-md px-3 py-2 text-sm font-medium app-sidebar-link transition"
               (click)="navigated.emit()"
             >
               <mat-icon aria-hidden="true">{{ item.icon }}</mat-icon>

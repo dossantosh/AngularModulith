@@ -14,16 +14,16 @@ import { MatCardModule } from '@angular/material/card';
       [class.overflow-hidden]="overflowHidden"
     >
       @if (title || subtitle) {
-        <header class="flex flex-col gap-2 border-b border-border px-4 py-3 sm:flex-row sm:items-center sm:justify-between">
+        <header class="flex flex-col gap-2 border-b app-border px-4 py-3 sm:flex-row sm:items-center sm:justify-between">
           <div>
             @if (title) {
-              <h2 class="text-sm font-semibold text-text">
+              <h2 class="text-sm font-semibold app-text">
                 {{ title }}
               </h2>
             }
 
             @if (subtitle) {
-              <p class="mt-1 text-xs text-muted">
+              <p class="mt-1 text-xs app-text-muted">
                 {{ subtitle }}
               </p>
             }

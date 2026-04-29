@@ -12,14 +12,14 @@ export interface AppBreadcrumbItem {
   imports: [RouterLink],
   template: `
     @if (items.length) {
-      <nav aria-label="Breadcrumb" class="mb-2 text-xs font-medium text-muted">
+      <nav aria-label="Breadcrumb" class="mb-2 text-xs font-medium app-text-muted">
         <ol class="flex flex-wrap items-center gap-1">
           @for (item of items; track item.label; let last = $last) {
             <li class="flex items-center gap-1">
               @if (item.routerLink && !last) {
                 <a
                   [routerLink]="item.routerLink"
-                  class="rounded-sm text-muted hover:text-text focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-focus"
+                  class="app-rounded-sm app-link-muted"
                 >
                   {{ item.label }}
                 </a>

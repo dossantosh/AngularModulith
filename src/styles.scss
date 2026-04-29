@@ -10,53 +10,114 @@ html {
     density: 0,
   ));
 
-  --color-primary: var(--mat-sys-primary);
-  --color-on-primary: var(--mat-sys-on-primary);
-  --color-background: var(--mat-sys-surface);
-  --color-surface: var(--mat-sys-surface-container-lowest);
-  --color-surface-muted: var(--mat-sys-surface-container-low);
-  --color-surface-container: var(--mat-sys-surface-container);
-  --color-text: var(--mat-sys-on-surface);
-  --color-text-muted: var(--mat-sys-on-surface-variant);
-  --color-border: var(--mat-sys-outline-variant);
-  --color-border-strong: var(--mat-sys-outline);
-  --color-focus: var(--mat-sys-primary);
-
-  --color-danger: var(--mat-sys-error);
-  --color-danger-container: var(--mat-sys-error-container);
-  --color-on-danger-container: var(--mat-sys-on-error-container);
-  --color-success: light-dark(#15803d, #86efac);
-  --color-success-container: light-dark(#dcfce7, #052e16);
-  --color-warning: light-dark(#b45309, #fcd34d);
-  --color-warning-container: light-dark(#fef3c7, #422006);
-  --color-info: var(--mat-sys-secondary);
-  --color-info-container: var(--mat-sys-secondary-container);
-  --color-on-info-container: var(--mat-sys-on-secondary-container);
-
-  --color-sidebar: var(--mat-sys-inverse-surface);
-  --color-sidebar-foreground: var(--mat-sys-inverse-on-surface);
-  --color-sidebar-muted: color-mix(in srgb, var(--mat-sys-inverse-on-surface) 70%, transparent);
-  --color-sidebar-hover: color-mix(in srgb, var(--mat-sys-inverse-on-surface) 10%, transparent);
-  --color-sidebar-active: var(--mat-sys-primary);
-  --color-overlay: color-mix(in srgb, #000 50%, transparent);
-
-  --radius-sm: var(--mat-sys-corner-small, 0.25rem);
-  --radius-md: var(--mat-sys-corner-medium, 0.5rem);
-  --radius-lg: var(--mat-sys-corner-large, 0.75rem);
-  --radius-full: var(--mat-sys-corner-full, 9999px);
   --spacing-base: 0.25rem;
-  --shadow-sm: var(--mat-sys-level1, 0 1px 3px 0 rgb(0 0 0 / 0.12));
-  --shadow-md: var(--mat-sys-level2, 0 4px 6px -1px rgb(0 0 0 / 0.12));
+  --radius-sm: 0.25rem;
+  --radius-md: 0.5rem;
+  --radius-lg: 0.75rem;
+  --radius-full: 9999px;
+  --shadow-sm: 0 1px 3px 0 rgb(15 23 42 / 0.12), 0 1px 2px -1px rgb(15 23 42 / 0.12);
+  --shadow-md: 0 8px 20px -12px rgb(15 23 42 / 0.35);
+
+  --mat-sys-primary: var(--color-primary);
+  --mat-sys-on-primary: var(--color-on-primary);
+  --mat-sys-primary-container: var(--color-primary-container);
+  --mat-sys-on-primary-container: var(--color-on-primary-container);
+  --mat-sys-secondary: var(--color-secondary);
+  --mat-sys-on-secondary: var(--color-on-secondary);
+  --mat-sys-secondary-container: var(--color-info-container);
+  --mat-sys-on-secondary-container: var(--color-on-info-container);
+  --mat-sys-error: var(--color-danger);
+  --mat-sys-on-error: var(--color-on-danger);
+  --mat-sys-error-container: var(--color-danger-container);
+  --mat-sys-on-error-container: var(--color-on-danger-container);
+  --mat-sys-surface: var(--color-background);
+  --mat-sys-surface-container-lowest: var(--color-surface);
+  --mat-sys-surface-container-low: var(--color-surface-muted);
+  --mat-sys-surface-container: var(--color-surface-container);
+  --mat-sys-on-surface: var(--color-text);
+  --mat-sys-on-surface-variant: var(--color-text-muted);
+  --mat-sys-outline: var(--color-border-strong);
+  --mat-sys-outline-variant: var(--color-border);
+  --mat-sys-inverse-surface: var(--color-sidebar);
+  --mat-sys-inverse-on-surface: var(--color-sidebar-foreground);
+  --mat-sys-corner-small: var(--radius-sm);
+  --mat-sys-corner-medium: var(--radius-md);
+  --mat-sys-corner-large: var(--radius-lg);
+  --mat-sys-corner-full: var(--radius-full);
+  --mat-sys-level1: var(--shadow-sm);
+  --mat-sys-level2: var(--shadow-md);
 }
 
-@include mat.system-classes();
-
-html.light {
+html:not(.dark) {
   color-scheme: light;
+  --color-primary: #2563eb;
+  --color-on-primary: #ffffff;
+  --color-primary-container: #dbeafe;
+  --color-on-primary-container: #0b1736;
+  --color-secondary: #475569;
+  --color-on-secondary: #ffffff;
+  --color-background: #f5f7fb;
+  --color-surface: #ffffff;
+  --color-surface-muted: #f8fafc;
+  --color-surface-container: #eef2f7;
+  --color-text: #0f172a;
+  --color-text-muted: #475569;
+  --color-border: #dbe3ef;
+  --color-border-strong: #b8c4d6;
+  --color-focus: #2563eb;
+  --color-danger: #b91c1c;
+  --color-on-danger: #ffffff;
+  --color-danger-container: #fee2e2;
+  --color-on-danger-container: #7f1d1d;
+  --color-success: #15803d;
+  --color-success-container: #dcfce7;
+  --color-warning: #b45309;
+  --color-warning-container: #fef3c7;
+  --color-info: #0369a1;
+  --color-info-container: #e0f2fe;
+  --color-on-info-container: #082f49;
+  --color-sidebar: #111827;
+  --color-sidebar-foreground: #ffffff;
+  --color-sidebar-muted: #cbd5e1;
+  --color-sidebar-hover: rgb(255 255 255 / 0.1);
+  --color-sidebar-active: #2563eb;
+  --color-overlay: rgb(0 0 0 / 0.5);
 }
 
 html.dark {
   color-scheme: dark;
+  --color-primary: #a7c7ff;
+  --color-on-primary: #0b1736;
+  --color-primary-container: #1e3a8a;
+  --color-on-primary-container: #dbeafe;
+  --color-secondary: #cbd5e1;
+  --color-on-secondary: #111827;
+  --color-background: #070b16;
+  --color-surface: #111827;
+  --color-surface-muted: #151f31;
+  --color-surface-container: #172033;
+  --color-text: #f8fafc;
+  --color-text-muted: #cbd5e1;
+  --color-border: #263348;
+  --color-border-strong: #3b4b63;
+  --color-focus: #bfdbfe;
+  --color-danger: #fca5a5;
+  --color-on-danger: #451a1a;
+  --color-danger-container: #451a1a;
+  --color-on-danger-container: #fecaca;
+  --color-success: #86efac;
+  --color-success-container: #052e16;
+  --color-warning: #fcd34d;
+  --color-warning-container: #422006;
+  --color-info: #7dd3fc;
+  --color-info-container: #082f49;
+  --color-on-info-container: #bae6fd;
+  --color-sidebar: #0b1020;
+  --color-sidebar-foreground: #ffffff;
+  --color-sidebar-muted: #94a3b8;
+  --color-sidebar-hover: rgb(255 255 255 / 0.1);
+  --color-sidebar-active: #93c5fd;
+  --color-overlay: rgb(0 0 0 / 0.55);
 }
 
 body {
@@ -74,4 +135,122 @@ body {
 :focus-visible {
   outline: 2px solid var(--color-focus);
   outline-offset: 2px;
+}
+
+.app-bg-background {
+  background-color: var(--color-background);
+}
+
+.app-surface {
+  background-color: var(--color-surface);
+}
+
+.app-surface-muted {
+  background-color: var(--color-surface-muted);
+}
+
+.app-surface-container {
+  background-color: var(--color-surface-container);
+}
+
+.app-text {
+  color: var(--color-text);
+}
+
+.app-text-muted {
+  color: var(--color-text-muted);
+}
+
+.app-text-primary {
+  color: var(--color-primary);
+}
+
+.app-link-muted {
+  color: var(--color-text-muted);
+}
+
+.app-link-muted:hover {
+  color: var(--color-text);
+}
+
+.app-border {
+  border-color: var(--color-border);
+}
+
+.app-border-strong {
+  border-color: var(--color-border-strong);
+}
+
+.app-rounded-sm {
+  border-radius: var(--radius-sm);
+}
+
+.app-rounded-md {
+  border-radius: var(--radius-md);
+}
+
+.app-rounded-lg {
+  border-radius: var(--radius-lg);
+}
+
+.app-rounded-full {
+  border-radius: var(--radius-full);
+}
+
+.app-card-content-padded.mat-mdc-card-content {
+  padding: calc(var(--spacing-base) * 6);
+}
+
+.app-icon-sm.mat-icon {
+  block-size: calc(var(--spacing-base) * 4);
+  font-size: 1rem;
+  inline-size: calc(var(--spacing-base) * 4);
+}
+
+.app-overlay {
+  background-color: var(--color-overlay);
+}
+
+.app-danger-border {
+  border-color: var(--color-danger);
+}
+
+.app-danger-surface {
+  background-color: var(--color-danger-container);
+}
+
+.app-danger-text {
+  color: var(--color-on-danger-container);
+}
+
+.app-sidebar {
+  background-color: var(--color-sidebar);
+  color: var(--color-sidebar-foreground);
+}
+
+.app-sidebar-muted {
+  color: var(--color-sidebar-muted);
+}
+
+.app-sidebar-link {
+  color: var(--color-sidebar-muted);
+}
+
+.app-sidebar-link:hover {
+  background-color: var(--color-sidebar-hover);
+  color: var(--color-sidebar-foreground);
+}
+
+.app-sidebar-active {
+  background-color: var(--color-sidebar-active);
+  color: var(--color-on-primary);
+}
+
+.app-sidebar-active:hover {
+  background-color: var(--color-sidebar-active);
+  color: var(--color-on-primary);
+}
+
+.app-shadow-sm {
+  box-shadow: var(--shadow-sm);
 }

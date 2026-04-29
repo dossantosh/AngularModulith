@@ -1,61 +1,63 @@
-<main class="flex min-h-screen items-center justify-center bg-background px-4 py-8">
-  <mat-card appearance="outlined" class="w-full max-w-sm p-6">
-    <div class="mb-5 flex flex-col items-center gap-2">
-      <img src="/favicon.ico" alt="" class="h-10 w-10 rounded-lg" />
-      <p class="text-sm font-semibold text-text">Seb's Perfumes</p>
-    </div>
+<main class="flex min-h-screen items-center justify-center app-bg-background px-4 py-8">
+  <mat-card appearance="outlined" class="w-full max-w-sm">
+    <mat-card-content class="app-card-content-padded">
+      <div class="mb-5 flex flex-col items-center gap-2">
+        <img src="/favicon.ico" alt="" class="h-10 w-10 app-rounded-lg" />
+        <p class="text-sm font-semibold app-text">Seb's Perfumes</p>
+      </div>
 
-    <h1 class="text-center text-2xl font-semibold text-text">
-      Iniciar sesion
-    </h1>
-    <p class="mt-1 text-center text-sm text-muted">
-      Accede con tu usuario y contrasena
-    </p>
+      <h1 class="text-center text-2xl font-semibold app-text">
+        Iniciar sesion
+      </h1>
+      <p class="mt-1 text-center text-sm app-text-muted">
+        Accede con tu usuario y contrasena
+      </p>
 
-    <form [formGroup]="loginForm" (ngSubmit)="onSubmit()" class="mt-6 space-y-4">
-      @if (loginError) {
-        <p
-          role="alert"
-          aria-live="assertive"
-          class="rounded-md border border-danger bg-danger-container px-3 py-2 text-sm text-on-danger-container"
+      <form [formGroup]="loginForm" (ngSubmit)="onSubmit()" class="mt-6 space-y-4">
+        @if (loginError) {
+          <p
+            role="alert"
+            aria-live="assertive"
+            class="app-rounded-md border app-danger-border app-danger-surface px-3 py-2 text-sm app-danger-text"
+          >
+            {{ loginError }}
+          </p>
+        }
+
+        <mat-form-field class="w-full" appearance="outline">
+          <mat-label>Origen de datos</mat-label>
+          <mat-select formControlName="dataSource" [disabled]="isSubmitting()">
+            <mat-option value="prod">Produccion</mat-option>
+            <mat-option value="historic">Historico</mat-option>
+          </mat-select>
+        </mat-form-field>
+
+        <app-text-field
+          label="Usuario"
+          autocomplete="username"
+          [control]="loginForm.controls.username"
+          [showErrors]="submitted"
+          [errorMessages]="{ required: 'Usuario es obligatorio.' }"
+        />
+
+        <app-text-field
+          label="Contrasena"
+          type="password"
+          autocomplete="current-password"
+          [control]="loginForm.controls.password"
+          [showErrors]="submitted"
+          [errorMessages]="{ required: 'Contrasena es obligatoria.' }"
+        />
+
+        <app-button
+          variant="primary"
+          type="submit"
+          [fullWidth]="true"
+          [loading]="isSubmitting()"
         >
-          {{ loginError }}
-        </p>
-      }
-
-      <mat-form-field class="w-full" appearance="outline">
-        <mat-label>Origen de datos</mat-label>
-        <mat-select formControlName="dataSource" [disabled]="isSubmitting()">
-          <mat-option value="prod">Produccion</mat-option>
-          <mat-option value="historic">Historico</mat-option>
-        </mat-select>
-      </mat-form-field>
-
-      <app-text-field
-        label="Usuario"
-        autocomplete="username"
-        [control]="loginForm.controls.username"
-        [showErrors]="submitted"
-        [errorMessages]="{ required: 'Usuario es obligatorio.' }"
-      />
-
-      <app-text-field
-        label="Contrasena"
-        type="password"
-        autocomplete="current-password"
-        [control]="loginForm.controls.password"
-        [showErrors]="submitted"
-        [errorMessages]="{ required: 'Contrasena es obligatoria.' }"
-      />
-
-      <app-button
-        variant="primary"
-        type="submit"
-        [fullWidth]="true"
-        [loading]="isSubmitting()"
-      >
-        Entrar
-      </app-button>
-    </form>
+          Entrar
+        </app-button>
+      </form>
+    </mat-card-content>
   </mat-card>
 </main>

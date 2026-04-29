@@ -6,7 +6,7 @@
   [breadcrumbs]="breadcrumbs"
 >
   <app-command-bar title="Filtros" subtitle="La busqueda se actualiza automaticamente al escribir.">
-    <span command-actions class="text-xs text-muted">
+    <span command-actions class="text-xs app-text-muted">
       Debounce 400ms
     </span>
 
@@ -55,7 +55,7 @@
     >
       <span card-actions>
         @if (facade.loading()) {
-          <span role="status" aria-live="polite" class="text-sm text-muted">
+          <span role="status" aria-live="polite" class="text-sm app-text-muted">
             Cargando usuarios...
           </span>
         }
@@ -89,19 +89,19 @@
 
             <ng-container matColumnDef="id">
               <th mat-header-cell *matHeaderCellDef>ID</th>
-              <td mat-cell *matCellDef="let user" class="text-muted">{{ user.id }}</td>
+              <td mat-cell *matCellDef="let user" class="app-text-muted">{{ user.id }}</td>
             </ng-container>
 
             <ng-container matColumnDef="username">
               <th mat-header-cell *matHeaderCellDef>Username</th>
-              <td mat-cell *matCellDef="let user" class="font-medium text-text">
+              <td mat-cell *matCellDef="let user" class="font-medium app-text">
                 {{ user.username }}
               </td>
             </ng-container>
 
             <ng-container matColumnDef="email">
               <th mat-header-cell *matHeaderCellDef>Email</th>
-              <td mat-cell *matCellDef="let user" class="text-muted">{{ user.email }}</td>
+              <td mat-cell *matCellDef="let user" class="app-text-muted">{{ user.email }}</td>
             </ng-container>
 
             <ng-container matColumnDef="enabled">
@@ -134,7 +134,7 @@
 
       <nav
         aria-label="Paginacion de usuarios"
-        class="flex items-center justify-between gap-3 border-t border-border px-4 py-3"
+        class="flex items-center justify-between gap-3 border-t app-border px-4 py-3"
       >
         <app-button
           variant="secondary"

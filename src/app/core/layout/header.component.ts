@@ -20,7 +20,7 @@ type ShellDataSource = 'prod' | 'historic';
     ThemeToggleComponent,
   ],
   template: `
-    <mat-toolbar class="flex h-16 items-center justify-between gap-3 border-b border-border px-4">
+    <mat-toolbar class="flex h-16 items-center justify-between gap-3 border-b app-border px-4">
       <div class="flex min-w-0 items-center gap-3">
         <button
           mat-icon-button
@@ -33,8 +33,8 @@ type ShellDataSource = 'prod' | 'historic';
         </button>
 
         <div class="min-w-0">
-          <p class="truncate text-sm font-semibold text-text">{{ companyName }}</p>
-          <p class="hidden text-xs text-muted sm:block">Workspace operativo</p>
+          <p class="truncate text-sm font-semibold app-text">{{ companyName }}</p>
+          <p class="hidden text-xs app-text-muted sm:block">Workspace operativo</p>
         </div>
       </div>
 
@@ -50,9 +50,9 @@ type ShellDataSource = 'prod' | 'historic';
 
         <app-theme-toggle />
 
-        <span class="hidden items-center gap-2 rounded-full bg-surface-container px-3 py-1.5 text-sm text-muted sm:inline-flex">
-          <mat-icon class="!h-4 !w-4 !text-base" aria-hidden="true">account_circle</mat-icon>
-          <span class="font-medium text-text">{{ userName }}</span>
+        <span class="hidden items-center gap-2 app-rounded-full app-surface-container px-3 py-1.5 text-sm app-text-muted sm:inline-flex">
+          <mat-icon class="app-icon-sm" aria-hidden="true">account_circle</mat-icon>
+          <span class="font-medium app-text">{{ userName }}</span>
         </span>
 
         <app-button
