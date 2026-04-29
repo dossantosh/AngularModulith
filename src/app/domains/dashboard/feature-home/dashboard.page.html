@@ -8,8 +8,8 @@
     <app-card title="Modulos activos">
       <div class="flex items-end justify-between gap-3">
         <div>
-          <p class="text-3xl font-semibold text-[var(--app-text)]">1+</p>
-          <p class="mt-1 text-sm text-[var(--app-text-muted)]">Disponibles o planificados</p>
+          <p class="text-3xl font-semibold text-text">1+</p>
+          <p class="mt-1 text-sm text-muted">Disponibles o planificados</p>
         </div>
         <app-status-badge label="Operativo" icon="check_circle" variant="success" />
       </div>
@@ -18,8 +18,8 @@
     <app-card title="Origen de datos">
       <div class="flex items-end justify-between gap-3">
         <div>
-          <p class="text-3xl font-semibold text-[var(--app-text)]">{{ dataSourceLabel() }}</p>
-          <p class="mt-1 text-sm text-[var(--app-text-muted)]">Sincronizado con la sesion</p>
+          <p class="text-3xl font-semibold text-text">{{ dataSourceLabel() }}</p>
+          <p class="mt-1 text-sm text-muted">Sincronizado con la sesion</p>
         </div>
         <app-status-badge
           label="Sesion"
@@ -32,8 +32,8 @@
     <app-card title="Permisos">
       <div class="flex items-end justify-between gap-3">
         <div>
-          <p class="text-3xl font-semibold text-[var(--app-text)]">UX</p>
-          <p class="mt-1 text-sm text-[var(--app-text-muted)]">Filtrado por capabilities</p>
+          <p class="text-3xl font-semibold text-text">UX</p>
+          <p class="mt-1 text-sm text-muted">Filtrado por capabilities</p>
         </div>
         <app-status-badge label="Activo" icon="verified_user" variant="success" />
       </div>
@@ -45,12 +45,12 @@
       <div class="grid gap-3 md:grid-cols-2">
         <section
           *appHasScope="scopes.users.read"
-          class="rounded-lg border border-[var(--app-border)] bg-[var(--app-surface-container)] p-4"
+          class="rounded-lg border border-border bg-surface-container p-4"
         >
           <div class="flex items-start justify-between gap-3">
             <div>
-              <h2 class="text-sm font-semibold text-[var(--app-text)]">Usuarios</h2>
-              <p class="mt-1 text-sm text-[var(--app-text-muted)]">
+              <h2 class="text-sm font-semibold text-text">Usuarios</h2>
+              <p class="mt-1 text-sm text-muted">
                 Buscar usuarios, revisar estado y preparar tareas de administracion.
               </p>
             </div>
@@ -64,11 +64,11 @@
           </div>
         </section>
 
-        <section class="rounded-lg border border-dashed border-[var(--app-border-strong)] bg-[var(--app-surface)] p-4">
+        <section class="rounded-lg border border-dashed border-border-strong bg-surface p-4">
           <div class="flex items-start justify-between gap-3">
             <div>
-              <h2 class="text-sm font-semibold text-[var(--app-text)]">Perfumes</h2>
-              <p class="mt-1 text-sm text-[var(--app-text-muted)]">
+              <h2 class="text-sm font-semibold text-text">Perfumes</h2>
+              <p class="mt-1 text-sm text-muted">
                 Modulo previsto para catalogo y operaciones futuras.
               </p>
             </div>
@@ -81,15 +81,15 @@
     <app-card title="Sesion" subtitle="Contexto actual">
       <dl class="space-y-3 text-sm">
         <div class="flex items-center justify-between gap-3">
-          <dt class="text-[var(--app-text-muted)]">Usuario</dt>
-          <dd class="font-medium text-[var(--app-text)]">{{ userName() }}</dd>
+          <dt class="text-muted">Usuario</dt>
+          <dd class="font-medium text-text">{{ userName() }}</dd>
         </div>
         <div class="flex items-center justify-between gap-3">
-          <dt class="text-[var(--app-text-muted)]">Tema</dt>
-          <dd class="text-[var(--app-text)]">Controlado desde topbar</dd>
+          <dt class="text-muted">Tema</dt>
+          <dd class="text-text">Controlado desde topbar</dd>
         </div>
         <div class="flex items-center justify-between gap-3">
-          <dt class="text-[var(--app-text-muted)]">Permisos</dt>
+          <dt class="text-muted">Permisos</dt>
           <dd>
             <app-status-badge label="Capabilities" icon="shield" variant="info" />
           </dd>
@@ -100,19 +100,19 @@
 
   <div class="mt-4 grid gap-4 lg:grid-cols-3">
     <app-card title="Autenticacion">
-      <p class="text-sm text-[var(--app-text-muted)]">
+      <p class="text-sm text-muted">
         Login, sesion, capabilities y origen de datos estan centralizados en core/auth.
       </p>
     </app-card>
 
     <app-card title="Usuarios">
-      <p class="text-sm text-[var(--app-text-muted)]">
+      <p class="text-sm text-muted">
         La pantalla usa un patron list report con filtros compactos, tabla densa y feedback inmediato.
       </p>
     </app-card>
 
     <app-card title="UI enterprise">
-      <p class="text-sm text-[var(--app-text-muted)]">
+      <p class="text-sm text-muted">
         Sidebar estable, topbar global, tokens visuales y componentes compuestos sobre Material.
       </p>
     </app-card>

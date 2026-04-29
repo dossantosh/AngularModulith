@@ -1,6 +1,7 @@
 import { Component, DestroyRef, OnInit, inject } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { FormBuilder, ReactiveFormsModule } from '@angular/forms';
+import { MatTableModule } from '@angular/material/table';
 import { debounceTime, distinctUntilChanged } from 'rxjs';
 
 import {
@@ -29,6 +30,7 @@ import { UsersFacade } from '../../application/users.facade';
     AppPageComponent,
     AppStatusBadgeComponent,
     AppTextFieldComponent,
+    MatTableModule,
     ReactiveFormsModule,
   ],
   templateUrl: './users-search.page.html',
@@ -48,6 +50,7 @@ export class UsersSearchPage implements OnInit {
     { label: 'Administracion' },
     { label: 'Usuarios' },
   ];
+  readonly displayedColumns = ['id', 'username', 'email', 'enabled', 'admin'];
 
   ngOnInit(): void {
     this.filtersForm.patchValue(this.facade.filters(), { emitEvent: false });

@@ -19,11 +19,14 @@ type AppButtonType = 'button' | 'submit' | 'reset';
   styles: `
     .app-button {
       min-inline-size: max-content;
+      white-space: nowrap;
     }
 
     .app-button--danger {
-      background-color: var(--mat-sys-error) !important;
-      color: var(--mat-sys-on-error) !important;
+      --mat-button-filled-container-color: var(--color-danger);
+      --mat-button-filled-label-text-color: var(--mat-sys-on-error);
+      --mat-button-filled-state-layer-color: var(--mat-sys-on-error);
+      --mat-button-filled-ripple-color: color-mix(in srgb, var(--mat-sys-on-error) 12%, transparent);
     }
 
     .app-button--loading {
@@ -182,7 +185,6 @@ export class AppButtonComponent {
   get buttonClasses(): string {
     return [
       'app-button',
-      'inline-flex items-center justify-center gap-2 whitespace-nowrap',
       this.fullWidth ? 'w-full' : '',
       this.loading ? 'app-button--loading' : '',
     ]

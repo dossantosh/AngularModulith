@@ -36,28 +36,28 @@ export type AppStatusBadgeVariant = 'success' | 'danger' | 'warning' | 'info' | 
     }
 
     .app-status-badge--success {
-      background: var(--app-success-surface);
-      color: var(--app-success);
+      background: var(--color-success-container);
+      color: var(--color-success);
     }
 
     .app-status-badge--danger {
-      background: var(--app-danger-surface);
-      color: var(--app-danger);
+      background: var(--color-danger-container);
+      color: var(--color-on-danger-container);
     }
 
     .app-status-badge--warning {
-      background: var(--app-warning-surface);
-      color: var(--app-warning);
+      background: var(--color-warning-container);
+      color: var(--color-warning);
     }
 
     .app-status-badge--info {
-      background: var(--app-info-surface);
-      color: var(--app-info);
+      background: var(--color-info-container);
+      color: var(--color-on-info-container);
     }
 
     .app-status-badge--neutral {
-      background: var(--app-surface-container);
-      color: var(--app-text-muted);
+      background: var(--color-surface-container);
+      color: var(--color-text-muted);
     }
 
     .app-status-badge__icon {

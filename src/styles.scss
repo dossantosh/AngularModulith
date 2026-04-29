@@ -2,82 +2,76 @@
 @use '@angular/material' as mat;
 
 html {
+  color-scheme: light dark;
+
   @include mat.theme((
     color: mat.$azure-palette,
     typography: Roboto,
     density: 0,
   ));
+
+  --color-primary: var(--mat-sys-primary);
+  --color-on-primary: var(--mat-sys-on-primary);
+  --color-background: var(--mat-sys-surface);
+  --color-surface: var(--mat-sys-surface-container-lowest);
+  --color-surface-muted: var(--mat-sys-surface-container-low);
+  --color-surface-container: var(--mat-sys-surface-container);
+  --color-text: var(--mat-sys-on-surface);
+  --color-text-muted: var(--mat-sys-on-surface-variant);
+  --color-border: var(--mat-sys-outline-variant);
+  --color-border-strong: var(--mat-sys-outline);
+  --color-focus: var(--mat-sys-primary);
+
+  --color-danger: var(--mat-sys-error);
+  --color-danger-container: var(--mat-sys-error-container);
+  --color-on-danger-container: var(--mat-sys-on-error-container);
+  --color-success: light-dark(#15803d, #86efac);
+  --color-success-container: light-dark(#dcfce7, #052e16);
+  --color-warning: light-dark(#b45309, #fcd34d);
+  --color-warning-container: light-dark(#fef3c7, #422006);
+  --color-info: var(--mat-sys-secondary);
+  --color-info-container: var(--mat-sys-secondary-container);
+  --color-on-info-container: var(--mat-sys-on-secondary-container);
+
+  --color-sidebar: var(--mat-sys-inverse-surface);
+  --color-sidebar-foreground: var(--mat-sys-inverse-on-surface);
+  --color-sidebar-muted: color-mix(in srgb, var(--mat-sys-inverse-on-surface) 70%, transparent);
+  --color-sidebar-hover: color-mix(in srgb, var(--mat-sys-inverse-on-surface) 10%, transparent);
+  --color-sidebar-active: var(--mat-sys-primary);
+  --color-overlay: color-mix(in srgb, #000 50%, transparent);
+
+  --radius-sm: var(--mat-sys-corner-small, 0.25rem);
+  --radius-md: var(--mat-sys-corner-medium, 0.5rem);
+  --radius-lg: var(--mat-sys-corner-large, 0.75rem);
+  --radius-full: var(--mat-sys-corner-full, 9999px);
+  --spacing-base: 0.25rem;
+  --shadow-sm: var(--mat-sys-level1, 0 1px 3px 0 rgb(0 0 0 / 0.12));
+  --shadow-md: var(--mat-sys-level2, 0 4px 6px -1px rgb(0 0 0 / 0.12));
 }
+
+@include mat.system-classes();
 
 html.light {
   color-scheme: light;
-  --app-bg: #f5f7fb;
-  --app-shell: #ffffff;
-  --app-sidebar: #111827;
-  --app-sidebar-muted: #9ca3af;
-  --app-sidebar-active: #2563eb;
-  --app-surface: #ffffff;
-  --app-surface-container: #f8fafc;
-  --app-surface-raised: #ffffff;
-  --app-border: #dbe3ef;
-  --app-border-strong: #b8c4d6;
-  --app-text: #0f172a;
-  --app-text-muted: #475569;
-  --app-text-subtle: #64748b;
-  --app-primary: #2563eb;
-  --app-primary-contrast: #ffffff;
-  --app-danger: #b91c1c;
-  --app-danger-surface: #fee2e2;
-  --app-success: #15803d;
-  --app-success-surface: #dcfce7;
-  --app-warning: #b45309;
-  --app-warning-surface: #fef3c7;
-  --app-info: #0369a1;
-  --app-info-surface: #e0f2fe;
-  --app-focus: #93c5fd;
 }
 
 html.dark {
   color-scheme: dark;
-  --app-bg: #070b16;
-  --app-shell: #111827;
-  --app-sidebar: #0b1020;
-  --app-sidebar-muted: #94a3b8;
-  --app-sidebar-active: #93c5fd;
-  --app-surface: #111827;
-  --app-surface-container: #151f31;
-  --app-surface-raised: #172033;
-  --app-border: #263348;
-  --app-border-strong: #3b4b63;
-  --app-text: #f8fafc;
-  --app-text-muted: #cbd5e1;
-  --app-text-subtle: #94a3b8;
-  --app-primary: #a7c7ff;
-  --app-primary-contrast: #0b1736;
-  --app-danger: #fca5a5;
-  --app-danger-surface: #451a1a;
-  --app-success: #86efac;
-  --app-success-surface: #052e16;
-  --app-warning: #fcd34d;
-  --app-warning-surface: #422006;
-  --app-info: #7dd3fc;
-  --app-info-surface: #082f49;
-  --app-focus: #bfdbfe;
 }
 
 body {
-  background-color: var(--app-bg);
-  color: var(--app-text);
-  font-family: Roboto, sans-serif;
+  background-color: var(--color-background);
+  color: var(--color-text);
+  font: var(--mat-sys-body-medium);
   margin: 0;
   min-height: 100vh;
 }
 
 * {
-  scrollbar-color: var(--app-border-strong) transparent;
+  scrollbar-color: var(--color-border-strong) transparent;
 }
 
 :focus-visible {
-  outline: 2px solid var(--app-focus);
+  outline: 2px solid var(--color-focus);
   outline-offset: 2px;
 }

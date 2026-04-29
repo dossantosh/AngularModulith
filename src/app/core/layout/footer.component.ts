@@ -4,9 +4,9 @@ import { Component, Input } from '@angular/core';
   selector: 'app-footer',
   standalone: true,
   template: `
-    <footer class="bg-white ring-1 ring-gray-200 shadow-sm dark:bg-gray-900 dark:ring-gray-800">
+    <footer class="border-t border-border bg-surface-muted shadow-sm">
       <div class="mx-auto flex max-w-7xl items-center justify-center px-4 py-4 text-center">
-        <p class="text-sm text-gray-500 dark:text-gray-400">
+        <p class="text-sm text-muted">
           &copy; {{ year }} {{ companyName }} - Todos los derechos reservados
         </p>
       </div>

@@ -1,14 +1,14 @@
-<main class="flex min-h-screen items-center justify-center bg-[var(--app-bg)] px-4 py-8">
-  <section class="w-full max-w-sm rounded-xl bg-[var(--app-surface)] p-6 shadow-sm ring-1 ring-[var(--app-border)]">
+<main class="flex min-h-screen items-center justify-center bg-background px-4 py-8">
+  <mat-card appearance="outlined" class="w-full max-w-sm p-6">
     <div class="mb-5 flex flex-col items-center gap-2">
       <img src="/favicon.ico" alt="" class="h-10 w-10 rounded-lg" />
-      <p class="text-sm font-semibold text-[var(--app-text)]">Seb's Perfumes</p>
+      <p class="text-sm font-semibold text-text">Seb's Perfumes</p>
     </div>
 
-    <h1 class="text-center text-2xl font-semibold text-[var(--app-text)]">
+    <h1 class="text-center text-2xl font-semibold text-text">
       Iniciar sesion
     </h1>
-    <p class="mt-1 text-center text-sm text-[var(--app-text-muted)]">
+    <p class="mt-1 text-center text-sm text-muted">
       Accede con tu usuario y contrasena
     </p>
 
@@ -17,7 +17,7 @@
         <p
           role="alert"
           aria-live="assertive"
-          class="rounded-lg bg-[var(--app-danger-surface)] px-3 py-2 text-sm text-[var(--app-danger)] ring-1 ring-[var(--app-danger)]"
+          class="rounded-md border border-danger bg-danger-container px-3 py-2 text-sm text-on-danger-container"
         >
           {{ loginError }}
         </p>
@@ -57,5 +57,5 @@
         Entrar
       </app-button>
     </form>
-  </section>
+  </mat-card>
 </main>

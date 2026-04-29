@@ -1,7 +1,9 @@
 import { Component, EventEmitter, Input, Output } from '@angular/core';
+import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
+import { MatToolbarModule } from '@angular/material/toolbar';
 
-import { AppButtonComponent } from '../../shared/ui';
+import { AppButtonComponent, AppStatusBadgeComponent } from '../../shared/ui';
 import { ThemeToggleComponent } from '../theme/theme-toggle.component';
 
 type ShellDataSource = 'prod' | 'historic';
@@ -9,13 +11,21 @@ type ShellDataSource = 'prod' | 'historic';
 @Component({
   selector: 'app-header',
   standalone: true,
-  imports: [AppButtonComponent, MatIconModule, ThemeToggleComponent],
+  imports: [
+    AppButtonComponent,
+    AppStatusBadgeComponent,
+    MatButtonModule,
+    MatIconModule,
+    MatToolbarModule,
+    ThemeToggleComponent,
+  ],
   template: `
-    <header class="flex h-16 items-center justify-between gap-3 border-b border-[var(--app-border)] bg-[var(--app-shell)] px-4 shadow-sm">
+    <mat-toolbar class="flex h-16 items-center justify-between gap-3 border-b border-border px-4">
       <div class="flex min-w-0 items-center gap-3">
         <button
+          mat-icon-button
           type="button"
-          class="inline-flex h-10 w-10 items-center justify-center rounded-lg text-[var(--app-text-muted)] transition hover:bg-[var(--app-surface-container)] hover:text-[var(--app-text)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--app-focus)] lg:hidden"
+          class="lg:hidden"
           aria-label="Abrir navegacion"
           (click)="menuToggle.emit()"
         >
@@ -23,26 +33,26 @@ type ShellDataSource = 'prod' | 'historic';
         </button>
 
         <div class="min-w-0">
-          <p class="truncate text-sm font-semibold text-[var(--app-text)]">{{ companyName }}</p>
-          <p class="hidden text-xs text-[var(--app-text-subtle)] sm:block">Workspace operativo</p>
+          <p class="truncate text-sm font-semibold text-text">{{ companyName }}</p>
+          <p class="hidden text-xs text-muted sm:block">Workspace operativo</p>
         </div>
       </div>
 
       <div class="flex items-center gap-2">
         @if (dataSource === 'historic') {
-          <span
-            class="rounded-full bg-[var(--app-warning-surface)] px-2.5 py-1 text-xs font-semibold text-[var(--app-warning)]"
+          <app-status-badge
+            label="Historico"
+            icon="history"
+            variant="warning"
             title="Estas navegando contra el origen historico"
-          >
-            Historico
-          </span>
+          />
         }
 
         <app-theme-toggle />
 
-        <span class="hidden items-center gap-2 rounded-full bg-[var(--app-surface-container)] px-3 py-1.5 text-sm text-[var(--app-text-muted)] sm:inline-flex">
+        <span class="hidden items-center gap-2 rounded-full bg-surface-container px-3 py-1.5 text-sm text-muted sm:inline-flex">
           <mat-icon class="!h-4 !w-4 !text-base" aria-hidden="true">account_circle</mat-icon>
-          <span class="font-medium text-[var(--app-text)]">{{ userName }}</span>
+          <span class="font-medium text-text">{{ userName }}</span>
         </span>
 
         <app-button
@@ -53,7 +63,7 @@ type ShellDataSource = 'prod' | 'historic';
           Salir
         </app-button>
       </div>
-    </header>
+    </mat-toolbar>
   `,
 })
 export class HeaderComponent {

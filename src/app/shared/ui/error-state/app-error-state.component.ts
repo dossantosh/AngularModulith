@@ -11,7 +11,7 @@ import { AppButtonComponent } from '../button/app-button.component';
     <section
       role="alert"
       aria-live="assertive"
-      class="rounded-xl border border-[var(--app-danger)] bg-[var(--app-danger-surface)] px-4 py-4 text-[var(--app-danger)]"
+      class="rounded-lg border border-danger bg-danger-container px-4 py-4 text-on-danger-container"
     >
       <div class="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
         <div class="flex gap-3">

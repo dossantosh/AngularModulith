@@ -1,27 +1,29 @@
 import { booleanAttribute, Component, Input } from '@angular/core';
+import { MatCardModule } from '@angular/material/card';
 
 @Component({
   selector: 'app-card',
   standalone: true,
+  imports: [MatCardModule],
   host: {
     class: 'block',
   },
   template: `
-    <section
-      class="rounded-xl bg-[var(--app-surface)] shadow-sm ring-1 ring-[var(--app-border)]"
+    <mat-card
+      appearance="outlined"
       [class.overflow-hidden]="overflowHidden"
     >
       @if (title || subtitle) {
-        <header class="flex flex-col gap-2 border-b border-[var(--app-border)] px-4 py-3 sm:flex-row sm:items-center sm:justify-between">
+        <header class="flex flex-col gap-2 border-b border-border px-4 py-3 sm:flex-row sm:items-center sm:justify-between">
           <div>
             @if (title) {
-              <h2 class="text-sm font-semibold text-[var(--app-text)]">
+              <h2 class="text-sm font-semibold text-text">
                 {{ title }}
               </h2>
             }
 
             @if (subtitle) {
-              <p class="mt-1 text-xs text-[var(--app-text-muted)]">
+              <p class="mt-1 text-xs text-muted">
                 {{ subtitle }}
               </p>
             }
@@ -36,7 +38,7 @@ import { booleanAttribute, Component, Input } from '@angular/core';
       <div [class.p-4]="padded" [class.p-6]="padded && spacious">
         <ng-content />
       </div>
-    </section>
+    </mat-card>
   `,
 })
 export class AppCardComponent {

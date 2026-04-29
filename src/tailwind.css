@@ -1,3 +1,41 @@
 @import "tailwindcss";
 
 @custom-variant dark (&:where(.dark, .dark *));
+
+@theme inline {
+  --color-primary: var(--color-primary);
+  --color-on-primary: var(--color-on-primary);
+  --color-background: var(--color-background);
+  --color-surface: var(--color-surface);
+  --color-surface-muted: var(--color-surface-muted);
+  --color-surface-container: var(--color-surface-container);
+  --color-text: var(--color-text);
+  --color-muted: var(--color-text-muted);
+  --color-border: var(--color-border);
+  --color-border-strong: var(--color-border-strong);
+  --color-focus: var(--color-focus);
+  --color-danger: var(--color-danger);
+  --color-danger-container: var(--color-danger-container);
+  --color-on-danger-container: var(--color-on-danger-container);
+  --color-success: var(--color-success);
+  --color-success-container: var(--color-success-container);
+  --color-warning: var(--color-warning);
+  --color-warning-container: var(--color-warning-container);
+  --color-info: var(--color-info);
+  --color-info-container: var(--color-info-container);
+  --color-on-info-container: var(--color-on-info-container);
+  --color-sidebar: var(--color-sidebar);
+  --color-sidebar-foreground: var(--color-sidebar-foreground);
+  --color-sidebar-muted: var(--color-sidebar-muted);
+  --color-sidebar-hover: var(--color-sidebar-hover);
+  --color-sidebar-active: var(--color-sidebar-active);
+  --color-overlay: var(--color-overlay);
+  --spacing: var(--spacing-base);
+  --radius-sm: var(--radius-sm);
+  --radius-md: var(--radius-md);
+  --radius-lg: var(--radius-lg);
+  --radius-xl: var(--radius-lg);
+  --radius-full: var(--radius-full);
+  --shadow-sm: var(--shadow-sm);
+  --shadow-md: var(--shadow-md);
+}
