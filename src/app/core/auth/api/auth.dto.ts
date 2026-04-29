@@ -1,5 +1,5 @@
-import { AuthCapabilities } from '../domain/auth-capabilities';
-import { BackendDataSource } from '../domain/backend-data-source';
+import { AuthCapabilities } from '../permissions/permissions';
+import { BackendDataSource } from '../session/session.model';
 
 export interface LoginRequestDto {
   username: string;
@@ -12,10 +12,8 @@ export interface LoginResponseDto {
 }
 
 export interface MeResponseDto {
-  userId?: number | null;
   username: string;
   dataSource: BackendDataSource;
-  roles?: string[];
   scopes?: string[];
   capabilities: AuthCapabilities;
 }

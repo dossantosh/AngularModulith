@@ -2,7 +2,7 @@ import { Component } from '@angular/core';
 import { TestBed } from '@angular/core/testing';
 import { vi } from 'vitest';
 
-import { AuthFacade } from '../application/auth.facade';
+import { AuthFacade } from '../session/auth.facade';
 import { HasScopeDirective } from './has-scope.directive';
 
 @Component({

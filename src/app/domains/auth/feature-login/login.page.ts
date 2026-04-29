@@ -2,8 +2,8 @@ import { Component, inject } from '@angular/core';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
 
-import { AuthFacade } from '../application/auth.facade';
-import { BackendDataSource } from '../domain/backend-data-source';
+import { AuthFacade } from '../../../core/auth/session/auth.facade';
+import { BackendDataSource } from '../../../core/auth/session/session.model';
 
 @Component({
   selector: 'app-login-page',

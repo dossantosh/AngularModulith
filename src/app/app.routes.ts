@@ -1,12 +1,12 @@
 import { Routes } from '@angular/router';
 
-import { AUTH_SCOPES } from './domains/auth/domain/auth-scopes';
+import { authGuard } from './core/auth/guards/auth.guard';
+import { scopeGuard } from './core/auth/guards/scope.guard';
+import { AUTH_SCOPES } from './core/auth/permissions/permissions';
+import { ShellContainer } from './core/layout/shell.container';
 import { ForbiddenPage } from './domains/auth/feature-forbidden/forbidden.page';
 import { LoginPage } from './domains/auth/feature-login/login.page';
-import { authGuard } from './domains/auth/routing/auth.guard';
-import { scopeGuard } from './domains/auth/routing/scope.guard';
 import { DashboardPage } from './domains/dashboard/feature-home/dashboard.page';
-import { ShellContainer } from './domains/shell/feature-shell/shell.container';
 
 export const routes: Routes = [
   {

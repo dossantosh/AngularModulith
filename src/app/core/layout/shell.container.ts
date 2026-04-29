@@ -1,9 +1,9 @@
 import { Component, computed, inject } from '@angular/core';
 import { Router, RouterOutlet } from '@angular/router';
 
-import { AuthFacade } from '../../auth/application/auth.facade';
-import { ThemeFacade } from '../application/theme.facade';
-import { MainLayoutComponent } from '../ui/main-layout.component';
+import { AuthFacade } from '../auth/session/auth.facade';
+import { ThemeService } from '../theme/theme.service';
+import { MainLayoutComponent } from './main-layout.component';
 
 @Component({
   selector: 'app-shell-container',
@@ -26,7 +26,7 @@ import { MainLayoutComponent } from '../ui/main-layout.component';
 export class ShellContainer {
   private readonly auth = inject(AuthFacade);
   private readonly router = inject(Router);
-  private readonly theme = inject(ThemeFacade);
+  private readonly theme = inject(ThemeService);
 
   readonly companyName = "Seb's Perfumes";
   readonly username = this.auth.username;

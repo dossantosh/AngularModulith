@@ -2,8 +2,8 @@ import { HttpClient, provideHttpClient } from '@angular/common/http';
 import { HttpTestingController, provideHttpClientTesting } from '@angular/common/http/testing';
 import { TestBed } from '@angular/core/testing';
 
-import { AuthenticatedUser } from '../domain/authenticated-user';
 import { AuthFacade } from './auth.facade';
+import { AuthenticatedUser } from './session.model';
 
 describe('AuthFacade', () => {
   let facade: AuthFacade;
@@ -36,10 +36,8 @@ describe('AuthFacade', () => {
 
     request.flush({ username: 'john' });
     http.expectOne((req) => req.url === '/api/auth/me').flush({
-      userId: 1,
       username: 'john',
       dataSource: 'historic',
-      roles: ['USER'],
       scopes: ['users:read'],
       capabilities: {
         users: {
@@ -79,7 +77,6 @@ describe('AuthFacade', () => {
     firstRequest.flush({
       username: 'john',
       dataSource: 'historic',
-      roles: [],
       scopes: [],
       capabilities: {
         users: {
@@ -116,7 +113,6 @@ describe('AuthFacade', () => {
     secondMeRequest.flush({
       username: 'john',
       dataSource: 'prod',
-      roles: [],
       scopes: [],
       capabilities: {
         users: {
@@ -143,7 +139,6 @@ describe('AuthFacade', () => {
     http.expectOne((req) => req.url === '/api/auth/me').flush({
       username: 'john',
       dataSource: 'historic',
-      roles: ['USER'],
       scopes: ['users:read'],
       capabilities: {
         users: {
@@ -181,7 +176,6 @@ describe('AuthFacade', () => {
     http.expectOne((req) => req.url === '/api/auth/me').flush({
       username: 'john',
       dataSource: 'prod',
-      roles: ['ADMIN'],
       scopes: ['users:update'],
       capabilities: {
         users: {

@@ -1,6 +1,6 @@
 import { Directive, Input, TemplateRef, ViewContainerRef, effect, inject, signal } from '@angular/core';
 
-import { AuthFacade } from '../application/auth.facade';
+import { AuthFacade } from '../session/auth.facade';
 
 @Directive({
   selector: '[appHasScope]',

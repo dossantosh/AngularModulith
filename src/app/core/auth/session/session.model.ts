@@ -1,4 +1,5 @@
+export type BackendDataSource = 'prod' | 'historic';
+
 export interface AuthenticatedUser {
-  userId?: number | null;
   username: string;
 }

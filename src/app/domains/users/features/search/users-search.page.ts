@@ -8,8 +8,8 @@ import {
   CardComponent,
   InputComponent,
   PageComponent,
-} from '../../../shared/ui';
-import { UsersFacade } from '../application/users.facade';
+} from '../../../../shared/ui';
+import { UsersFacade } from '../../application/users.facade';
 
 @Component({
   standalone: true,

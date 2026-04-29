@@ -1,9 +1,9 @@
 import { Component, computed, inject } from '@angular/core';
 import { RouterLink } from '@angular/router';
 
-import { AuthFacade } from '../../auth/application/auth.facade';
-import { HasScopeDirective } from '../../auth/directives/has-scope.directive';
-import { AUTH_SCOPES } from '../../auth/domain/auth-scopes';
+import { HasScopeDirective } from '../../../core/auth/permissions/has-scope.directive';
+import { AUTH_SCOPES } from '../../../core/auth/permissions/permissions';
+import { AuthFacade } from '../../../core/auth/session/auth.facade';
 import { CardComponent, PageComponent } from '../../../shared/ui';
 
 @Component({

@@ -14,8 +14,6 @@ type Variant = 'primary' | 'warning';
       [disabled]="disabled"
       [class]="classes"
       (click)="emitClick($event)"
-      (keydown.enter)="emitClick($event)"
-      (keydown.space)="emitClick($event)"
     >
       <ng-content></ng-content>
     </button>

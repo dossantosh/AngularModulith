@@ -1,11 +1,10 @@
 import { Injectable, inject } from '@angular/core';
 import { Observable, map, shareReplay, switchMap, tap } from 'rxjs';
 
-import { AuthApi } from '../data-access/auth.api';
-import { CapabilityAction, can, hasAllScopes, hasAnyScope, hasScope } from '../domain/access.policy';
-import { AuthenticatedUser } from '../domain/authenticated-user';
-import { BackendDataSource } from '../domain/backend-data-source';
-import { AuthSessionStore } from '../state/auth-session.store';
+import { AuthApi } from '../api/auth.api';
+import { CapabilityAction, can, hasAllScopes, hasAnyScope, hasScope } from '../permissions/permissions';
+import { AuthSessionStore } from './auth-session.store';
+import { AuthenticatedUser, BackendDataSource } from './session.model';
 
 export interface LoginCommand {
   username: string;
@@ -20,10 +19,8 @@ export class AuthFacade {
 
   private sessionOnce$?: Observable<AuthenticatedUser>;
 
-  readonly userId = this.sessionStore.userId;
   readonly username = this.sessionStore.username;
   readonly dataSource = this.sessionStore.dataSource;
-  readonly roles = this.sessionStore.roles;
   readonly scopes = this.sessionStore.scopes;
   readonly capabilities = this.sessionStore.capabilities;
 
@@ -47,12 +44,10 @@ export class AuthFacade {
     this.sessionOnce$ ??= this.api.me().pipe(
       tap((response) => {
         this.sessionStore.setDataSource(response.dataSource ?? 'prod');
-        this.sessionStore.setRoles(response.roles ?? []);
         this.sessionStore.setScopes(response.scopes ?? []);
         this.sessionStore.setCapabilities(response.capabilities);
       }),
       map((response) => ({
-        userId: response.userId,
         username: response.username,
       })),
       tap((user) => this.sessionStore.setAuthenticatedUser(user)),

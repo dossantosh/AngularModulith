@@ -42,7 +42,19 @@ export default tseslint.config(
     },
   },
   {
-    files: ['src/app/domains/**/feature-*/**/*.ts'],
+    files: ['src/app/core/**/*.ts'],
+    ignores: ['**/*.spec.ts'],
+    rules: {
+      'no-restricted-imports': restrictedImports([
+        {
+          group: ['**/domains/**'],
+          message: 'core/ must stay app-level and must not depend on feature/domain internals.',
+        },
+      ]),
+    },
+  },
+  {
+    files: ['src/app/domains/**/feature-*/**/*.ts', 'src/app/domains/**/features/**/*.ts'],
     ignores: ['**/*.spec.ts'],
     rules: {
       'no-restricted-imports': restrictedImports([
@@ -63,7 +75,17 @@ export default tseslint.config(
     rules: {
       'no-restricted-imports': restrictedImports([
         {
-          group: ['../feature-*', '../feature-*/*', '../ui', '../ui/*', '../routing', '../routing/*'],
+          group: [
+            '../feature-*',
+            '../feature-*/*',
+            '../features',
+            '../features/*',
+            '../features/**',
+            '../ui',
+            '../ui/*',
+            '../routing',
+            '../routing/*',
+          ],
           message: 'Application services should not depend on feature, UI or routing internals.',
         },
       ]),
@@ -75,7 +97,23 @@ export default tseslint.config(
     rules: {
       'no-restricted-imports': restrictedImports([
         {
-          group: ['../application', '../application/*', '../data-access', '../data-access/*', '../feature-*', '../feature-*/*', '../routing', '../routing/*', '../state', '../state/*', '../ui', '../ui/*'],
+          group: [
+            '../application',
+            '../application/*',
+            '../data-access',
+            '../data-access/*',
+            '../feature-*',
+            '../feature-*/*',
+            '../features',
+            '../features/*',
+            '../features/**',
+            '../routing',
+            '../routing/*',
+            '../state',
+            '../state/*',
+            '../ui',
+            '../ui/*',
+          ],
           message: 'Domain models must stay free of Angular, UI, state, routing and data-access dependencies.',
         },
         {
@@ -91,7 +129,17 @@ export default tseslint.config(
     rules: {
       'no-restricted-imports': restrictedImports([
         {
-          group: ['../feature-*', '../feature-*/*', '../routing', '../routing/*', '../ui', '../ui/*'],
+          group: [
+            '../feature-*',
+            '../feature-*/*',
+            '../features',
+            '../features/*',
+            '../features/**',
+            '../routing',
+            '../routing/*',
+            '../ui',
+            '../ui/*',
+          ],
           message: 'Data-access should not depend on feature, routing or UI layers.',
         },
       ]),
@@ -103,7 +151,23 @@ export default tseslint.config(
     rules: {
       'no-restricted-imports': restrictedImports([
         {
-          group: ['../application', '../application/*', '../data-access', '../data-access/*', '../domain', '../domain/*', '../feature-*', '../feature-*/*', '../routing', '../routing/*', '../state', '../state/*'],
+          group: [
+            '../application',
+            '../application/*',
+            '../data-access',
+            '../data-access/*',
+            '../domain',
+            '../domain/*',
+            '../feature-*',
+            '../feature-*/*',
+            '../features',
+            '../features/*',
+            '../features/**',
+            '../routing',
+            '../routing/*',
+            '../state',
+            '../state/*',
+          ],
           message: 'UI components should stay presentational and avoid domain internals.',
         },
       ]),

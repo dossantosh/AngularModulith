@@ -3,7 +3,7 @@ import { Injectable, signal } from '@angular/core';
 type ThemePreference = 'light' | 'dark';
 
 @Injectable({ providedIn: 'root' })
-export class ThemeFacade {
+export class ThemeService {
   private readonly _isDark = signal(false);
 
   readonly isDark = this._isDark.asReadonly();

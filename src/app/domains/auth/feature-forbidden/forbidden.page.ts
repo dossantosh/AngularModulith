@@ -3,7 +3,7 @@ import { MatButtonModule } from '@angular/material/button';
 import { Router, RouterLink } from '@angular/router';
 
 import { CardComponent, PageComponent } from '../../../shared/ui';
-import { AuthFacade } from '../application/auth.facade';
+import { AuthFacade } from '../../../core/auth/session/auth.facade';
 
 @Component({
   selector: 'app-forbidden-page',

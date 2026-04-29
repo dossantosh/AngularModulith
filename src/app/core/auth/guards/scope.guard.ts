@@ -2,7 +2,7 @@ import { inject } from '@angular/core';
 import { ActivatedRouteSnapshot, CanActivateFn, Router } from '@angular/router';
 import { catchError, map, of } from 'rxjs';
 
-import { AuthFacade } from '../application/auth.facade';
+import { AuthFacade } from '../session/auth.facade';
 
 export const scopeGuard: CanActivateFn = (route: ActivatedRouteSnapshot) => {
   const auth = inject(AuthFacade);

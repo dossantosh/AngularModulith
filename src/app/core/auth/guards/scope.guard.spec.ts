@@ -3,8 +3,8 @@ import { ActivatedRouteSnapshot, Router, RouterStateSnapshot, UrlTree } from '@a
 import { firstValueFrom, from, isObservable, of, throwError } from 'rxjs';
 import { vi } from 'vitest';
 
-import { AuthFacade } from '../application/auth.facade';
-import { AUTH_SCOPES } from '../domain/auth-scopes';
+import { AUTH_SCOPES } from '../permissions/permissions';
+import { AuthFacade } from '../session/auth.facade';
 import { scopeGuard } from './scope.guard';
 
 describe('scopeGuard', () => {
