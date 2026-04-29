@@ -1,18 +1,21 @@
 import { Component, inject } from '@angular/core';
-import { MatButtonModule } from '@angular/material/button';
-import { Router, RouterLink } from '@angular/router';
+import { Router } from '@angular/router';
 
-import { CardComponent, PageComponent } from '../../../shared/ui';
 import { AuthFacade } from '../../../core/auth/session/auth.facade';
+import { AppButtonComponent, AppCardComponent, AppPageComponent } from '../../../shared/ui';
 
 @Component({
   selector: 'app-forbidden-page',
   standalone: true,
-  imports: [CardComponent, MatButtonModule, PageComponent, RouterLink],
+  imports: [AppButtonComponent, AppCardComponent, AppPageComponent],
   template: `
-    <ui-page>
+    <app-page
+      title="Acceso denegado"
+      subtitle="Tu sesion esta activa, pero faltan permisos para entrar en esta zona."
+      eyebrow="Seguridad"
+    >
       <div class="flex min-h-[60vh] items-center justify-center">
-        <ui-card class="w-full max-w-xl">
+        <app-card class="w-full max-w-xl" [spacious]="true">
           <div class="space-y-4 text-center">
             <span
               class="inline-flex rounded-full bg-amber-100 px-3 py-1 text-xs font-semibold uppercase tracking-wide text-amber-800 dark:bg-amber-900/40 dark:text-amber-200"
@@ -30,25 +33,22 @@ import { AuthFacade } from '../../../core/auth/session/auth.facade';
             </div>
 
             <div class="flex flex-col justify-center gap-3 sm:flex-row">
-              <a
-                matButton="filled"
-                routerLink="/"
-              >
+              <app-button variant="primary" routerLink="/">
                 Volver al inicio
-              </a>
+              </app-button>
 
-              <button
-                matButton="outlined"
+              <app-button
+                variant="secondary"
                 type="button"
-                (click)="changeUser()"
+                (clicked)="changeUser()"
               >
                 Cambiar de usuario
-              </button>
+              </app-button>
             </div>
           </div>
-        </ui-card>
+        </app-card>
       </div>
-    </ui-page>
+    </app-page>
   `,
 })
 export class ForbiddenPage {

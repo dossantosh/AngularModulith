@@ -1,7 +1,7 @@
 import { Component, EventEmitter, Input, Output } from '@angular/core';
-import { MatButtonModule } from '@angular/material/button';
 import { RouterLink, RouterLinkActive } from '@angular/router';
 
+import { AppButtonComponent } from '../../shared/ui';
 import { ThemeToggleComponent } from '../theme/theme-toggle.component';
 
 type ShellDataSource = 'prod' | 'historic';
@@ -9,7 +9,7 @@ type ShellDataSource = 'prod' | 'historic';
 @Component({
   selector: 'app-header',
   standalone: true,
-  imports: [MatButtonModule, RouterLink, RouterLinkActive, ThemeToggleComponent],
+  imports: [AppButtonComponent, RouterLink, RouterLinkActive, ThemeToggleComponent],
   template: `
     <header class="sticky top-0 z-40 bg-white ring-1 ring-gray-200 shadow-sm dark:bg-gray-900 dark:ring-gray-800">
       <div class="mx-auto flex h-16 max-w-7xl items-center justify-between gap-4 px-4">
@@ -20,7 +20,7 @@ type ShellDataSource = 'prod' | 'historic';
           </h1>
         </div>
 
-        <nav class="hidden items-center gap-1 md:flex">
+        <nav aria-label="Navegacion principal" class="hidden items-center gap-1 md:flex">
           <a
             routerLink="/"
             routerLinkActive="bg-gray-100 text-gray-900 dark:bg-gray-800 dark:text-gray-100"
@@ -60,16 +60,39 @@ type ShellDataSource = 'prod' | 'historic';
             </span>
           }
 
-          <button
-            matButton="filled"
+          <app-button
+            variant="danger"
             type="button"
-            (click)="logout.emit()"
-            class="whitespace-nowrap"
+            (clicked)="logout.emit()"
           >
             Salir
-          </button>
+          </app-button>
         </div>
       </div>
+
+      <nav
+        aria-label="Navegacion principal movil"
+        class="flex gap-1 overflow-x-auto border-t border-gray-200 px-4 py-2 dark:border-gray-800 md:hidden"
+      >
+        <a
+          routerLink="/"
+          routerLinkActive="bg-gray-100 text-gray-900 dark:bg-gray-800 dark:text-gray-100"
+          [routerLinkActiveOptions]="{ exact: true }"
+          class="shrink-0 rounded-lg px-3 py-1.5 text-sm font-medium text-gray-600 transition hover:bg-gray-100 hover:text-gray-900 focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-gray-300/40 dark:text-gray-300 dark:hover:bg-gray-800 dark:hover:text-gray-100 dark:focus-visible:ring-gray-700/40"
+        >
+          Dashboard
+        </a>
+
+        @if (canReadUsers) {
+          <a
+            routerLink="/users/search"
+            routerLinkActive="bg-gray-100 text-gray-900 dark:bg-gray-800 dark:text-gray-100"
+            class="shrink-0 rounded-lg px-3 py-1.5 text-sm font-medium text-gray-600 transition hover:bg-gray-100 hover:text-gray-900 focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-gray-300/40 dark:text-gray-300 dark:hover:bg-gray-800 dark:hover:text-gray-100 dark:focus-visible:ring-gray-700/40"
+          >
+            Usuarios
+          </a>
+        }
+      </nav>
     </header>
   `,
 })

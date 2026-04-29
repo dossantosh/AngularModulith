@@ -1,8 +1,8 @@
-<div class="flex min-h-screen items-center justify-center bg-gray-100 px-4 dark:bg-gray-950">
-  <div class="w-full max-w-sm rounded-2xl bg-white p-8 shadow-lg ring-1 ring-gray-200 dark:bg-gray-900 dark:ring-gray-800">
-    <h2 class="text-center text-2xl font-semibold text-gray-900 dark:text-gray-100">
+<main class="flex min-h-screen items-center justify-center bg-gray-100 px-4 py-8 dark:bg-slate-950">
+  <section class="w-full max-w-sm rounded-xl bg-white p-6 shadow-sm ring-1 ring-gray-200 dark:bg-gray-900 dark:ring-gray-800">
+    <h1 class="text-center text-2xl font-semibold text-gray-950 dark:text-gray-50">
       Iniciar sesion
-    </h2>
+    </h1>
     <p class="mt-1 text-center text-sm text-gray-500 dark:text-gray-400">
       Accede con tu usuario y contrasena
     </p>
@@ -19,47 +19,37 @@
 
       <mat-form-field class="w-full" appearance="outline">
         <mat-label>Origen de datos</mat-label>
-        <mat-select formControlName="dataSource">
+        <mat-select formControlName="dataSource" [disabled]="isSubmitting()">
           <mat-option value="prod">Produccion</mat-option>
           <mat-option value="historic">Historico</mat-option>
         </mat-select>
       </mat-form-field>
 
-      <mat-form-field class="w-full" appearance="outline">
-        <mat-label>Usuario</mat-label>
-        <input
-          matInput
-          type="text"
-          formControlName="username"
-          autocomplete="username"
-        />
+      <app-text-field
+        label="Usuario"
+        autocomplete="username"
+        [control]="loginForm.controls.username"
+        [showErrors]="submitted"
+        [errorMessages]="{ required: 'Usuario es obligatorio.' }"
+      />
 
-        @if (submitted && formControls['username'].errors?.['required']) {
-          <mat-error>Usuario es obligatorio.</mat-error>
-        }
-      </mat-form-field>
+      <app-text-field
+        label="Contrasena"
+        type="password"
+        autocomplete="current-password"
+        [control]="loginForm.controls.password"
+        [showErrors]="submitted"
+        [errorMessages]="{ required: 'Contrasena es obligatoria.' }"
+      />
 
-      <mat-form-field class="w-full" appearance="outline">
-        <mat-label>Contrasena</mat-label>
-        <input
-          matInput
-          type="password"
-          formControlName="password"
-          autocomplete="current-password"
-        />
-
-        @if (submitted && formControls['password'].errors?.['required']) {
-          <mat-error>Contrasena es obligatoria.</mat-error>
-        }
-      </mat-form-field>
-
-      <button
-        matButton="filled"
+      <app-button
+        variant="primary"
         type="submit"
-        class="mt-2 w-full"
+        [fullWidth]="true"
+        [loading]="isSubmitting()"
       >
         Entrar
-      </button>
+      </app-button>
     </form>
-  </div>
-</div>
+  </section>
+</main>

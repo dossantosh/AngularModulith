@@ -2,23 +2,30 @@ import { CommonModule } from '@angular/common';
 import { Component, DestroyRef, OnInit, inject } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { FormBuilder, ReactiveFormsModule } from '@angular/forms';
-import { MatButtonModule } from '@angular/material/button';
-import { MatFormFieldModule } from '@angular/material/form-field';
-import { MatInputModule } from '@angular/material/input';
 
-import { CardComponent, PageComponent } from '../../../../shared/ui';
+import {
+  AppButtonComponent,
+  AppCardComponent,
+  AppEmptyStateComponent,
+  AppErrorStateComponent,
+  AppLoadingStateComponent,
+  AppPageComponent,
+  AppTextFieldComponent,
+} from '../../../../shared/ui';
 import { UsersFacade } from '../../application/users.facade';
 
 @Component({
   standalone: true,
   selector: 'app-users-search-page',
   imports: [
-    CardComponent,
+    AppButtonComponent,
+    AppCardComponent,
+    AppEmptyStateComponent,
+    AppErrorStateComponent,
+    AppLoadingStateComponent,
+    AppPageComponent,
+    AppTextFieldComponent,
     CommonModule,
-    MatButtonModule,
-    MatFormFieldModule,
-    MatInputModule,
-    PageComponent,
     ReactiveFormsModule,
   ],
   templateUrl: './users-search.page.html',
