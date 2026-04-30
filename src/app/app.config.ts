@@ -10,6 +10,7 @@ import { provideHttpClient, withInterceptors, withXsrfConfiguration } from '@ang
 import { provideAuthBootstrap } from './core/auth/bootstrap/provide-auth-bootstrap';
 import { authInterceptor } from './core/auth/http/auth.interceptor';
 import { ThemeService } from './core/theme/theme.service';
+import { provideNgOpenapi } from './generated/openapi/providers';
 
 import { routes } from './app.routes';
 
@@ -25,6 +26,7 @@ export const appConfig: ApplicationConfig = {
       }),
       withInterceptors([authInterceptor])
     ),
+    provideNgOpenapi({ basePath: '' }),
     provideBrowserGlobalErrorListeners(),
   ],
 };

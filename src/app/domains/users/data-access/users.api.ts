@@ -1,7 +1,9 @@
-import { HttpClient, HttpParams } from '@angular/common/http';
 import { Injectable, inject } from '@angular/core';
+import { Observable, map } from 'rxjs';
 
-import { UserPageDto } from './users.dto';
+import { UserControllerService } from '../../../generated/openapi/services/userController.service';
+import { KeysetPageUserSummaryView, UserSummaryView } from '../../../generated/openapi/models';
+import { UserPageDto, UserSummaryDto } from './users.dto';
 
 interface UsersSearchRequest {
   limit: number;
@@ -16,21 +18,45 @@ interface UsersSearchRequest {
 
 @Injectable({ providedIn: 'root' })
 export class UsersApi {
-  private readonly http = inject(HttpClient);
-  private readonly baseUrl = '/api/';
+  private readonly usersClient = inject(UserControllerService);
 
-  search(query: UsersSearchRequest) {
-    let params = new HttpParams()
-      .set('limit', String(query.limit))
-      .set('direction', query.direction);
-
+  search(query: UsersSearchRequest): Observable<UserPageDto> {
     const { filters, lastId } = query;
+    const username = filters.username.trim() || undefined;
+    const email = filters.email.trim() || undefined;
 
-    if (filters.id != null) params = params.set('id', String(filters.id));
-    if (filters.username.trim()) params = params.set('username', filters.username.trim());
-    if (filters.email.trim()) params = params.set('email', filters.email.trim());
-    if (lastId != null) params = params.set('lastId', String(lastId));
-
-    return this.http.get<UserPageDto>(`${this.baseUrl}users`, { params });
+    return this.usersClient
+      .getUsers(
+        filters.id ?? undefined,
+        username,
+        email,
+        lastId ?? undefined,
+        query.limit,
+        query.direction
+      )
+      .pipe(map(mapUserPage));
   }
+}
+
+function mapUserPage(page: KeysetPageUserSummaryView & { empty?: boolean }): UserPageDto {
+  const content = (page.content ?? []).map(mapUserSummary);
+
+  return {
+    content,
+    hasNext: page.hasNext ?? false,
+    hasPrevious: page.hasPrevious ?? false,
+    nextId: page.nextId ?? null,
+    previousId: page.previousId ?? null,
+    empty: page.empty ?? content.length === 0,
+  };
+}
+
+function mapUserSummary(user: UserSummaryView): UserSummaryDto {
+  return {
+    id: user.id ?? 0,
+    username: user.username ?? '',
+    email: user.email ?? '',
+    enabled: user.enabled ?? false,
+    isAdmin: user.isAdmin ?? false,
+  };
 }

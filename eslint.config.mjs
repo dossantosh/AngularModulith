@@ -11,7 +11,7 @@ const restrictedImports = (patterns) => [
 
 export default tseslint.config(
   {
-    ignores: ['**/dist', '**/out-tsc', '**/node_modules'],
+    ignores: ['**/dist', '**/out-tsc', '**/node_modules', 'src/app/generated/openapi/**'],
   },
   {
     files: ['**/*.ts'],
