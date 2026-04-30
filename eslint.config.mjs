@@ -48,23 +48,32 @@ export default tseslint.config(
       'no-restricted-imports': restrictedImports([
         {
           group: ['**/domains/**'],
-          message: 'core/ must stay app-level and must not depend on feature/domain internals.',
+          message: 'core/ is app-level infrastructure and must not depend on domain internals.',
         },
       ]),
     },
   },
   {
-    files: ['src/app/domains/**/feature-*/**/*.ts', 'src/app/domains/**/features/**/*.ts'],
+    files: ['src/app/shared/ui/**/*.ts'],
     ignores: ['**/*.spec.ts'],
     rules: {
       'no-restricted-imports': restrictedImports([
         {
-          group: ['../data-access', '../data-access/*'],
-          message: 'Feature code should reach remote data through application services or facades, not data-access directly.',
+          group: ['**/domains/**', '**/core/**'],
+          message: 'shared/ui must stay presentational and domain-agnostic.',
         },
+      ]),
+    },
+  },
+  {
+    files: ['src/app/domains/**/features/**/*.ts', 'src/app/domains/**/feature-*/**/*.ts'],
+    ignores: ['**/*.spec.ts'],
+    rules: {
+      'no-restricted-imports': restrictedImports([
         {
-          group: ['../state', '../state/*'],
-          message: 'Feature code should depend on application-facing APIs instead of store internals.',
+          group: ['../data-access', '../data-access/*', '../../data-access', '../../data-access/*'],
+          message:
+            'Feature code should reach remote data through application services or facades, not data-access directly.',
         },
       ]),
     },
@@ -76,49 +85,18 @@ export default tseslint.config(
       'no-restricted-imports': restrictedImports([
         {
           group: [
-            '../feature-*',
-            '../feature-*/*',
             '../features',
             '../features/*',
             '../features/**',
-            '../ui',
-            '../ui/*',
-            '../routing',
-            '../routing/*',
-          ],
-          message: 'Application services should not depend on feature, UI or routing internals.',
-        },
-      ]),
-    },
-  },
-  {
-    files: ['src/app/domains/**/domain/**/*.ts'],
-    ignores: ['**/*.spec.ts'],
-    rules: {
-      'no-restricted-imports': restrictedImports([
-        {
-          group: [
-            '../application',
-            '../application/*',
-            '../data-access',
-            '../data-access/*',
+            '../../features',
+            '../../features/*',
+            '../../features/**',
             '../feature-*',
             '../feature-*/*',
-            '../features',
-            '../features/*',
-            '../features/**',
-            '../routing',
-            '../routing/*',
-            '../state',
-            '../state/*',
-            '../ui',
-            '../ui/*',
+            '../../feature-*',
+            '../../feature-*/*',
           ],
-          message: 'Domain models must stay free of Angular, UI, state, routing and data-access dependencies.',
-        },
-        {
-          group: ['@angular/*'],
-          message: 'Domain models should remain free of Angular framework dependencies.',
+          message: 'Application services should orchestrate state/data and must not depend on pages.',
         },
       ]),
     },
@@ -130,45 +108,22 @@ export default tseslint.config(
       'no-restricted-imports': restrictedImports([
         {
           group: [
-            '../feature-*',
-            '../feature-*/*',
-            '../features',
-            '../features/*',
-            '../features/**',
-            '../routing',
-            '../routing/*',
-            '../ui',
-            '../ui/*',
-          ],
-          message: 'Data-access should not depend on feature, routing or UI layers.',
-        },
-      ]),
-    },
-  },
-  {
-    files: ['src/app/domains/**/ui/**/*.ts'],
-    ignores: ['**/*.spec.ts'],
-    rules: {
-      'no-restricted-imports': restrictedImports([
-        {
-          group: [
             '../application',
             '../application/*',
-            '../data-access',
-            '../data-access/*',
-            '../domain',
-            '../domain/*',
-            '../feature-*',
-            '../feature-*/*',
+            '../../application',
+            '../../application/*',
             '../features',
             '../features/*',
             '../features/**',
-            '../routing',
-            '../routing/*',
-            '../state',
-            '../state/*',
+            '../../features',
+            '../../features/*',
+            '../../features/**',
+            '../feature-*',
+            '../feature-*/*',
+            '../../feature-*',
+            '../../feature-*/*',
           ],
-          message: 'UI components should stay presentational and avoid domain internals.',
+          message: 'Data-access should stay an adapter layer and must not depend on app orchestration or pages.',
         },
       ]),
     },

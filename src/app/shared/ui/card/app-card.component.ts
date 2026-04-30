@@ -1,4 +1,4 @@
-import { booleanAttribute, Component, Input } from '@angular/core';
+import { booleanAttribute, Component, input } from '@angular/core';
 import { MatCardModule } from '@angular/material/card';
 
 @Component({
@@ -29,20 +29,20 @@ import { MatCardModule } from '@angular/material/card';
   template: `
     <mat-card
       appearance="outlined"
-      [class.overflow-hidden]="overflowHidden"
+      [class.overflow-hidden]="overflowHidden()"
     >
-      @if (title || subtitle) {
+      @if (title() || subtitle()) {
         <header class="app-card__header flex flex-col gap-2 border-b px-4 py-3 sm:flex-row sm:items-center sm:justify-between">
           <div>
-            @if (title) {
+            @if (title()) {
               <h2 class="app-card__title">
-                {{ title }}
+                {{ title() }}
               </h2>
             }
 
-            @if (subtitle) {
+            @if (subtitle()) {
               <p class="app-card__subtitle mt-1">
-                {{ subtitle }}
+                {{ subtitle() }}
               </p>
             }
           </div>
@@ -53,16 +53,16 @@ import { MatCardModule } from '@angular/material/card';
         </header>
       }
 
-      <div [class.p-4]="padded" [class.p-6]="padded && spacious">
+      <div [class.p-4]="padded()" [class.p-6]="padded() && spacious()">
         <ng-content />
       </div>
     </mat-card>
   `,
 })
 export class AppCardComponent {
-  @Input() title = '';
-  @Input() subtitle = '';
-  @Input({ transform: booleanAttribute }) padded = true;
-  @Input({ transform: booleanAttribute }) spacious = false;
-  @Input({ transform: booleanAttribute }) overflowHidden = false;
+  readonly title = input('');
+  readonly subtitle = input('');
+  readonly padded = input(true, { transform: booleanAttribute });
+  readonly spacious = input(false, { transform: booleanAttribute });
+  readonly overflowHidden = input(false, { transform: booleanAttribute });
 }

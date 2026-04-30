@@ -12,10 +12,17 @@ import {
   AppErrorStateComponent,
   AppLoadingStateComponent,
   AppPageComponent,
+  AppPaginationBarComponent,
   AppStatusBadgeComponent,
   AppTextFieldComponent,
 } from '../../../../shared/ui';
 import { UsersFacade } from '../../application/users.facade';
+
+type UserSearchFormValue = Partial<{
+  id: number | null;
+  username: string | null;
+  email: string | null;
+}>;
 
 @Component({
   standalone: true,
@@ -28,6 +35,7 @@ import { UsersFacade } from '../../application/users.facade';
     AppErrorStateComponent,
     AppLoadingStateComponent,
     AppPageComponent,
+    AppPaginationBarComponent,
     AppStatusBadgeComponent,
     AppTextFieldComponent,
     MatTableModule,
@@ -58,7 +66,7 @@ export class UsersSearchPage implements OnInit {
     this.filtersForm.valueChanges
       .pipe(
         debounceTime(400),
-        distinctUntilChanged((previous, current) => JSON.stringify(previous) === JSON.stringify(current)),
+        distinctUntilChanged(sameUserSearchFilters),
         takeUntilDestroyed(this.destroyRef)
       )
       .subscribe((value) => {
@@ -89,4 +97,15 @@ export class UsersSearchPage implements OnInit {
   loadPrevious(): void {
     this.facade.loadPrevious();
   }
+}
+
+function sameUserSearchFilters(
+  previous: UserSearchFormValue,
+  current: UserSearchFormValue
+): boolean {
+  return (
+    (previous.id ?? null) === (current.id ?? null) &&
+    (previous.username ?? '') === (current.username ?? '') &&
+    (previous.email ?? '') === (current.email ?? '')
+  );
 }

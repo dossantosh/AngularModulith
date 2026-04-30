@@ -1,4 +1,5 @@
 import { Injectable, computed, inject, signal } from '@angular/core';
+import type { Subscription } from 'rxjs';
 
 import { UsersApi } from '../data-access/users.api';
 import { UserPageDto } from '../data-access/users.dto';
@@ -29,6 +30,7 @@ export class UsersFacade {
   private readonly _status = signal<LoadStatus>('idle');
   private readonly _error = signal<string | null>(null);
   private readonly _page = signal<UserPageDto | null>(null);
+  private searchSubscription?: Subscription;
 
   readonly filters = this._filters.asReadonly();
   readonly error = this._error.asReadonly();
@@ -45,16 +47,19 @@ export class UsersFacade {
 
   search(): void {
     this.startLoading();
+    this.searchSubscription?.unsubscribe();
 
-    this.api.search({
-      limit: this._limit(),
-      direction: this._direction(),
-      lastId: this._lastId(),
-      filters: this._filters(),
-    }).subscribe({
-      next: (page) => this.setPage(page),
-      error: () => this.setError('Failed to load users'),
-    });
+    this.searchSubscription = this.api
+      .search({
+        limit: this._limit(),
+        direction: this._direction(),
+        lastId: this._lastId(),
+        filters: this._filters(),
+      })
+      .subscribe({
+        next: (page) => this.setPage(page),
+        error: () => this.setError('Failed to load users'),
+      });
   }
 
   clearFiltersAndSearch(): void {

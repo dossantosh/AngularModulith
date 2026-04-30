@@ -1,4 +1,4 @@
-import { Component, Input } from '@angular/core';
+import { Component, input } from '@angular/core';
 import { MatIconModule } from '@angular/material/icon';
 
 export type AppStatusBadgeVariant = 'success' | 'danger' | 'warning' | 'info' | 'neutral';
@@ -10,16 +10,16 @@ export type AppStatusBadgeVariant = 'success' | 'danger' | 'warning' | 'info' | 
   template: `
     <span
       class="app-status-badge"
-      [class.app-status-badge--success]="variant === 'success'"
-      [class.app-status-badge--danger]="variant === 'danger'"
-      [class.app-status-badge--warning]="variant === 'warning'"
-      [class.app-status-badge--info]="variant === 'info'"
-      [class.app-status-badge--neutral]="variant === 'neutral'"
+      [class.app-status-badge--success]="variant() === 'success'"
+      [class.app-status-badge--danger]="variant() === 'danger'"
+      [class.app-status-badge--warning]="variant() === 'warning'"
+      [class.app-status-badge--info]="variant() === 'info'"
+      [class.app-status-badge--neutral]="variant() === 'neutral'"
     >
-      @if (icon) {
-        <mat-icon class="app-status-badge__icon" aria-hidden="true">{{ icon }}</mat-icon>
+      @if (icon()) {
+        <mat-icon class="app-status-badge__icon" aria-hidden="true">{{ icon() }}</mat-icon>
       }
-      <span>{{ label }}</span>
+      <span>{{ label() }}</span>
     </span>
   `,
   styles: `
@@ -68,7 +68,7 @@ export type AppStatusBadgeVariant = 'success' | 'danger' | 'warning' | 'info' | 
   `,
 })
 export class AppStatusBadgeComponent {
-  @Input() label = '';
-  @Input() icon = '';
-  @Input() variant: AppStatusBadgeVariant = 'neutral';
+  readonly label = input('');
+  readonly icon = input('');
+  readonly variant = input<AppStatusBadgeVariant>('neutral');
 }

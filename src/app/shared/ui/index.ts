@@ -6,6 +6,7 @@ export { AppEmptyStateComponent } from './empty-state/app-empty-state.component'
 export { AppErrorStateComponent } from './error-state/app-error-state.component';
 export { AppLoadingStateComponent } from './loading-state/app-loading-state.component';
 export { AppPageComponent } from './page/app-page.component';
+export { AppPaginationBarComponent } from './pagination-bar/app-pagination-bar.component';
 export {
   AppSidebarComponent,
   type AppSidebarItem,

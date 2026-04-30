@@ -1,4 +1,4 @@
-import { Component, Input } from '@angular/core';
+import { Component, computed, input } from '@angular/core';
 
 import { AppBreadcrumbComponent, AppBreadcrumbItem } from '../breadcrumb/app-breadcrumb.component';
 
@@ -25,27 +25,27 @@ type AppPageLayout = 'default' | 'wide' | 'full';
   `,
   template: `
     <div class="min-h-full app-bg-background">
-      <main class="mx-auto w-full px-4 py-4 md:px-6 md:py-5" [style.max-width]="maxWidth">
-        <app-breadcrumb [items]="breadcrumbs" />
+      <main class="mx-auto w-full px-4 py-4 md:px-6 md:py-5" [style.max-width]="maxWidth()">
+        <app-breadcrumb [items]="breadcrumbs()" />
 
-        @if (title || subtitle) {
+        @if (title() || subtitle()) {
           <header class="mb-4 flex flex-col gap-3 border-b app-border pb-4 md:flex-row md:items-end md:justify-between">
             <div class="min-w-0">
-              @if (eyebrow) {
+              @if (eyebrow()) {
                 <p class="app-page__eyebrow uppercase">
-                  {{ eyebrow }}
+                  {{ eyebrow() }}
                 </p>
               }
 
-              @if (title) {
+              @if (title()) {
                 <h1 class="app-page__title">
-                  {{ title }}
+                  {{ title() }}
                 </h1>
               }
 
-              @if (subtitle) {
+              @if (subtitle()) {
                 <p class="mt-1 max-w-3xl text-sm app-text-muted">
-                  {{ subtitle }}
+                  {{ subtitle() }}
                 </p>
               }
             </div>
@@ -62,19 +62,19 @@ type AppPageLayout = 'default' | 'wide' | 'full';
   `,
 })
 export class AppPageComponent {
-  @Input() title = '';
-  @Input() subtitle = '';
-  @Input() eyebrow = '';
-  @Input() layout: AppPageLayout = 'wide';
-  @Input() breadcrumbs: readonly AppBreadcrumbItem[] = [];
+  readonly title = input('');
+  readonly subtitle = input('');
+  readonly eyebrow = input('');
+  readonly layout = input<AppPageLayout>('wide');
+  readonly breadcrumbs = input<readonly AppBreadcrumbItem[]>([]);
 
-  get maxWidth(): string {
+  protected readonly maxWidth = computed(() => {
     const widths: Record<AppPageLayout, string> = {
       default: '80rem',
       wide: '1440px',
       full: 'none',
     };
 
-    return widths[this.layout];
-  }
+    return widths[this.layout()];
+  });
 }

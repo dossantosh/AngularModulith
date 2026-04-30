@@ -132,30 +132,15 @@
         </div>
       }
 
-      <nav
-        aria-label="Paginacion de usuarios"
-        class="flex items-center justify-between gap-3 border-t app-border px-4 py-3"
-      >
-        <app-button
-          variant="secondary"
-          type="button"
-          ariaLabel="Cargar pagina anterior de usuarios"
-          (clicked)="loadPrevious()"
-          [disabled]="!facade.hasPrevious() || facade.loading()"
-        >
-          Anterior
-        </app-button>
-
-        <app-button
-          variant="secondary"
-          type="button"
-          ariaLabel="Cargar pagina siguiente de usuarios"
-          (clicked)="loadNext()"
-          [disabled]="!facade.hasNext() || facade.loading()"
-        >
-          Siguiente
-        </app-button>
-      </nav>
+      <app-pagination-bar
+        ariaLabel="Paginacion de usuarios"
+        previousAriaLabel="Cargar pagina anterior de usuarios"
+        nextAriaLabel="Cargar pagina siguiente de usuarios"
+        [previousDisabled]="!facade.hasPrevious() || facade.loading()"
+        [nextDisabled]="!facade.hasNext() || facade.loading()"
+        (previous)="loadPrevious()"
+        (next)="loadNext()"
+      />
     </app-card>
   </div>
 </app-page>

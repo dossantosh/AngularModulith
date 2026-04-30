@@ -1,128 +1,171 @@
 # AngularModulith
 
-AngularModulith is an Angular 21 frontend for the SpringFirstModulith backend. The app uses a lightweight modulith structure: code is grouped by domain, shared UI primitives stay domain-agnostic, and route-level boundaries keep features isolated without extra architectural layers.
+Frontend Angular 21 para un ERP modular. La arquitectura prioriza escalabilidad real de frontend: dominios por feature, estado localizado, componentes reutilizables cuando reducen repeticion y una UI enterprise consistente.
 
-## Tech Stack
+## Stack
 
-- Angular 21 with standalone components
-- Angular Router with lazy routes
-- RxJS and Angular signals
-- Vitest + JSDOM for unit tests
-- Playwright for E2E tests
-- TailwindCSS for app styling
-- Angular Material available for isolated Material-based UI where it is useful
+- Angular 21 con standalone components.
+- Angular Router con rutas lazy por dominio cuando aplica.
+- Angular Signals para estado de UI/facades.
+- RxJS para flujos async, formularios y HTTP.
+- Angular Material para componentes funcionales y accesibles.
+- Tailwind CSS para layout, spacing, responsive y composicion externa.
+- Design tokens propios en `src/styles.scss` como fuente visual comun.
+- Vitest + JSDOM para unit tests.
+- Playwright configurado para E2E.
 
-## Project Structure
+## Estructura actual
 
 ```text
 src/app
 |-- app.config.ts
 |-- app.routes.ts
+|-- core
+|   |-- auth
+|   |   |-- api
+|   |   |-- bootstrap
+|   |   |-- guards
+|   |   |-- http
+|   |   |-- permissions
+|   |   `-- session
+|   |-- layout
+|   `-- theme
 |-- domains
 |   |-- auth
-|   |   |-- application
-|   |   |-- data-access
-|   |   |-- directives
-|   |   |-- domain
 |   |   |-- feature-forbidden
-|   |   |-- feature-login
-|   |   |-- routing
-|   |   `-- state
+|   |   `-- feature-login
 |   |-- dashboard
-|   |-- shell
+|   |   `-- feature-home
 |   `-- users
+|       |-- application
+|       |-- data-access
+|       |-- features
+|       |   `-- search
+|       `-- users.routes.ts
 `-- shared
     `-- ui
 ```
 
-The intended dependency direction is:
+`src/styles.scss` define tokens globales, theme light/dark y ajustes de Angular Material. `src/tailwind.css` carga Tailwind y consume el spacing base. Tailwind no es la fuente de colores de producto.
+
+## Responsabilidades
+
+### core
+
+Codigo transversal de aplicacion: autenticacion, guards, interceptores, layout principal, bootstrap y tema. `core` no debe depender de `domains`.
+
+### shared/ui
+
+Componentes presentacionales y reutilizables que no conocen dominios: botones, cards, page shell, command bar, text field, badges, estados y pagination bar. Un wrapper compartido se crea solo cuando aporta una API de producto, accesibilidad consistente o elimina repeticion real.
+
+No crear wrappers triviales para cada componente de Material. Si `mat-select`, `mat-datepicker` o `mat-dialog` se usan bien una sola vez, se pueden usar directamente en la feature.
+
+### domains
+
+Cada dominio contiene la UI y el flujo propio del negocio. La estructura recomendada para un CRUD que crece es:
 
 ```text
-feature/page -> application facade -> data-access
-feature/page -> domain constants/models
-shell -> auth facade
-shared/ui -> no domain dependencies
+domains/<domain>/
+|-- data-access/
+|-- application/
+|-- features/
+|-- ui/              # solo si hay componentes presentacionales del dominio
+`-- <domain>.routes.ts
 ```
 
-Avoid adding facades, stores, use-cases, factories, or adapters by default. Add a layer only when it removes real complexity from more than one place.
+No crear carpetas vacias. Un dominio simple puede empezar solo con `feature-*` o `features/<screen>`.
 
-## Auth And Authorization
+### data-access
 
-The app uses session-based authentication with cookies. The backend remains the security authority. The frontend only uses backend-calculated scopes and capabilities to improve UX by hiding routes, menus, buttons, and actions.
+Adaptadores HTTP y DTOs. No maneja layout, permisos visuales ni estado de pantalla. No importa `features`.
 
-Expected backend endpoints:
+### application
+
+Facades o servicios de orquestacion cuando una pantalla necesita estado, paginacion, filtros, loading/error o combinacion de varios adapters. No crear una facade si la page es trivial.
+
+### features
+
+Pantallas route-level y containers. Componen `shared/ui`, Material y servicios `application`. No deberian llamar directamente a `data-access` si ya existe facade.
+
+### ui dentro de dominio
+
+Componentes presentacionales especificos del dominio. No importan facades, APIs ni pages. Se crean cuando una pantalla empieza a repetir partes visibles dentro del mismo dominio.
+
+## UI, Material, Tailwind y tokens
+
+- Angular Material gestiona componentes complejos: botones, inputs, tablas, dialogs, menus, select, datepicker, etc.
+- Tailwind se usa para layout: `grid`, `flex`, `gap`, `px`, `py`, responsive y composicion alrededor de componentes.
+- No usar Tailwind para pelear contra estilos internos de Material en `mat-button`, `mat-form-field`, `mat-card` o `mat-table`.
+- Los colores, surfaces, texto, bordes, radius, sombras y estados light/dark viven en `src/styles.scss`.
+- Los componentes propios usan tokens como `--color-text`, `--color-surface`, `--color-border` y clases globales pequeñas como `app-text`, `app-border`, `app-surface`.
+
+## Patron CRUD recomendado
+
+Para un listado enterprise:
+
+1. Crear una feature route en `domains/<domain>/features/<screen>`.
+2. Usar `app-page` para el marco de pantalla.
+3. Usar `app-command-bar` para filtros y acciones compactas.
+4. Usar controles Material o wrappers existentes (`app-text-field`) con Reactive Forms.
+5. Mantener filtros, paginacion, loading/error/empty en una facade si la pantalla deja de ser trivial.
+6. Renderizar tablas con Angular Material (`mat-table`) y Tailwind solo para overflow/layout externo.
+7. Usar `app-loading-state`, `app-error-state`, `app-empty-state`, `app-status-badge` y `app-pagination-bar` para consistencia.
+
+No crear un form-engine o schema-table hasta que existan varios CRUDs con repeticion demostrada.
+
+## Estado y reactividad
+
+- Preferir estado local en la page o facade del dominio.
+- Usar signals para estado de UI consultado por templates.
+- Usar RxJS para HTTP, debounce, formularios y cancelacion de flujos async.
+- Evitar estado global salvo sesion/auth, theme o necesidades realmente transversales.
+- No introducir NgRx/SignalStore por defecto.
+
+## Boundaries de ESLint
+
+Las reglas actuales protegen limites reales:
+
+- `core` no importa `domains`.
+- `shared/ui` no importa `core` ni `domains`.
+- `shared` no importa `domains`.
+- `features` no accede directo a `data-access` cuando existe `application`.
+- `application` no importa pages/features.
+- `data-access` no importa application/features.
+
+Si aparece una nueva capa real, ajustar reglas despues de crear uso real, no antes.
+
+## Auth y autorizacion
+
+La app usa autenticacion basada en cookies y CSRF. El backend es la autoridad de seguridad. El frontend usa scopes/capabilities para UX: ocultar rutas, menus, botones o acciones.
+
+Endpoints esperados:
 
 - `POST /api/auth/login`
 - `POST /api/auth/logout`
 - `GET /api/auth/me`
 - `GET /api/auth/csrf`
 
-Known frontend scopes live in:
+Usar `AuthFacade`, `authGuard`, `scopeGuard` y `appHasScope` para permisos de UI. No confiar en la UI como seguridad final.
 
-```text
-src/app/domains/auth/domain/auth-scopes.ts
-```
-
-Use `AuthFacade` for permission checks:
-
-```ts
-auth.hasScope('users:read');
-auth.hasAnyScope(['users:create', 'users:update']);
-auth.hasAllScopes(['users:read']);
-auth.can('users', 'read');
-```
-
-Protect routes with `scopeGuard` and route data:
-
-```ts
-{
-  path: 'users',
-  canActivate: [scopeGuard],
-  data: { requiredScopes: [AUTH_SCOPES.users.read] },
-}
-```
-
-Hide UI with the structural directive:
-
-```html
-<button *appHasScope="scopes.users.create">Crear usuario</button>
-```
-
-## Adding A Domain
-
-1. Create `src/app/domains/<domain-name>/`.
-2. Add `feature-*` pages/components for route-level UI.
-3. Add `data-access` only for HTTP or persistence adapters.
-4. Add an `application` facade only when the page needs orchestration or state.
-5. Add domain constants/models in `domain` when they are shared inside that domain.
-6. Lazy-load the domain from `src/app/app.routes.ts` when it has child routes.
-7. Keep reusable, domain-agnostic UI in `src/app/shared/ui`.
-
-## Commands
+## Comandos
 
 ```bash
 npm install
 npm start
-npm run test:run
 npm run lint
+npm test
+npm run test:run
 npm run build
+npm run e2e
 ```
 
-## Backend Contract
+`npm run e2e` requiere specs Playwright. Si no hay specs, el comando puede fallar por falta de tests, no por la aplicacion.
 
-`GET /api/auth/me` should return the authenticated user, selected datasource, roles if needed for display/admin screens, effective scopes, and semantic capabilities. Roles and technical authorities are not used by the frontend for authorization decisions.
+## Reglas de no sobreingenieria
 
-When adding a new permission:
-
-1. Add and enforce the backend scope first.
-2. Expose the effective scope and derived capability through `/api/auth/me`.
-3. Mirror the stable frontend scope in `AUTH_SCOPES`.
-4. Use `scopeGuard`, `appHasScope`, or `AuthFacade` checks only for UX visibility.
-
-## Docker Notes
-
-The production image is expected to be served behind Nginx with `/api` proxied to the backend. Sessions and CSRF depend on the browser receiving and sending the backend cookies correctly.
-
-## Author
-
-Sebastian Dos Santos
+- No copiar DDD backend 1:1 al frontend.
+- No crear carpetas vacias para parecer enterprise.
+- No crear facades, stores, engines o adapters sin repeticion real.
+- No introducir Nx, NgRx, microfrontends, SSR o librerias nuevas sin evidencia fuerte.
+- No envolver Material si usar Material directo es mas claro.
+- Mantener componentes pequenos y APIs explicitas.

@@ -8,8 +8,8 @@
     "lint": "ng lint",
     "watch": "ng build --watch --configuration development",
     "test": "ng test",
-    "test:run": "vitest run",
-    "test:coverage": "vitest run --coverage",
+    "test:run": "ng test --watch=false",
+    "test:coverage": "ng test --watch=false --coverage",
     "e2e": "playwright test",
     "e2e:ui": "playwright test --ui"
   },

@@ -1,4 +1,4 @@
-import { Component, EventEmitter, Input, Output } from '@angular/core';
+import { Component, input, output } from '@angular/core';
 import { MatIconModule } from '@angular/material/icon';
 
 import { AppButtonComponent } from '../button/app-button.component';
@@ -17,14 +17,14 @@ import { AppButtonComponent } from '../button/app-button.component';
         <div class="flex gap-3">
           <mat-icon aria-hidden="true">error</mat-icon>
           <div>
-            <h3 class="text-sm font-medium">{{ title }}</h3>
-            <p class="mt-1 text-sm">{{ message }}</p>
+            <h3 class="text-sm font-medium">{{ title() }}</h3>
+            <p class="mt-1 text-sm">{{ message() }}</p>
           </div>
         </div>
 
-        @if (actionLabel) {
+        @if (actionLabel()) {
           <app-button variant="secondary" type="button" (clicked)="retry.emit()">
-            {{ actionLabel }}
+            {{ actionLabel() }}
           </app-button>
         }
       </div>
@@ -32,9 +32,9 @@ import { AppButtonComponent } from '../button/app-button.component';
   `,
 })
 export class AppErrorStateComponent {
-  @Input() title = 'No se pudo completar la accion';
-  @Input() message = 'Intentalo de nuevo.';
-  @Input() actionLabel = '';
+  readonly title = input('No se pudo completar la accion');
+  readonly message = input('Intentalo de nuevo.');
+  readonly actionLabel = input('');
 
-  @Output() retry = new EventEmitter<void>();
+  readonly retry = output<void>();
 }

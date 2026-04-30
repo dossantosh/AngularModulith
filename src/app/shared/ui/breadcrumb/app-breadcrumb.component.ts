@@ -1,4 +1,4 @@
-import { Component, Input } from '@angular/core';
+import { Component, input } from '@angular/core';
 import { RouterLink } from '@angular/router';
 
 export interface AppBreadcrumbItem {
@@ -11,10 +11,10 @@ export interface AppBreadcrumbItem {
   standalone: true,
   imports: [RouterLink],
   template: `
-    @if (items.length) {
+    @if (items().length) {
       <nav aria-label="Breadcrumb" class="mb-2 text-xs font-medium app-text-muted">
         <ol class="flex flex-wrap items-center gap-1">
-          @for (item of items; track item.label; let last = $last) {
+          @for (item of items(); track item.label; let last = $last) {
             <li class="flex items-center gap-1">
               @if (item.routerLink && !last) {
                 <a
@@ -38,5 +38,5 @@ export interface AppBreadcrumbItem {
   `,
 })
 export class AppBreadcrumbComponent {
-  @Input() items: readonly AppBreadcrumbItem[] = [];
+  readonly items = input<readonly AppBreadcrumbItem[]>([]);
 }
