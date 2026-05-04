@@ -1,4 +1,4 @@
-import { Component, EventEmitter, Input, Output } from '@angular/core';
+import { Component, input, output } from '@angular/core';
 import { MatIconModule } from '@angular/material/icon';
 import { RouterLink, RouterLinkActive } from '@angular/router';
 
@@ -23,13 +23,13 @@ export interface AppSidebarItem {
       <div class="flex h-16 items-center gap-3 border-b app-border px-4">
         <img src="/favicon.ico" alt="" class="h-8 w-8 app-rounded-md" />
         <div class="min-w-0">
-          <p class="truncate text-sm">{{ productName }}</p>
+          <p class="truncate text-sm">{{ productName() }}</p>
           <p class="text-xs app-sidebar-muted">ERP workspace</p>
         </div>
       </div>
 
       <div class="flex-1 space-y-1 overflow-y-auto px-3 py-4">
-        @for (item of items; track item.label) {
+        @for (item of items(); track item.label) {
           @if (item.disabled) {
             <span
               class="flex cursor-not-allowed items-center gap-3 app-rounded-md px-3 py-2 text-sm font-medium app-sidebar-muted opacity-60"
@@ -56,8 +56,8 @@ export interface AppSidebarItem {
   `,
 })
 export class AppSidebarComponent {
-  @Input() productName = 'Workspace';
-  @Input() items: readonly AppSidebarItem[] = [];
+  readonly productName = input('Workspace');
+  readonly items = input<readonly AppSidebarItem[]>([]);
 
-  @Output() navigated = new EventEmitter<void>();
+  readonly navigated = output<void>();
 }
