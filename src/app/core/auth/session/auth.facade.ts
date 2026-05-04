@@ -75,6 +75,10 @@ export class AuthFacade {
     );
   }
 
+  clearSessionAfterUnauthorized(): void {
+    this.clearSession();
+  }
+
   private clearSession(): void {
     this.sessionStore.clear();
     this.resetSessionCache();

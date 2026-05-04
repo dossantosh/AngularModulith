@@ -161,7 +161,8 @@ Politica de cache de sesion:
 
 - `loadSession()` puede cachear `GET /api/auth/me` para no repetir la misma carga de sesion.
 - La cache debe invalidarse en login exitoso, logout y fallo de carga de sesion.
-- Si mas adelante se agrega manejo global de `401/403`, debe limpiar sesion/cache en el mismo sentido.
+- Un `401` desde endpoints protegidos fuera de `/api/auth/*` limpia sesion/cache y navega a `/login`.
+- Un `403` no redirige a login por defecto: representa falta de permisos y se maneja con guards/rutas como `/forbidden`.
 - La sesion global vive en `AuthSessionStore`; las features leen permisos via `AuthFacade`, no desde HTTP directo.
 
 ## Comandos
