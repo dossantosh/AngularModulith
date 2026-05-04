@@ -1,5 +1,6 @@
-import { Injectable, computed, inject, signal } from '@angular/core';
-import type { Subscription } from 'rxjs';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
+import { DestroyRef, Injectable, computed, inject, signal } from '@angular/core';
+import { EMPTY, Subject, catchError, switchMap, tap } from 'rxjs';
 
 import { UsersApi } from '../data-access/users.api';
 import { UserPageDto } from '../data-access/users.dto';
@@ -19,47 +20,85 @@ const DEFAULT_USER_SEARCH_FILTERS: UserSearchFilters = {
   email: '',
 };
 
+interface UsersState {
+  filters: UserSearchFilters;
+  limit: number;
+  direction: PageDirection;
+  lastId: number | null;
+  status: LoadStatus;
+  error: string | null;
+  page: UserPageDto | null;
+}
+
+interface UsersSearchRequest {
+  limit: number;
+  direction: PageDirection;
+  lastId: number | null;
+  filters: UserSearchFilters;
+}
+
+function createInitialState(): UsersState {
+  return {
+    filters: { ...DEFAULT_USER_SEARCH_FILTERS },
+    limit: 10,
+    direction: 'NEXT',
+    lastId: null,
+    status: 'idle',
+    error: null,
+    page: null,
+  };
+}
+
 @Injectable({ providedIn: 'root' })
 export class UsersFacade {
   private readonly api = inject(UsersApi);
+  private readonly destroyRef = inject(DestroyRef);
+  private readonly searchRequests$ = new Subject<UsersSearchRequest>();
 
-  private readonly _filters = signal<UserSearchFilters>({ ...DEFAULT_USER_SEARCH_FILTERS });
-  private readonly _limit = signal<number>(10);
-  private readonly _direction = signal<PageDirection>('NEXT');
-  private readonly _lastId = signal<number | null>(null);
-  private readonly _status = signal<LoadStatus>('idle');
-  private readonly _error = signal<string | null>(null);
-  private readonly _page = signal<UserPageDto | null>(null);
-  private searchSubscription?: Subscription;
+  private readonly state = signal<UsersState>(createInitialState());
 
-  readonly filters = this._filters.asReadonly();
-  readonly error = this._error.asReadonly();
-  readonly loading = computed(() => this._status() === 'loading');
-  readonly users = computed(() => this._page()?.content ?? []);
-  readonly hasNext = computed(() => this._page()?.hasNext ?? false);
-  readonly hasPrevious = computed(() => this._page()?.hasPrevious ?? false);
-  private readonly nextId = computed(() => this._page()?.nextId ?? null);
-  private readonly previousId = computed(() => this._page()?.previousId ?? null);
+  readonly filters = computed(() => this.state().filters);
+  readonly error = computed(() => this.state().error);
+  readonly loading = computed(() => this.state().status === 'loading');
+  readonly users = computed(() => this.state().page?.content ?? []);
+  readonly hasNext = computed(() => this.state().page?.hasNext ?? false);
+  readonly hasPrevious = computed(() => this.state().page?.hasPrevious ?? false);
+  private readonly nextId = computed(() => this.state().page?.nextId ?? null);
+  private readonly previousId = computed(() => this.state().page?.previousId ?? null);
+
+  constructor() {
+    this.searchRequests$
+      .pipe(
+        tap(() => this.startLoading()),
+        switchMap((request) =>
+          this.api.search(request).pipe(
+            tap((page) => this.setPage(page)),
+            catchError(() => {
+              this.setError('Failed to load users');
+              return EMPTY;
+            })
+          )
+        ),
+        takeUntilDestroyed(this.destroyRef)
+      )
+      .subscribe();
+  }
 
   setFilters(partial: Partial<UserSearchFilters>): void {
-    this._filters.set({ ...this._filters(), ...partial });
+    this.patchState((state) => ({
+      filters: { ...state.filters, ...partial },
+    }));
   }
 
   search(): void {
-    this.startLoading();
-    this.searchSubscription?.unsubscribe();
+    const { limit, direction, lastId, filters } = this.state();
 
-    this.searchSubscription = this.api
-      .search({
-        limit: this._limit(),
-        direction: this._direction(),
-        lastId: this._lastId(),
-        filters: this._filters(),
-      })
-      .subscribe({
-        next: (page) => this.setPage(page),
-        error: () => this.setError('Failed to load users'),
-      });
+    this.searchRequests$.next({
+      limit,
+      direction,
+      lastId,
+      filters,
+    });
   }
 
   clearFiltersAndSearch(): void {
@@ -85,33 +124,51 @@ export class UsersFacade {
   }
 
   private resetFilters(): void {
-    this._filters.set({ ...DEFAULT_USER_SEARCH_FILTERS });
+    this.patchState({ filters: { ...DEFAULT_USER_SEARCH_FILTERS } });
   }
 
   private resetPagination(): void {
-    this._lastId.set(null);
-    this._direction.set('NEXT');
+    this.patchState({
+      direction: 'NEXT',
+      lastId: null,
+    });
   }
 
   private setPagination(direction: PageDirection, lastId: number | null): void {
-    this._direction.set(direction);
-    this._lastId.set(lastId);
+    this.patchState({ direction, lastId });
   }
 
   private startLoading(): void {
-    this._status.set('loading');
-    this._error.set(null);
+    this.patchState({
+      status: 'loading',
+      error: null,
+    });
   }
 
   private setPage(page: UserPageDto): void {
-    this._page.set(page);
-    this._status.set('success');
-    this._error.set(null);
+    this.patchState({
+      page,
+      status: 'success',
+      error: null,
+    });
   }
 
   private setError(message: string): void {
-    this._page.set(null);
-    this._status.set('error');
-    this._error.set(message);
+    this.patchState({
+      page: null,
+      status: 'error',
+      error: message,
+    });
+  }
+
+  private patchState(patch: Partial<UsersState>): void;
+  private patchState(project: (state: UsersState) => Partial<UsersState>): void;
+  private patchState(
+    patchOrProject: Partial<UsersState> | ((state: UsersState) => Partial<UsersState>)
+  ): void {
+    this.state.update((state) => ({
+      ...state,
+      ...(typeof patchOrProject === 'function' ? patchOrProject(state) : patchOrProject),
+    }));
   }
 }
