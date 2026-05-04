@@ -7,7 +7,7 @@
     "build": "ng build",
     "lint": "ng lint",
     "watch": "ng build --watch --configuration development",
-    "api:generate": "ng-openapi -c openapi.config.ts && node scripts/cleanup-openapi-generated.mjs",
+    "api:generate": "ng-openapi -c openapi.config.ts",
     "test": "ng test",
     "test:run": "ng test --watch=false",
     "test:coverage": "ng test --watch=false --coverage",

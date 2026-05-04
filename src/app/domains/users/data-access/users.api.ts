@@ -1,8 +1,8 @@
 import { Injectable, inject } from '@angular/core';
 import { Observable, map } from 'rxjs';
 
-import { UserControllerService } from '../../../generated/openapi/services/userController.service';
 import { KeysetPageUserSummaryView, UserSummaryView } from '../../../generated/openapi/models';
+import { UserControllerService } from '../../../generated/openapi/services/userController.service';
 import { UserPageDto, UserSummaryDto } from './users.dto';
 
 interface UsersSearchRequest {
