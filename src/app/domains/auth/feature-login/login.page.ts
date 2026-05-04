@@ -1,4 +1,5 @@
-import { Component, inject, signal } from '@angular/core';
+import { Component, DestroyRef, inject, signal } from '@angular/core';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { MatCardModule } from '@angular/material/card';
 import { MatFormFieldModule } from '@angular/material/form-field';
@@ -30,6 +31,7 @@ export class LoginPage {
   private readonly fb = inject(FormBuilder);
   private readonly auth = inject(AuthFacade);
   private readonly router = inject(Router);
+  private readonly destroyRef = inject(DestroyRef);
 
   readonly loginForm = this.fb.nonNullable.group({
     username: ['', Validators.required],
@@ -48,13 +50,16 @@ export class LoginPage {
     this.isSubmitting.set(true);
     this.loginForm.disable({ emitEvent: false });
 
-    this.auth.login(this.loginForm.getRawValue()).subscribe({
-      next: () => void this.router.navigateByUrl('/'),
-      error: () => {
-        this.isSubmitting.set(false);
-        this.loginForm.enable({ emitEvent: false });
-        this.loginError = 'No se pudo iniciar sesion. Revisa tus credenciales e intentalo de nuevo.';
-      },
-    });
+    this.auth
+      .login(this.loginForm.getRawValue())
+      .pipe(takeUntilDestroyed(this.destroyRef))
+      .subscribe({
+        next: () => void this.router.navigateByUrl('/'),
+        error: () => {
+          this.isSubmitting.set(false);
+          this.loginForm.enable({ emitEvent: false });
+          this.loginError = 'No se pudo iniciar sesion. Revisa tus credenciales e intentalo de nuevo.';
+        },
+      });
   }
 }

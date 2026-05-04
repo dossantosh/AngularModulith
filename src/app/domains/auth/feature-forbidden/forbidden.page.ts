@@ -1,4 +1,5 @@
-import { Component, inject } from '@angular/core';
+import { Component, DestroyRef, inject } from '@angular/core';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { Router } from '@angular/router';
 
 import { AuthFacade } from '../../../core/auth/session/auth.facade';
@@ -50,6 +51,7 @@ import {
 export class ForbiddenPage {
   private readonly auth = inject(AuthFacade);
   private readonly router = inject(Router);
+  private readonly destroyRef = inject(DestroyRef);
   readonly breadcrumbs = [
     { label: 'Inicio', routerLink: '/' },
     { label: 'Seguridad' },
@@ -57,9 +59,12 @@ export class ForbiddenPage {
   ];
 
   changeUser(): void {
-    this.auth.logout().subscribe({
-      next: () => void this.router.navigateByUrl('/login'),
-      error: () => void this.router.navigateByUrl('/login'),
-    });
+    this.auth
+      .logout()
+      .pipe(takeUntilDestroyed(this.destroyRef))
+      .subscribe({
+        next: () => void this.router.navigateByUrl('/login'),
+        error: () => void this.router.navigateByUrl('/login'),
+      });
   }
 }

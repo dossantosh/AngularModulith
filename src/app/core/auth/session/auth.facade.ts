@@ -1,5 +1,5 @@
 import { Injectable, inject } from '@angular/core';
-import { Observable, map, shareReplay, switchMap, tap } from 'rxjs';
+import { Observable, catchError, map, shareReplay, switchMap, tap, throwError } from 'rxjs';
 
 import { AuthApi } from '../api/auth.api';
 import { CapabilityAction, can, hasAllScopes, hasAnyScope, hasScope } from '../permissions/permissions';
@@ -51,6 +51,10 @@ export class AuthFacade {
         username: response.username,
       })),
       tap((user) => this.sessionStore.setAuthenticatedUser(user)),
+      catchError((error) => {
+        this.clearSession();
+        return throwError(() => error);
+      }),
       shareReplay({ bufferSize: 1, refCount: true })
     );
 
@@ -67,11 +71,13 @@ export class AuthFacade {
 
   logout() {
     return this.api.logout().pipe(
-      tap(() => {
-        this.sessionStore.clear();
-        this.resetSessionCache();
-      })
+      tap(() => this.clearSession())
     );
+  }
+
+  private clearSession(): void {
+    this.sessionStore.clear();
+    this.resetSessionCache();
   }
 
   private resetSessionCache(): void {
