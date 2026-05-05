@@ -7,6 +7,8 @@ export { AppErrorStateComponent } from './error-state/app-error-state.component'
 export { AppLoadingStateComponent } from './loading-state/app-loading-state.component';
 export { AppPageComponent } from './page/app-page.component';
 export { AppPaginationBarComponent } from './pagination-bar/app-pagination-bar.component';
+export { AppSearchFiltersComponent } from './search-filters/app-search-filters.component';
+export { AppSearchResultsComponent } from './search-results/app-search-results.component';
 export {
   AppSidebarComponent,
   type AppSidebarItem,

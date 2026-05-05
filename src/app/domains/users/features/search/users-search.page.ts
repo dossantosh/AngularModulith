@@ -6,13 +6,9 @@ import { debounceTime, distinctUntilChanged } from 'rxjs';
 
 import {
   AppButtonComponent,
-  AppCardComponent,
-  AppCommandBarComponent,
-  AppEmptyStateComponent,
-  AppErrorStateComponent,
-  AppLoadingStateComponent,
   AppPageComponent,
-  AppPaginationBarComponent,
+  AppSearchFiltersComponent,
+  AppSearchResultsComponent,
   AppStatusBadgeComponent,
   AppTextFieldComponent,
 } from '../../../../shared/ui';
@@ -29,19 +25,50 @@ type UserSearchFormValue = Partial<{
   selector: 'app-users-search-page',
   imports: [
     AppButtonComponent,
-    AppCardComponent,
-    AppCommandBarComponent,
-    AppEmptyStateComponent,
-    AppErrorStateComponent,
-    AppLoadingStateComponent,
     AppPageComponent,
-    AppPaginationBarComponent,
+    AppSearchFiltersComponent,
+    AppSearchResultsComponent,
     AppStatusBadgeComponent,
     AppTextFieldComponent,
     MatTableModule,
     ReactiveFormsModule,
   ],
   templateUrl: './users-search.page.html',
+  styles: `
+    .users-results-table {
+      table-layout: fixed;
+      width: 100%;
+    }
+
+    .users-results-table__id {
+      width: 7rem;
+    }
+
+    .users-results-table__username {
+      width: 18rem;
+    }
+
+    .users-results-table__email {
+      width: 38%;
+    }
+
+    .users-results-table__status,
+    .users-results-table__admin {
+      width: 10rem;
+    }
+
+    .users-results-table th,
+    .users-results-table td {
+      height: 3.25rem;
+      vertical-align: middle;
+    }
+
+    .users-results-table td {
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+  `,
 })
 export class UsersSearchPage implements OnInit {
   readonly facade = inject(UsersFacade);
