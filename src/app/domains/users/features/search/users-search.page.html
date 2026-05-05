@@ -5,16 +5,11 @@
   layout="full"
   [breadcrumbs]="breadcrumbs"
 >
-  <app-command-bar title="Filtros" subtitle="La busqueda se actualiza automaticamente al escribir.">
-    <span command-actions class="text-xs app-text-muted">
-      Debounce 400ms
-    </span>
-
-    <form
-      aria-label="Filtros de busqueda de usuarios"
-      [formGroup]="filtersForm"
-      class="grid gap-3 grid-cols-1 sm:grid-cols-2 lg:grid-cols-[180px_1fr_1fr_auto]"
-    >
+  <form
+    aria-label="Filtros de busqueda de usuarios"
+    [formGroup]="filtersForm"
+  >
+    <app-search-filters title="Filtros" subtitle="La busqueda se actualiza automaticamente al escribir.">
       <app-text-field label="ID" type="number" inputMode="numeric" [control]="filtersForm.controls.id" />
 
       <app-text-field label="Username" autocomplete="username" [control]="filtersForm.controls.username" />
@@ -32,8 +27,8 @@
           Limpiar
         </app-button>
       </div>
-    </form>
-  </app-command-bar>
+    </app-search-filters>
+  </form>
 
   <div class="mt-4">
     <app-search-results

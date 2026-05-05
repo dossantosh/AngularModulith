@@ -6,8 +6,8 @@ import { debounceTime, distinctUntilChanged } from 'rxjs';
 
 import {
   AppButtonComponent,
-  AppCommandBarComponent,
   AppPageComponent,
+  AppSearchFiltersComponent,
   AppSearchResultsComponent,
   AppStatusBadgeComponent,
   AppTextFieldComponent,
@@ -25,8 +25,8 @@ type UserSearchFormValue = Partial<{
   selector: 'app-users-search-page',
   imports: [
     AppButtonComponent,
-    AppCommandBarComponent,
     AppPageComponent,
+    AppSearchFiltersComponent,
     AppSearchResultsComponent,
     AppStatusBadgeComponent,
     AppTextFieldComponent,
