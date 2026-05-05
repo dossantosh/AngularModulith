@@ -3,6 +3,7 @@ import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { Router, RouterOutlet } from '@angular/router';
 
 import { AuthFacade } from '../auth/session/auth.facade';
+import { buildSidebarNavigation } from '../navigation/app-navigation';
 import { MainLayoutComponent } from './main-layout.component';
 
 @Component({
@@ -14,7 +15,7 @@ import { MainLayoutComponent } from './main-layout.component';
       [companyName]="companyName"
       [userName]="userName()"
       [dataSource]="dataSource()"
-      [canReadUsers]="canReadUsers()"
+      [navigationItems]="navigationItems()"
       (logout)="logout()"
     >
       <router-outlet></router-outlet>
@@ -30,7 +31,8 @@ export class ShellContainer {
   readonly username = this.auth.username;
   readonly userName = computed(() => this.username() ?? 'Guest');
   readonly dataSource = this.auth.dataSource;
-  readonly canReadUsers = computed(() => this.auth.can('users', 'read'));
+  readonly scopes = this.auth.scopes;
+  readonly navigationItems = computed(() => buildSidebarNavigation(this.scopes()));
 
   logout(): void {
     this.auth

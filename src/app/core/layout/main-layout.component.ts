@@ -1,6 +1,6 @@
-import { Component, computed, input, output, signal } from '@angular/core';
+import { Component, input, output, signal } from '@angular/core';
 
-import { AppSidebarComponent, AppSidebarItem } from '../../shared/ui';
+import { AppSidebarComponent, type AppSidebarItem } from '../../shared/ui';
 import { HeaderComponent } from './header.component';
 
 type ShellDataSource = 'prod' | 'historic';
@@ -75,24 +75,12 @@ export class MainLayoutComponent {
   readonly companyName = input('My Company');
   readonly userName = input('User');
   readonly dataSource = input<ShellDataSource>('prod');
-  readonly canReadUsers = input(false);
+  readonly navigationItems = input<readonly AppSidebarItem[]>([]);
 
   readonly logout = output<void>();
 
   readonly sidebarOpen = signal(false);
   readonly sidebarCollapsed = signal(false);
-  readonly navigationItems = computed<readonly AppSidebarItem[]>(() => [
-    { label: 'Dashboard', icon: 'dashboard', routerLink: '/', exact: true },
-    ...(this.canReadUsers()
-      ? [{ label: 'Usuarios', icon: 'group', routerLink: '/users/search' }]
-      : []),
-    {
-      label: 'Perfumes',
-      icon: 'local_florist',
-      disabled: true,
-      hint: 'Modulo previsto para proximas fases',
-    },
-  ]);
 
   toggleSidebar(): void {
     if (this.isDesktopViewport()) {
