@@ -1,4 +1,4 @@
-import { Component, EventEmitter, Input, Output } from '@angular/core';
+import { Component, input, output } from '@angular/core';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
 import { MatToolbarModule } from '@angular/material/toolbar';
@@ -33,13 +33,13 @@ type ShellDataSource = 'prod' | 'historic';
         </button>
 
         <div class="min-w-0">
-          <p class="truncate text-sm app-text">{{ companyName }}</p>
+          <p class="truncate text-sm app-text">{{ companyName() }}</p>
           <p class="hidden text-xs app-text-muted sm:block">Workspace operativo</p>
         </div>
       </div>
 
       <div class="flex items-center gap-2">
-        @if (dataSource === 'historic') {
+        @if (dataSource() === 'historic') {
           <app-status-badge
             label="Historico"
             icon="history"
@@ -52,7 +52,7 @@ type ShellDataSource = 'prod' | 'historic';
 
         <span class="hidden items-center gap-2 app-rounded-full app-surface-container px-3 py-1.5 text-sm app-text-muted sm:inline-flex">
           <mat-icon class="app-icon-sm" aria-hidden="true">account_circle</mat-icon>
-          <span class="font-medium app-text">{{ userName }}</span>
+          <span class="font-medium app-text">{{ userName() }}</span>
         </span>
 
         <app-button
@@ -67,10 +67,10 @@ type ShellDataSource = 'prod' | 'historic';
   `,
 })
 export class HeaderComponent {
-  @Input() companyName = 'My Company';
-  @Input() userName = 'User';
-  @Input() dataSource: ShellDataSource = 'prod';
+  readonly companyName = input('My Company');
+  readonly userName = input('User');
+  readonly dataSource = input<ShellDataSource>('prod');
 
-  @Output() menuToggle = new EventEmitter<void>();
-  @Output() logout = new EventEmitter<void>();
+  readonly menuToggle = output<void>();
+  readonly logout = output<void>();
 }

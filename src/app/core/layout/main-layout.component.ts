@@ -1,4 +1,4 @@
-import { Component, EventEmitter, Input, Output, signal } from '@angular/core';
+import { Component, computed, input, output, signal } from '@angular/core';
 
 import { AppSidebarComponent, AppSidebarItem } from '../../shared/ui';
 import { HeaderComponent } from './header.component';
@@ -12,7 +12,7 @@ type ShellDataSource = 'prod' | 'historic';
   template: `
     <div class="flex h-dvh overflow-hidden app-bg-background app-text">
       <aside class="hidden shrink-0 lg:block">
-        <app-sidebar [productName]="companyName" [items]="navigationItems" />
+        <app-sidebar [productName]="companyName()" [items]="navigationItems()" />
       </aside>
 
       @if (sidebarOpen()) {
@@ -25,8 +25,8 @@ type ShellDataSource = 'prod' | 'historic';
           ></button>
           <aside class="relative h-full">
             <app-sidebar
-              [productName]="companyName"
-              [items]="navigationItems"
+              [productName]="companyName()"
+              [items]="navigationItems()"
               (navigated)="closeSidebar()"
             />
           </aside>
@@ -36,9 +36,9 @@ type ShellDataSource = 'prod' | 'historic';
       <div class="flex min-w-0 flex-1 flex-col">
         <app-header
           class="shrink-0"
-          [companyName]="companyName"
-          [userName]="userName"
-          [dataSource]="dataSource"
+          [companyName]="companyName()"
+          [userName]="userName()"
+          [dataSource]="dataSource()"
           (menuToggle)="toggleSidebar()"
           (logout)="logout.emit()"
         />
@@ -51,29 +51,26 @@ type ShellDataSource = 'prod' | 'historic';
   `,
 })
 export class MainLayoutComponent {
-  @Input() companyName = 'My Company';
-  @Input() userName = 'User';
-  @Input() dataSource: ShellDataSource = 'prod';
-  @Input() canReadUsers = false;
+  readonly companyName = input('My Company');
+  readonly userName = input('User');
+  readonly dataSource = input<ShellDataSource>('prod');
+  readonly canReadUsers = input(false);
 
-  @Output() logout = new EventEmitter<void>();
+  readonly logout = output<void>();
 
   readonly sidebarOpen = signal(false);
-
-  get navigationItems(): readonly AppSidebarItem[] {
-    return [
-      { label: 'Dashboard', icon: 'dashboard', routerLink: '/', exact: true },
-      ...(this.canReadUsers
-        ? [{ label: 'Usuarios', icon: 'group', routerLink: '/users/search' }]
-        : []),
-      {
-        label: 'Perfumes',
-        icon: 'local_florist',
-        disabled: true,
-        hint: 'Modulo previsto para proximas fases',
-      },
-    ];
-  }
+  readonly navigationItems = computed<readonly AppSidebarItem[]>(() => [
+    { label: 'Dashboard', icon: 'dashboard', routerLink: '/', exact: true },
+    ...(this.canReadUsers()
+      ? [{ label: 'Usuarios', icon: 'group', routerLink: '/users/search' }]
+      : []),
+    {
+      label: 'Perfumes',
+      icon: 'local_florist',
+      disabled: true,
+      hint: 'Modulo previsto para proximas fases',
+    },
+  ]);
 
   toggleSidebar(): void {
     this.sidebarOpen.update((open) => !open);

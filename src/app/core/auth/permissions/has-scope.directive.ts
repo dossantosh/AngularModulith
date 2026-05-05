@@ -1,4 +1,4 @@
-import { Directive, Input, TemplateRef, ViewContainerRef, effect, inject, signal } from '@angular/core';
+import { Directive, TemplateRef, ViewContainerRef, computed, effect, inject, input } from '@angular/core';
 
 import { AuthFacade } from '../session/auth.facade';
 
@@ -10,7 +10,8 @@ export class HasScopeDirective {
   private readonly auth = inject(AuthFacade);
   private readonly templateRef = inject(TemplateRef<unknown>);
   private readonly viewContainer = inject(ViewContainerRef);
-  private readonly requiredScopes = signal<readonly string[]>([]);
+  readonly appHasScope = input<string | readonly string[] | null | undefined>(undefined);
+  private readonly requiredScopes = computed(() => normalizeScopes(this.appHasScope()));
 
   private hasView = false;
 
@@ -31,10 +32,6 @@ export class HasScopeDirective {
     });
   }
 
-  @Input()
-  set appHasScope(value: string | readonly string[] | null | undefined) {
-    this.requiredScopes.set(normalizeScopes(value));
-  }
 }
 
 function normalizeScopes(value: string | readonly string[] | null | undefined): readonly string[] {

@@ -133,6 +133,42 @@ describe('AuthFacade', () => {
     });
   });
 
+  it('loadSession() clears the cache when the session request fails', () => {
+    facade.loadSession().subscribe({ error: () => undefined });
+
+    const failedRequest = http.expectOne((req) => req.url === '/api/auth/me');
+    failedRequest.flush({ message: 'Unauthorized' }, { status: 401, statusText: 'Unauthorized' });
+
+    expect(facade.username()).toBe(null);
+    expect(facade.dataSource()).toBe('prod');
+
+    facade.loadSession().subscribe();
+    http.expectOne((req) => req.url === '/api/auth/me').flush({
+      username: 'john',
+      dataSource: 'historic',
+      scopes: [],
+      capabilities: {
+        users: {
+          canAccess: true,
+          canRead: false,
+          canCreate: false,
+          canUpdate: false,
+          canDelete: false,
+        },
+        perfumes: {
+          canAccess: false,
+          canRead: false,
+          canCreate: false,
+          canUpdate: false,
+          canDelete: false,
+        },
+      },
+    });
+
+    expect(facade.username()).toBe('john');
+    expect(facade.dataSource()).toBe('historic');
+  });
+
   it('logout() resets username, capabilities, and data source', () => {
     facade.login({ username: 'john', password: 'pw', dataSource: 'historic' }).subscribe();
     http.expectOne((req) => req.url === '/api/auth/login').flush({ username: 'john' });
@@ -168,6 +204,65 @@ describe('AuthFacade', () => {
     expect(facade.dataSource()).toBe('prod');
     expect(facade.can('users', 'access')).toBe(false);
     expect(facade.hasScope('users:read')).toBe(false);
+  });
+
+  it('clearSessionAfterUnauthorized() resets session and invalidates the cached /me response', () => {
+    facade.loadSession().subscribe();
+
+    http.expectOne((req) => req.url === '/api/auth/me').flush({
+      username: 'john',
+      dataSource: 'historic',
+      scopes: ['users:read'],
+      capabilities: {
+        users: {
+          canAccess: true,
+          canRead: true,
+          canCreate: false,
+          canUpdate: false,
+          canDelete: false,
+        },
+        perfumes: {
+          canAccess: false,
+          canRead: false,
+          canCreate: false,
+          canUpdate: false,
+          canDelete: false,
+        },
+      },
+    });
+
+    expect(facade.username()).toBe('john');
+
+    facade.clearSessionAfterUnauthorized();
+
+    expect(facade.username()).toBe(null);
+    expect(facade.dataSource()).toBe('prod');
+    expect(facade.can('users', 'read')).toBe(false);
+
+    facade.loadSession().subscribe();
+    http.expectOne((req) => req.url === '/api/auth/me').flush({
+      username: 'jane',
+      dataSource: 'prod',
+      scopes: [],
+      capabilities: {
+        users: {
+          canAccess: false,
+          canRead: false,
+          canCreate: false,
+          canUpdate: false,
+          canDelete: false,
+        },
+        perfumes: {
+          canAccess: false,
+          canRead: false,
+          canCreate: false,
+          canUpdate: false,
+          canDelete: false,
+        },
+      },
+    });
+
+    expect(facade.username()).toBe('jane');
   });
 
   it('loadSession() reads capabilities as the permission contract', () => {

@@ -1,4 +1,4 @@
-import { OnChanges, booleanAttribute, Component, Input } from '@angular/core';
+import { Component, booleanAttribute, effect, input } from '@angular/core';
 import { FormControl, ReactiveFormsModule } from '@angular/forms';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
@@ -16,18 +16,18 @@ const DEFAULT_ERROR_MESSAGES: Record<string, string> = {
   imports: [MatFormFieldModule, MatInputModule, ReactiveFormsModule],
   template: `
     <mat-form-field class="w-full" appearance="outline">
-      <mat-label>{{ label }}</mat-label>
+      <mat-label>{{ label() }}</mat-label>
       <input
         matInput
-        [type]="type"
-        [formControl]="control"
-        [attr.autocomplete]="autocomplete || null"
-        [attr.inputmode]="inputMode || null"
-        [attr.aria-describedby]="ariaDescribedBy || null"
+        [type]="type()"
+        [formControl]="control()"
+        [attr.autocomplete]="autocomplete() || null"
+        [attr.inputmode]="inputMode() || null"
+        [attr.aria-describedby]="ariaDescribedBy() || null"
       />
 
-      @if (hint && !errorMessage) {
-        <mat-hint>{{ hint }}</mat-hint>
+      @if (hint() && !errorMessage) {
+        <mat-hint>{{ hint() }}</mat-hint>
       }
 
       @if (errorMessage) {
@@ -36,30 +36,33 @@ const DEFAULT_ERROR_MESSAGES: Record<string, string> = {
     </mat-form-field>
   `,
 })
-export class AppTextFieldComponent implements OnChanges {
-  @Input({ required: true }) label = '';
-  @Input({ required: true }) control!: FormControl;
-  @Input() type: TextFieldType = 'text';
-  @Input() autocomplete = '';
-  @Input() inputMode = '';
-  @Input() hint = '';
-  @Input() ariaDescribedBy = '';
-  @Input() errorMessages: Partial<Record<string, string>> = {};
-  @Input({ transform: booleanAttribute }) showErrors = false;
+export class AppTextFieldComponent {
+  readonly label = input.required<string>();
+  readonly control = input.required<FormControl>();
+  readonly type = input<TextFieldType>('text');
+  readonly autocomplete = input('');
+  readonly inputMode = input('');
+  readonly hint = input('');
+  readonly ariaDescribedBy = input('');
+  readonly errorMessages = input<Partial<Record<string, string>>>({});
+  readonly showErrors = input(false, { transform: booleanAttribute });
 
-  ngOnChanges(): void {
-    if (this.showErrors && this.control?.invalid) {
-      this.control.markAsTouched({ onlySelf: true });
-    }
+  constructor() {
+    effect(() => {
+      const control = this.control();
+      if (this.showErrors() && control.invalid) {
+        control.markAsTouched({ onlySelf: true });
+      }
+    });
   }
 
   get errorMessage(): string | null {
-    const control = this.control;
-    if (!control.errors || !(this.showErrors || control.touched || control.dirty)) {
+    const control = this.control();
+    if (!control.errors || !(this.showErrors() || control.touched || control.dirty)) {
       return null;
     }
 
     const firstError = Object.keys(control.errors)[0];
-    return this.errorMessages[firstError] ?? DEFAULT_ERROR_MESSAGES[firstError] ?? 'Valor no valido.';
+    return this.errorMessages()[firstError] ?? DEFAULT_ERROR_MESSAGES[firstError] ?? 'Valor no valido.';
   }
 }

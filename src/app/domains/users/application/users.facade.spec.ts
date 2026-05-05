@@ -54,6 +54,42 @@ describe('UsersFacade', () => {
     expect(facade.hasNext()).toBe(true);
   });
 
+  it('search() ignores an older in-flight request when a newer search starts', () => {
+    const first = new Subject<ReturnType<typeof userPage>>();
+    const second = new Subject<ReturnType<typeof userPage>>();
+    const oldUser = {
+      id: 1,
+      username: 'old',
+      email: 'old@example.com',
+      enabled: true,
+      isAdmin: false,
+    };
+    const newUser = {
+      id: 2,
+      username: 'new',
+      email: 'new@example.com',
+      enabled: true,
+      isAdmin: false,
+    };
+    const api = {
+      search: vi
+        .fn()
+        .mockReturnValueOnce(first.asObservable())
+        .mockReturnValueOnce(second.asObservable()),
+    };
+    const facade = setup(api);
+
+    facade.search();
+    facade.setFilters({ username: 'new' });
+    facade.search();
+
+    first.next(userPage({ content: [oldUser], empty: false }));
+    expect(facade.users()).toEqual([]);
+
+    second.next(userPage({ content: [newUser], empty: false }));
+    expect(facade.users()).toEqual([newUser]);
+  });
+
   it('search() sets error state on failure', () => {
     const facade = setup({
       search: () => throwError(() => new Error('boom')),

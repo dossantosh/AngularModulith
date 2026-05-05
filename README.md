@@ -121,6 +121,16 @@ No crear un form-engine o schema-table hasta que existan varios CRUDs con repeti
 - Evitar estado global salvo sesion/auth, theme o necesidades realmente transversales.
 - No introducir NgRx/SignalStore por defecto.
 
+Guia interna:
+
+- Signals: estado sincronico de UI, sesion/permisos/theme, flags de pantalla y valores derivados con `computed()`.
+- RxJS: HTTP, guards, `valueChanges`, debounce, cancelacion con `switchMap`, inicializadores y streams externos.
+- Facades: exponen signals para lectura desde UI y pueden usar RxJS internamente para asincronia. Evitar `Subscription` manual en flujos repetibles; modelar comandos privados con `Subject` + `switchMap` cuando la ultima accion debe ganar.
+- Componentes: un `subscribe()` puntual para login/logout/navegacion es aceptable, pero debe usar `takeUntilDestroyed()` si el componente puede destruirse antes de que termine.
+- `effect()`: usarlo para renderizado o integracion visual, como directivas estructurales. No usarlo para fetch, navegacion o reglas de negocio salvo justificacion clara.
+- Interop: usar `toSignal()`/`toObservable()` solo en fronteras claras entre estado UI y streams async; no convertir por reflejo.
+- Inputs/outputs: componentes nuevos de `shared/ui` usan `input()`/`output()`. Componentes existentes se migran cuando se toquen por una razon real.
+
 ## Boundaries de ESLint
 
 Las reglas actuales protegen limites reales:
@@ -146,6 +156,14 @@ Endpoints esperados:
 - `GET /api/auth/csrf`
 
 Usar `AuthFacade`, `authGuard`, `scopeGuard` y `appHasScope` para permisos de UI. No confiar en la UI como seguridad final.
+
+Politica de cache de sesion:
+
+- `loadSession()` puede cachear `GET /api/auth/me` para no repetir la misma carga de sesion.
+- La cache debe invalidarse en login exitoso, logout y fallo de carga de sesion.
+- Un `401` desde endpoints protegidos fuera de `/api/auth/*` limpia sesion/cache y navega a `/login`.
+- Un `403` no redirige a login por defecto: representa falta de permisos y se maneja con guards/rutas como `/forbidden`.
+- La sesion global vive en `AuthSessionStore`; las features leen permisos via `AuthFacade`, no desde HTTP directo.
 
 ## Comandos
 

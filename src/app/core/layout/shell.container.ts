@@ -1,4 +1,5 @@
-import { Component, computed, inject } from '@angular/core';
+import { Component, DestroyRef, computed, inject } from '@angular/core';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { Router, RouterOutlet } from '@angular/router';
 
 import { AuthFacade } from '../auth/session/auth.facade';
@@ -23,6 +24,7 @@ import { MainLayoutComponent } from './main-layout.component';
 export class ShellContainer {
   private readonly auth = inject(AuthFacade);
   private readonly router = inject(Router);
+  private readonly destroyRef = inject(DestroyRef);
 
   readonly companyName = "Seb's Perfumes";
   readonly username = this.auth.username;
@@ -31,9 +33,12 @@ export class ShellContainer {
   readonly canReadUsers = computed(() => this.auth.can('users', 'read'));
 
   logout(): void {
-    this.auth.logout().subscribe({
-      next: () => void this.router.navigateByUrl('/login'),
-      error: () => void this.router.navigateByUrl('/login'),
-    });
+    this.auth
+      .logout()
+      .pipe(takeUntilDestroyed(this.destroyRef))
+      .subscribe({
+        next: () => void this.router.navigateByUrl('/login'),
+        error: () => void this.router.navigateByUrl('/login'),
+      });
   }
 }
