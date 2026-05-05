@@ -6,13 +6,9 @@ import { debounceTime, distinctUntilChanged } from 'rxjs';
 
 import {
   AppButtonComponent,
-  AppCardComponent,
   AppCommandBarComponent,
-  AppEmptyStateComponent,
-  AppErrorStateComponent,
-  AppLoadingStateComponent,
   AppPageComponent,
-  AppPaginationBarComponent,
+  AppSearchResultsComponent,
   AppStatusBadgeComponent,
   AppTextFieldComponent,
 } from '../../../../shared/ui';
@@ -29,13 +25,9 @@ type UserSearchFormValue = Partial<{
   selector: 'app-users-search-page',
   imports: [
     AppButtonComponent,
-    AppCardComponent,
     AppCommandBarComponent,
-    AppEmptyStateComponent,
-    AppErrorStateComponent,
-    AppLoadingStateComponent,
     AppPageComponent,
-    AppPaginationBarComponent,
+    AppSearchResultsComponent,
     AppStatusBadgeComponent,
     AppTextFieldComponent,
     MatTableModule,
