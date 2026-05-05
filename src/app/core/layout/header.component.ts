@@ -25,8 +25,7 @@ type ShellDataSource = 'prod' | 'historic';
         <button
           mat-icon-button
           type="button"
-          class="lg:hidden"
-          aria-label="Abrir navegacion"
+          aria-label="Alternar navegacion"
           (click)="menuToggle.emit()"
         >
           <mat-icon aria-hidden="true">menu</mat-icon>

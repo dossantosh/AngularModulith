@@ -19,8 +19,26 @@ type MaterialButtonAppearance = 'filled' | 'outlined' | 'text';
   },
   styles: `
     .app-button {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 0.5rem;
       min-inline-size: max-content;
+      line-height: 1;
       white-space: nowrap;
+    }
+
+    .app-button mat-icon {
+      width: 1.125rem;
+      height: 1.125rem;
+      font-size: 1.125rem;
+      line-height: 1;
+    }
+
+    .app-button span {
+      display: inline-flex;
+      align-items: center;
+      line-height: 1.25rem;
     }
 
     .app-button--danger {

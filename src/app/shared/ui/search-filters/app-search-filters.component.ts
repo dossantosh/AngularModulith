@@ -12,7 +12,7 @@ import { AppCommandBarComponent } from '../command-bar/app-command-bar.component
         <ng-content select="[search-filter-actions]" />
       </span>
 
-      <div class="grid gap-3 grid-cols-1 sm:grid-cols-2 lg:grid-cols-[180px_1fr_1fr_auto]">
+      <div class="grid grid-cols-1 items-center gap-3 sm:grid-cols-2 lg:grid-cols-[180px_1fr_1fr]">
         <ng-content />
       </div>
     </app-command-bar>

@@ -30,7 +30,7 @@ export type AppStatusBadgeVariant = 'success' | 'danger' | 'warning' | 'info' | 
       border-radius: 9999px;
       padding: 0.125rem 0.625rem;
       font-size: 0.75rem;
-      font-weight: 600;
+      font-weight: 400;
       line-height: 1rem;
       white-space: nowrap;
     }

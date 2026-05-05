@@ -4,7 +4,7 @@
   eyebrow="Inicio"
   [breadcrumbs]="breadcrumbs"
 >
-  <div class="grid gap-4 md:grid-cols-3">
+  <div class="dashboard-grid">
     <app-card title="Modulos activos">
       <div class="flex items-end justify-between gap-3">
         <div>
@@ -23,7 +23,7 @@
         </div>
         <app-status-badge
           label="Sesion"
-          icon="database"
+          icon="storage"
           [variant]="dataSource() === 'historic' ? 'warning' : 'info'"
         />
       </div>
@@ -38,10 +38,12 @@
         <app-status-badge label="Activo" icon="verified_user" variant="success" />
       </div>
     </app-card>
-  </div>
 
-  <div class="mt-4 grid gap-4 xl:grid-cols-[2fr_1fr]">
-    <app-card title="Trabajo disponible" subtitle="Acciones principales segun tus permisos.">
+    <app-card
+      class="dashboard-card--wide"
+      title="Trabajo disponible"
+      subtitle="Acciones principales segun tus permisos."
+    >
       <div class="grid gap-3 md:grid-cols-2">
         <section
           *appHasScope="scopes.users.read"
@@ -96,9 +98,7 @@
         </div>
       </dl>
     </app-card>
-  </div>
 
-  <div class="mt-4 grid gap-4 lg:grid-cols-3">
     <app-card title="Autenticacion">
       <p class="text-sm app-text-muted">
         Login, sesion, capabilities y origen de datos estan centralizados en core/auth.

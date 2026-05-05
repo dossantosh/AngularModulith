@@ -21,6 +21,23 @@ import {
     HasScopeDirective,
   ],
   templateUrl: './dashboard.page.html',
+  styles: `
+    .dashboard-grid {
+      display: grid;
+      gap: 1rem;
+      grid-template-columns: 1fr;
+    }
+
+    @media (min-width: 768px) {
+      .dashboard-grid {
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+      }
+
+      .dashboard-card--wide {
+        grid-column: span 2;
+      }
+    }
+  `,
 })
 export class DashboardPage {
   private readonly auth = inject(AuthFacade);

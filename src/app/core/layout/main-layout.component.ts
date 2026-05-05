@@ -11,12 +11,14 @@ type ShellDataSource = 'prod' | 'historic';
   imports: [AppSidebarComponent, HeaderComponent],
   template: `
     <div class="flex h-dvh overflow-hidden app-bg-background app-text">
-      <aside class="hidden shrink-0 lg:block">
-        <app-sidebar [productName]="companyName()" [items]="navigationItems()" />
-      </aside>
+      @if (!sidebarCollapsed()) {
+        <aside class="app-layout__desktop-sidebar shrink-0">
+          <app-sidebar [productName]="companyName()" [items]="navigationItems()" />
+        </aside>
+      }
 
       @if (sidebarOpen()) {
-        <div class="fixed inset-0 z-50 lg:hidden">
+        <div class="app-layout__mobile-overlay fixed inset-0 z-50">
           <button
             type="button"
             class="absolute inset-0 app-overlay"
@@ -49,6 +51,25 @@ type ShellDataSource = 'prod' | 'historic';
       </div>
     </div>
   `,
+  styles: `
+    .app-layout__desktop-sidebar {
+      display: none;
+    }
+
+    .app-layout__mobile-overlay {
+      display: block;
+    }
+
+    @media (min-width: 1024px) {
+      .app-layout__desktop-sidebar {
+        display: block;
+      }
+
+      .app-layout__mobile-overlay {
+        display: none;
+      }
+    }
+  `,
 })
 export class MainLayoutComponent {
   readonly companyName = input('My Company');
@@ -59,6 +80,7 @@ export class MainLayoutComponent {
   readonly logout = output<void>();
 
   readonly sidebarOpen = signal(false);
+  readonly sidebarCollapsed = signal(false);
   readonly navigationItems = computed<readonly AppSidebarItem[]>(() => [
     { label: 'Dashboard', icon: 'dashboard', routerLink: '/', exact: true },
     ...(this.canReadUsers()
@@ -73,10 +95,25 @@ export class MainLayoutComponent {
   ]);
 
   toggleSidebar(): void {
+    if (this.isDesktopViewport()) {
+      this.sidebarCollapsed.update((collapsed) => !collapsed);
+      this.sidebarOpen.set(false);
+      return;
+    }
+
     this.sidebarOpen.update((open) => !open);
   }
 
   closeSidebar(): void {
     this.sidebarOpen.set(false);
+    this.sidebarCollapsed.set(false);
+  }
+
+  private isDesktopViewport(): boolean {
+    return (
+      typeof window !== 'undefined' &&
+      typeof window.matchMedia === 'function' &&
+      window.matchMedia('(min-width: 1024px)').matches
+    );
   }
 }

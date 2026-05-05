@@ -10,6 +10,16 @@
     [formGroup]="filtersForm"
   >
     <app-search-filters title="Filtros" subtitle="La busqueda se actualiza automaticamente al escribir.">
+      <app-button
+        search-filter-actions
+        variant="secondary"
+        type="button"
+        [disabled]="facade.loading()"
+        (clicked)="clearFilters()"
+      >
+        Limpiar
+      </app-button>
+
       <app-text-field label="ID" type="number" inputMode="numeric" [control]="filtersForm.controls.id" />
 
       <app-text-field label="Username" autocomplete="username" [control]="filtersForm.controls.username" />
@@ -21,12 +31,6 @@
         autocomplete="email"
         [control]="filtersForm.controls.email"
       />
-
-      <div class="flex items-start sm:col-span-2 lg:col-span-1 lg:justify-end">
-        <app-button variant="secondary" type="button" [disabled]="facade.loading()" (clicked)="clearFilters()">
-          Limpiar
-        </app-button>
-      </div>
     </app-search-filters>
   </form>
 
@@ -62,32 +66,40 @@
           id="users-results-table"
           aria-label="Listado de usuarios encontrados"
           [attr.aria-busy]="facade.loading()"
-          class="min-w-full"
+          class="users-results-table min-w-full"
         >
           <caption class="sr-only">
             Listado de usuarios encontrados
           </caption>
 
           <ng-container matColumnDef="id">
-            <th mat-header-cell *matHeaderCellDef>ID</th>
-            <td mat-cell *matCellDef="let user" class="app-text-muted">{{ user.id }}</td>
+            <th mat-header-cell *matHeaderCellDef class="users-results-table__id">ID</th>
+            <td mat-cell *matCellDef="let user" class="users-results-table__id app-text-muted">
+              {{ user.id }}
+            </td>
           </ng-container>
 
           <ng-container matColumnDef="username">
-            <th mat-header-cell *matHeaderCellDef>Username</th>
-            <td mat-cell *matCellDef="let user" class="font-medium app-text">
+            <th mat-header-cell *matHeaderCellDef class="users-results-table__username">Username</th>
+            <td
+              mat-cell
+              *matCellDef="let user"
+              class="users-results-table__username font-medium app-text"
+            >
               {{ user.username }}
             </td>
           </ng-container>
 
           <ng-container matColumnDef="email">
-            <th mat-header-cell *matHeaderCellDef>Email</th>
-            <td mat-cell *matCellDef="let user" class="app-text-muted">{{ user.email }}</td>
+            <th mat-header-cell *matHeaderCellDef class="users-results-table__email">Email</th>
+            <td mat-cell *matCellDef="let user" class="users-results-table__email app-text-muted">
+              {{ user.email }}
+            </td>
           </ng-container>
 
           <ng-container matColumnDef="enabled">
-            <th mat-header-cell *matHeaderCellDef>Enabled</th>
-            <td mat-cell *matCellDef="let user">
+            <th mat-header-cell *matHeaderCellDef class="users-results-table__status">Enabled</th>
+            <td mat-cell *matCellDef="let user" class="users-results-table__status">
               <app-status-badge
                 [label]="user.enabled ? 'Activo' : 'Inactivo'"
                 [icon]="user.enabled ? 'check_circle' : 'cancel'"
@@ -97,8 +109,8 @@
           </ng-container>
 
           <ng-container matColumnDef="admin">
-            <th mat-header-cell *matHeaderCellDef>Admin</th>
-            <td mat-cell *matCellDef="let user">
+            <th mat-header-cell *matHeaderCellDef class="users-results-table__admin">Admin</th>
+            <td mat-cell *matCellDef="let user" class="users-results-table__admin">
               <app-status-badge
                 [label]="user.isAdmin ? 'Admin' : 'Usuario'"
                 [icon]="user.isAdmin ? 'shield_person' : 'person'"
