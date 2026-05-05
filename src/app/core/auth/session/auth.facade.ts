@@ -23,6 +23,7 @@ export class AuthFacade {
   readonly dataSource = this.sessionStore.dataSource;
   readonly scopes = this.sessionStore.scopes;
   readonly capabilities = this.sessionStore.capabilities;
+  readonly navigation = this.sessionStore.navigation;
 
   hasScope(scope: string): boolean {
     return hasScope(this.scopes(), scope);
@@ -46,6 +47,7 @@ export class AuthFacade {
         this.sessionStore.setDataSource(response.dataSource ?? 'prod');
         this.sessionStore.setScopes(response.scopes ?? []);
         this.sessionStore.setCapabilities(response.capabilities);
+        this.sessionStore.setNavigation(response.navigation ?? []);
       }),
       map((response) => ({
         username: response.username,

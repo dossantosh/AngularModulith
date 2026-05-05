@@ -1,4 +1,5 @@
 import { AUTH_SCOPES } from '../auth/permissions/permissions';
+import { type AuthNavigationModule } from '../auth/session/session.model';
 import { type AppSidebarItem } from '../../shared/ui';
 
 interface AppNavigationLink {
@@ -52,20 +53,53 @@ const APP_NAVIGATION: readonly AppNavigationModule[] = [
   },
 ];
 
-export function buildSidebarNavigation(scopes: readonly string[]): readonly AppSidebarItem[] {
+export function buildSidebarNavigation(
+  scopes: readonly string[],
+  backendNavigation: readonly AuthNavigationModule[] = []
+): readonly AppSidebarItem[] {
+  if (backendNavigation.length > 0) {
+    return [dashboardLink(), ...backendNavigation.map(toSidebarModuleFromBackend)];
+  }
+
+  return buildFallbackSidebarNavigation(scopes);
+}
+
+function buildFallbackSidebarNavigation(scopes: readonly string[]): readonly AppSidebarItem[] {
   return [
-    {
-      key: 'dashboard',
-      kind: 'link',
-      label: 'Dashboard',
-      icon: 'dashboard',
-      routerLink: '/',
-      exact: true,
-    },
+    dashboardLink(),
     ...APP_NAVIGATION.map((module) => toSidebarModule(module, scopes)).filter(
       (module): module is AppSidebarItem => Boolean(module)
     ),
   ];
+}
+
+function dashboardLink(): AppSidebarItem {
+  return {
+    key: 'dashboard',
+    kind: 'link',
+    label: 'Dashboard',
+    icon: 'dashboard',
+    routerLink: '/',
+    exact: true,
+  };
+}
+
+function toSidebarModuleFromBackend(module: AuthNavigationModule): AppSidebarItem {
+  return {
+    key: module.key,
+    kind: 'group',
+    label: module.label,
+    icon: module.icon,
+    items: module.items.map((item) => ({
+      key: item.key,
+      kind: 'link',
+      label: item.label,
+      icon: item.icon,
+      routerLink: item.route,
+      disabled: item.disabled ?? false,
+      hint: item.hint ?? undefined,
+    })),
+  };
 }
 
 function toSidebarModule(

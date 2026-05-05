@@ -39,6 +39,21 @@ describe('AuthFacade', () => {
       username: 'john',
       dataSource: 'historic',
       scopes: ['users:read'],
+      navigation: [
+        {
+          key: 'systems',
+          label: 'Sistemas',
+          icon: 'settings',
+          items: [
+            {
+              key: 'users_search',
+              label: 'Usuarios',
+              icon: 'group',
+              route: '/users/search',
+            },
+          ],
+        },
+      ],
       capabilities: {
         users: {
           canAccess: true,
@@ -67,6 +82,8 @@ describe('AuthFacade', () => {
     expect(facade.hasAnyScope(['users:create', 'users:read'])).toBe(true);
     expect(facade.hasAllScopes(['users:read'])).toBe(true);
     expect(facade.can('users', 'read')).toBe(true);
+    expect(facade.navigation()).toHaveLength(1);
+    expect(facade.navigation()[0]?.items[0]?.route).toBe('/users/search');
   });
 
   it('loadSession() caches until logout resets it', () => {
@@ -204,6 +221,7 @@ describe('AuthFacade', () => {
     expect(facade.dataSource()).toBe('prod');
     expect(facade.can('users', 'access')).toBe(false);
     expect(facade.hasScope('users:read')).toBe(false);
+    expect(facade.navigation()).toEqual([]);
   });
 
   it('clearSessionAfterUnauthorized() resets session and invalidates the cached /me response', () => {

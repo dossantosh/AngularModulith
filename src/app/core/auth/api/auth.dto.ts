@@ -1,5 +1,5 @@
 import { AuthCapabilities } from '../permissions/permissions';
-import { BackendDataSource } from '../session/session.model';
+import { AuthNavigationModule, BackendDataSource } from '../session/session.model';
 
 export interface LoginRequestDto {
   username: string;
@@ -16,4 +16,5 @@ export interface MeResponseDto {
   dataSource: BackendDataSource;
   scopes?: string[];
   capabilities: AuthCapabilities;
+  navigation?: AuthNavigationModule[];
 }

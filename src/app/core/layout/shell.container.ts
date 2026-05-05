@@ -32,7 +32,8 @@ export class ShellContainer {
   readonly userName = computed(() => this.username() ?? 'Guest');
   readonly dataSource = this.auth.dataSource;
   readonly scopes = this.auth.scopes;
-  readonly navigationItems = computed(() => buildSidebarNavigation(this.scopes()));
+  readonly navigation = this.auth.navigation;
+  readonly navigationItems = computed(() => buildSidebarNavigation(this.scopes(), this.navigation()));
 
   logout(): void {
     this.auth
