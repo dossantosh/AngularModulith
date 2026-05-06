@@ -38,7 +38,7 @@ describe('AuthFacade', () => {
     http.expectOne((req) => req.url === '/api/auth/me').flush({
       username: 'john',
       dataSource: 'historic',
-      scopes: ['users:read'],
+      scopes: ['systems:read'],
       navigation: [
         {
           key: 'systems',
@@ -55,7 +55,7 @@ describe('AuthFacade', () => {
         },
       ],
       capabilities: {
-        users: {
+        systems: {
           canAccess: true,
           canRead: true,
           canCreate: false,
@@ -75,13 +75,13 @@ describe('AuthFacade', () => {
     expect(result).toBe('john');
     expect(facade.username()).toBe('john');
     expect(facade.dataSource()).toBe('historic');
-    expect(facade.can('users', 'access')).toBe(true);
-    expect(facade.can('users', 'read')).toBe(true);
-    expect(facade.can('users', 'write')).toBe(false);
-    expect(facade.hasScope('users:read')).toBe(true);
-    expect(facade.hasAnyScope(['users:create', 'users:read'])).toBe(true);
-    expect(facade.hasAllScopes(['users:read'])).toBe(true);
-    expect(facade.can('users', 'read')).toBe(true);
+    expect(facade.can('systems', 'access')).toBe(true);
+    expect(facade.can('systems', 'read')).toBe(true);
+    expect(facade.can('systems', 'write')).toBe(false);
+    expect(facade.hasScope('systems:read')).toBe(true);
+    expect(facade.hasAnyScope(['systems:write', 'systems:read'])).toBe(true);
+    expect(facade.hasAllScopes(['systems:read'])).toBe(true);
+    expect(facade.can('systems', 'read')).toBe(true);
     expect(facade.navigation()).toHaveLength(1);
     expect(facade.navigation()[0]?.items[0]?.route).toBe('/users/search');
   });
@@ -96,7 +96,7 @@ describe('AuthFacade', () => {
       dataSource: 'historic',
       scopes: [],
       capabilities: {
-        users: {
+        systems: {
           canAccess: true,
           canRead: false,
           canCreate: false,
@@ -132,7 +132,7 @@ describe('AuthFacade', () => {
       dataSource: 'prod',
       scopes: [],
       capabilities: {
-        users: {
+        systems: {
           canAccess: false,
           canRead: false,
           canCreate: false,
@@ -165,7 +165,7 @@ describe('AuthFacade', () => {
       dataSource: 'historic',
       scopes: [],
       capabilities: {
-        users: {
+        systems: {
           canAccess: true,
           canRead: false,
           canCreate: false,
@@ -192,9 +192,9 @@ describe('AuthFacade', () => {
     http.expectOne((req) => req.url === '/api/auth/me').flush({
       username: 'john',
       dataSource: 'historic',
-      scopes: ['users:read'],
+      scopes: ['systems:read'],
       capabilities: {
-        users: {
+        systems: {
           canAccess: true,
           canRead: false,
           canCreate: false,
@@ -219,8 +219,8 @@ describe('AuthFacade', () => {
 
     expect(facade.username()).toBe(null);
     expect(facade.dataSource()).toBe('prod');
-    expect(facade.can('users', 'access')).toBe(false);
-    expect(facade.hasScope('users:read')).toBe(false);
+    expect(facade.can('systems', 'access')).toBe(false);
+    expect(facade.hasScope('systems:read')).toBe(false);
     expect(facade.navigation()).toEqual([]);
   });
 
@@ -230,9 +230,9 @@ describe('AuthFacade', () => {
     http.expectOne((req) => req.url === '/api/auth/me').flush({
       username: 'john',
       dataSource: 'historic',
-      scopes: ['users:read'],
+      scopes: ['systems:read'],
       capabilities: {
-        users: {
+        systems: {
           canAccess: true,
           canRead: true,
           canCreate: false,
@@ -255,7 +255,7 @@ describe('AuthFacade', () => {
 
     expect(facade.username()).toBe(null);
     expect(facade.dataSource()).toBe('prod');
-    expect(facade.can('users', 'read')).toBe(false);
+    expect(facade.can('systems', 'read')).toBe(false);
 
     facade.loadSession().subscribe();
     http.expectOne((req) => req.url === '/api/auth/me').flush({
@@ -263,7 +263,7 @@ describe('AuthFacade', () => {
       dataSource: 'prod',
       scopes: [],
       capabilities: {
-        users: {
+        systems: {
           canAccess: false,
           canRead: false,
           canCreate: false,
@@ -289,9 +289,9 @@ describe('AuthFacade', () => {
     http.expectOne((req) => req.url === '/api/auth/me').flush({
       username: 'john',
       dataSource: 'prod',
-      scopes: ['users:update'],
+      scopes: ['systems:write'],
       capabilities: {
-        users: {
+        systems: {
           canAccess: true,
           canRead: false,
           canCreate: false,
@@ -308,10 +308,11 @@ describe('AuthFacade', () => {
       },
     });
 
-    expect(facade.can('users', 'access')).toBe(true);
-    expect(facade.can('users', 'read')).toBe(false);
-    expect(facade.can('users', 'write')).toBe(true);
-    expect(facade.hasScope('users:update')).toBe(true);
-    expect(facade.can('users', 'update')).toBe(true);
+    expect(facade.can('systems', 'access')).toBe(true);
+    expect(facade.can('systems', 'read')).toBe(false);
+    expect(facade.can('systems', 'write')).toBe(true);
+    expect(facade.hasScope('systems:write')).toBe(true);
+    expect(facade.can('systems', 'update')).toBe(true);
   });
 });
+

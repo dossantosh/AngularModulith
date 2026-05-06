@@ -15,3 +15,4 @@ import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 export class AppLoadingStateComponent {
   readonly message = input('Cargando...');
 }
+

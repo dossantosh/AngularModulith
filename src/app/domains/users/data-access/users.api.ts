@@ -60,3 +60,4 @@ function mapUserSummary(user: UserSummaryView): UserSummaryDto {
     isAdmin: user.isAdmin ?? false,
   };
 }
+

@@ -7,12 +7,12 @@ export interface FeatureCapability {
 }
 
 export interface AuthCapabilities extends Record<string, FeatureCapability> {
-  users: FeatureCapability;
+  systems: FeatureCapability;
   perfumes: FeatureCapability;
 }
 
 export const EMPTY_AUTH_CAPABILITIES: AuthCapabilities = {
-  users: {
+  systems: {
     canAccess: false,
     canRead: false,
     canCreate: false,
@@ -29,25 +29,13 @@ export const EMPTY_AUTH_CAPABILITIES: AuthCapabilities = {
 };
 
 export const AUTH_SCOPES = {
-  users: {
-    read: 'users:read',
-    create: 'users:create',
-    update: 'users:update',
-    delete: 'users:delete',
+  systems: {
+    read: 'systems:read',
+    write: 'systems:write',
   },
   perfumes: {
     read: 'perfumes:read',
-    create: 'perfumes:create',
-    update: 'perfumes:update',
-    delete: 'perfumes:delete',
-  },
-  roles: {
-    read: 'role:read',
-    assign: 'role:assign',
-  },
-  scopes: {
-    read: 'scope:read',
-    assign: 'scope:assign',
+    write: 'perfumes:write',
   },
 } as const;
 
@@ -98,3 +86,4 @@ export function can(
   const capabilityName = `can${action.charAt(0).toUpperCase()}${action.slice(1)}`;
   return Boolean(resourceCapabilities[capabilityName as keyof typeof resourceCapabilities]);
 }
+

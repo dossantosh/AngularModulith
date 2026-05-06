@@ -17,3 +17,4 @@ export class FooterComponent {
   readonly companyName = input('My Company');
   readonly year = input(new Date().getFullYear());
 }
+

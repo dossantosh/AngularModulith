@@ -78,3 +78,4 @@ export class AppPageComponent {
     return widths[this.layout()];
   });
 }
+

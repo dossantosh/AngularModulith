@@ -14,3 +14,4 @@ export interface UserPageDto {
   previousId: number | null;
   empty: boolean;
 }
+

@@ -60,3 +60,4 @@ describe('LoginPage', () => {
     expect(alert?.textContent).toContain('No se pudo iniciar sesion');
   });
 });
+

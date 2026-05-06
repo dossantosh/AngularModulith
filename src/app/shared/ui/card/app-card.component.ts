@@ -66,3 +66,4 @@ export class AppCardComponent {
   readonly spacious = input(false, { transform: booleanAttribute });
   readonly overflowHidden = input(false, { transform: booleanAttribute });
 }
+

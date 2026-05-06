@@ -6,3 +6,4 @@ import { AuthApi } from '../api/auth.api';
 export function provideAuthBootstrap() {
   return provideAppInitializer(() => firstValueFrom(inject(AuthApi).initCsrf()));
 }
+

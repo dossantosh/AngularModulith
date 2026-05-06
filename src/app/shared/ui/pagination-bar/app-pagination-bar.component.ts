@@ -45,3 +45,4 @@ export class AppPaginationBarComponent {
   readonly previous = output<void>();
   readonly next = output<void>();
 }
+

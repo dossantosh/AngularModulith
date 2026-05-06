@@ -26,7 +26,7 @@ export const routes: Routes = [
         path: 'users',
         canActivate: [scopeGuard],
         data: {
-          requiredScopes: [AUTH_SCOPES.users.read],
+          requiredScopes: [AUTH_SCOPES.systems.read],
         },
         loadChildren: () => import('./domains/users/users.routes').then((m) => m.USERS_ROUTES),
       },
@@ -35,3 +35,4 @@ export const routes: Routes = [
   { path: 'login', component: LoginPage },
   { path: '**', redirectTo: 'forbidden' },
 ];
+

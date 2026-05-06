@@ -47,14 +47,14 @@ describe('scopeGuard', () => {
       hasAllScopes: ReturnType<typeof vi.fn>;
     };
     const route = {
-      data: { requiredScopes: [AUTH_SCOPES.users.read] },
+      data: { requiredScopes: [AUTH_SCOPES.systems.read] },
     } as unknown as ActivatedRouteSnapshot;
 
     auth.loadSession.mockReturnValue(of({ username: 'john' }));
     auth.hasAllScopes.mockReturnValue(true);
 
     await expect(runGuard(route)).resolves.toBe(true);
-    expect(auth.hasAllScopes).toHaveBeenCalledWith([AUTH_SCOPES.users.read]);
+    expect(auth.hasAllScopes).toHaveBeenCalledWith([AUTH_SCOPES.systems.read]);
     expect(createUrlTree).not.toHaveBeenCalled();
   });
 
@@ -78,7 +78,7 @@ describe('scopeGuard', () => {
     };
     const forbiddenTree = { redirected: true } as unknown as UrlTree;
     const route = {
-      data: { requiredScopes: [AUTH_SCOPES.users.read] },
+      data: { requiredScopes: [AUTH_SCOPES.systems.read] },
     } as unknown as ActivatedRouteSnapshot;
 
     createUrlTree.mockReturnValue(forbiddenTree);
@@ -96,7 +96,7 @@ describe('scopeGuard', () => {
     };
     const loginTree = { redirected: true } as unknown as UrlTree;
     const route = {
-      data: { requiredScopes: [AUTH_SCOPES.users.read] },
+      data: { requiredScopes: [AUTH_SCOPES.systems.read] },
     } as unknown as ActivatedRouteSnapshot;
 
     createUrlTree.mockReturnValue(loginTree);
@@ -106,3 +106,4 @@ describe('scopeGuard', () => {
     expect(createUrlTree).toHaveBeenCalledWith(['/login']);
   });
 });
+

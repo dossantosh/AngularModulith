@@ -18,3 +18,4 @@ export interface MeResponseDto {
   capabilities: AuthCapabilities;
   navigation?: AuthNavigationModule[];
 }
+

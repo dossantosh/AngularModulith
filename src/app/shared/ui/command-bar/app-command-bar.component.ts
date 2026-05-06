@@ -33,3 +33,4 @@ export class AppCommandBarComponent {
   readonly title = input('');
   readonly subtitle = input('');
 }
+

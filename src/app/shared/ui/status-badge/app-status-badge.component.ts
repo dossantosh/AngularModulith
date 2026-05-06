@@ -72,3 +72,4 @@ export class AppStatusBadgeComponent {
   readonly icon = input('');
   readonly variant = input<AppStatusBadgeVariant>('neutral');
 }
+

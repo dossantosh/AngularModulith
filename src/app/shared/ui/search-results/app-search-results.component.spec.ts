@@ -110,3 +110,4 @@ describe('AppSearchResultsComponent', () => {
     expect(fixture.componentInstance.next).toHaveBeenCalledOnce();
   });
 });
+

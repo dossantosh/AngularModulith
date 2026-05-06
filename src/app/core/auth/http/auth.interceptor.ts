@@ -33,3 +33,4 @@ function isProtectedApiRequest(url: string): boolean {
 function getPath(url: string): string {
   return new URL(url, 'http://localhost').pathname;
 }
+

@@ -21,7 +21,7 @@ export interface AppSidebarItem {
   imports: [MatIconModule, NgTemplateOutlet, RouterLink, RouterLinkActive],
   template: `
     <nav
-      aria-label="Modulos principales"
+      aria-label="Módulos principales"
       class="flex h-full w-60 flex-col border-r app-border app-sidebar"
     >
       <div class="flex h-16 items-center gap-3 border-b app-border px-4">
@@ -126,3 +126,4 @@ export class AppSidebarComponent {
     );
   }
 }
+

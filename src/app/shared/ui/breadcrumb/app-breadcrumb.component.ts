@@ -40,3 +40,4 @@ export interface AppBreadcrumbItem {
 export class AppBreadcrumbComponent {
   readonly items = input<readonly AppBreadcrumbItem[]>([]);
 }
+

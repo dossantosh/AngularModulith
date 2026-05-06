@@ -36,3 +36,4 @@ describe('AuthApi', () => {
     expect(completed).toBe(true);
   });
 });
+

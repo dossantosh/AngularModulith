@@ -31,3 +31,4 @@ export class AppEmptyStateComponent {
   readonly title = input('Sin datos');
   readonly message = input('No hay informacion disponible.');
 }
+

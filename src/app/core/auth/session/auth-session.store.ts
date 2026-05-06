@@ -52,3 +52,4 @@ function copyNavigationModule(module: AuthNavigationModule): AuthNavigationModul
     items: module.items.map((item) => ({ ...item })),
   };
 }
+

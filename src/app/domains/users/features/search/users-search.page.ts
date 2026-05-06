@@ -136,3 +136,4 @@ function sameUserSearchFilters(
     (previous.email ?? '') === (current.email ?? '')
   );
 }
+

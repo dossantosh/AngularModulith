@@ -19,3 +19,4 @@ export const scopeGuard: CanActivateFn = (route: ActivatedRouteSnapshot) => {
     catchError(() => of(router.createUrlTree(['/login'])))
   );
 };
+

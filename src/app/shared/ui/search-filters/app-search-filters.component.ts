@@ -22,3 +22,4 @@ export class AppSearchFiltersComponent {
   readonly title = input('Filtros');
   readonly subtitle = input('');
 }
+

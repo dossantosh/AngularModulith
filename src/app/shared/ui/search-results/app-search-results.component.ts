@@ -95,3 +95,4 @@ export class AppSearchResultsComponent {
   readonly previous = output<void>();
   readonly next = output<void>();
 }
+

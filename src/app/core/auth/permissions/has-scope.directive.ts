@@ -40,3 +40,4 @@ function normalizeScopes(value: string | readonly string[] | null | undefined): 
   }
   return typeof value === 'string' ? [value] : [...value];
 }
+
