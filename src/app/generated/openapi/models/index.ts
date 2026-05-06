@@ -65,46 +65,6 @@ export interface CsrfToken {
     headerName?: string;
 }
 
-export type BackendDataSource = 'prod' | 'historic';
-export const BackendDataSource = {
-    Prod: 'prod' as BackendDataSource,
-    Historic: 'historic' as BackendDataSource
-};
-
-export interface FeatureCapability {
-    canRead: boolean;
-    canWrite: boolean;
-}
-
-export interface AuthCapabilitiesResponse {
-    systems: FeatureCapability;
-    perfumes: FeatureCapability;
-}
-
-export interface AuthNavigationItem {
-    key: string;
-    label: string;
-    icon: string;
-    route: string;
-    disabled?: boolean;
-    hint?: string | null;
-}
-
-export interface AuthNavigationModule {
-    key: string;
-    label: string;
-    icon: string;
-    items: Array<AuthNavigationItem>;
-}
-
-export interface MeResponse {
-    username: string;
-    dataSource: BackendDataSource;
-    scopes?: Array<string>;
-    capabilities: AuthCapabilitiesResponse;
-    navigation?: Array<AuthNavigationModule>;
-}
-
 /** Request Options for Angular HttpClient requests */
 export interface RequestOptions<TResponseType extends 'arraybuffer' | 'blob' | 'json' | 'text'> {
     headers?: HttpHeaders;

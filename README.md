@@ -146,7 +146,7 @@ Si aparece una nueva capa real, ajustar reglas despues de crear uso real, no ant
 
 ## Auth y autorizacion
 
-La app usa autenticacion basada en cookies y CSRF. El backend es la autoridad de seguridad. El frontend usa scopes/capabilities para UX: ocultar rutas, menus, botones o acciones.
+La app usa autenticacion basada en cookies y CSRF. El backend es la autoridad de seguridad. El frontend usa scopes para UX: ocultar rutas, menus, botones o acciones.
 
 Endpoints esperados:
 

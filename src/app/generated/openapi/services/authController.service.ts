@@ -12,7 +12,7 @@ import { inject, Injectable } from "@angular/core";
 import { Observable } from "rxjs";
 import { BASE_PATH_DEFAULT, CLIENT_CONTEXT_TOKEN_DEFAULT } from "../tokens";
 import { HttpParamsBuilder } from "../utils/http-params-builder";
-import { RequestOptions, MeResponse, CsrfToken } from "../models";
+import { RequestOptions, CsrfToken } from "../models";
 
 @Injectable({ providedIn: "root" })
 export class AuthControllerService {
@@ -25,9 +25,9 @@ export class AuthControllerService {
         return context.set(this.clientContextToken, 'default');
     }
 
-    me(observe?: 'body', options?: RequestOptions<'json'>): Observable<MeResponse>;
-    me(observe?: 'response', options?: RequestOptions<'json'>): Observable<HttpResponse<MeResponse>>;
-    me(observe?: 'events', options?: RequestOptions<'json'>): Observable<HttpEvent<MeResponse>>;
+    me(observe?: 'body', options?: RequestOptions<'blob'>): Observable<Record<string, any>>;
+    me(observe?: 'response', options?: RequestOptions<'blob'>): Observable<HttpResponse<Record<string, any>>>;
+    me(observe?: 'events', options?: RequestOptions<'blob'>): Observable<HttpEvent<Record<string, any>>>;
     me(observe?: 'body' | 'events' | 'response', options?: RequestOptions<'arraybuffer' | 'blob' | 'json' | 'text'>): Observable<any> {
         const url = `${this.basePath}/api/auth/me`;
 
@@ -41,6 +41,7 @@ export class AuthControllerService {
         const requestOptions: any = {
             observe: observe as any,
             headers,
+            responseType: 'blob' as 'blob',
             reportProgress: options?.reportProgress,
             withCredentials: options?.withCredentials,
             context: this.createContextWithClientId(options?.context)
