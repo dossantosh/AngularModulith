@@ -5,6 +5,28 @@ import { TestBed } from '@angular/core/testing';
 import { AuthFacade } from './auth.facade';
 import { AuthenticatedUser } from './session.model';
 
+type FeatureCapabilityOverrides = Partial<{
+  canRead: boolean;
+  canWrite: boolean;
+}>;
+
+function featureCapability(overrides: FeatureCapabilityOverrides = {}) {
+  return {
+    canRead: false,
+    canWrite: false,
+    ...overrides,
+  };
+}
+
+function authCapabilities(
+  overrides: Partial<Record<'systems' | 'perfumes', FeatureCapabilityOverrides>> = {}
+) {
+  return {
+    systems: featureCapability(overrides.systems),
+    perfumes: featureCapability(overrides.perfumes),
+  };
+}
+
 describe('AuthFacade', () => {
   let facade: AuthFacade;
   let http: HttpTestingController;
@@ -54,28 +76,14 @@ describe('AuthFacade', () => {
           ],
         },
       ],
-      capabilities: {
-        systems: {
-          canAccess: true,
-          canRead: true,
-          canCreate: false,
-          canUpdate: false,
-          canDelete: false,
-        },
-        perfumes: {
-          canAccess: false,
-          canRead: false,
-          canCreate: false,
-          canUpdate: false,
-          canDelete: false,
-        },
-      },
+      capabilities: authCapabilities({
+        systems: { canRead: true },
+      }),
     });
 
     expect(result).toBe('john');
     expect(facade.username()).toBe('john');
     expect(facade.dataSource()).toBe('historic');
-    expect(facade.can('systems', 'access')).toBe(true);
     expect(facade.can('systems', 'read')).toBe(true);
     expect(facade.can('systems', 'write')).toBe(false);
     expect(facade.hasScope('systems:read')).toBe(true);
@@ -95,22 +103,9 @@ describe('AuthFacade', () => {
       username: 'john',
       dataSource: 'historic',
       scopes: [],
-      capabilities: {
-        systems: {
-          canAccess: true,
-          canRead: false,
-          canCreate: false,
-          canUpdate: false,
-          canDelete: false,
-        },
-        perfumes: {
-          canAccess: false,
-          canRead: false,
-          canCreate: false,
-          canUpdate: false,
-          canDelete: false,
-        },
-      },
+      capabilities: authCapabilities({
+        systems: { canRead: true },
+      }),
     });
 
     expect(firstResult?.username).toBe('john');
@@ -131,22 +126,7 @@ describe('AuthFacade', () => {
       username: 'john',
       dataSource: 'prod',
       scopes: [],
-      capabilities: {
-        systems: {
-          canAccess: false,
-          canRead: false,
-          canCreate: false,
-          canUpdate: false,
-          canDelete: false,
-        },
-        perfumes: {
-          canAccess: false,
-          canRead: false,
-          canCreate: false,
-          canUpdate: false,
-          canDelete: false,
-        },
-      },
+      capabilities: authCapabilities(),
     });
   });
 
@@ -164,22 +144,9 @@ describe('AuthFacade', () => {
       username: 'john',
       dataSource: 'historic',
       scopes: [],
-      capabilities: {
-        systems: {
-          canAccess: true,
-          canRead: false,
-          canCreate: false,
-          canUpdate: false,
-          canDelete: false,
-        },
-        perfumes: {
-          canAccess: false,
-          canRead: false,
-          canCreate: false,
-          canUpdate: false,
-          canDelete: false,
-        },
-      },
+      capabilities: authCapabilities({
+        systems: { canRead: true },
+      }),
     });
 
     expect(facade.username()).toBe('john');
@@ -193,22 +160,9 @@ describe('AuthFacade', () => {
       username: 'john',
       dataSource: 'historic',
       scopes: ['systems:read'],
-      capabilities: {
-        systems: {
-          canAccess: true,
-          canRead: false,
-          canCreate: false,
-          canUpdate: false,
-          canDelete: false,
-        },
-        perfumes: {
-          canAccess: false,
-          canRead: false,
-          canCreate: false,
-          canUpdate: false,
-          canDelete: false,
-        },
-      },
+      capabilities: authCapabilities({
+        systems: { canRead: true },
+      }),
     });
 
     facade.logout().subscribe();
@@ -219,7 +173,7 @@ describe('AuthFacade', () => {
 
     expect(facade.username()).toBe(null);
     expect(facade.dataSource()).toBe('prod');
-    expect(facade.can('systems', 'access')).toBe(false);
+    expect(facade.can('systems', 'read')).toBe(false);
     expect(facade.hasScope('systems:read')).toBe(false);
     expect(facade.navigation()).toEqual([]);
   });
@@ -231,22 +185,9 @@ describe('AuthFacade', () => {
       username: 'john',
       dataSource: 'historic',
       scopes: ['systems:read'],
-      capabilities: {
-        systems: {
-          canAccess: true,
-          canRead: true,
-          canCreate: false,
-          canUpdate: false,
-          canDelete: false,
-        },
-        perfumes: {
-          canAccess: false,
-          canRead: false,
-          canCreate: false,
-          canUpdate: false,
-          canDelete: false,
-        },
-      },
+      capabilities: authCapabilities({
+        systems: { canRead: true },
+      }),
     });
 
     expect(facade.username()).toBe('john');
@@ -262,22 +203,7 @@ describe('AuthFacade', () => {
       username: 'jane',
       dataSource: 'prod',
       scopes: [],
-      capabilities: {
-        systems: {
-          canAccess: false,
-          canRead: false,
-          canCreate: false,
-          canUpdate: false,
-          canDelete: false,
-        },
-        perfumes: {
-          canAccess: false,
-          canRead: false,
-          canCreate: false,
-          canUpdate: false,
-          canDelete: false,
-        },
-      },
+      capabilities: authCapabilities(),
     });
 
     expect(facade.username()).toBe('jane');
@@ -290,29 +216,14 @@ describe('AuthFacade', () => {
       username: 'john',
       dataSource: 'prod',
       scopes: ['systems:write'],
-      capabilities: {
-        systems: {
-          canAccess: true,
-          canRead: false,
-          canCreate: false,
-          canUpdate: true,
-          canDelete: false,
-        },
-        perfumes: {
-          canAccess: false,
-          canRead: false,
-          canCreate: false,
-          canUpdate: false,
-          canDelete: false,
-        },
-      },
+      capabilities: authCapabilities({
+        systems: { canRead: true, canWrite: true },
+      }),
     });
 
-    expect(facade.can('systems', 'access')).toBe(true);
-    expect(facade.can('systems', 'read')).toBe(false);
+    expect(facade.can('systems', 'read')).toBe(true);
     expect(facade.can('systems', 'write')).toBe(true);
     expect(facade.hasScope('systems:write')).toBe(true);
-    expect(facade.can('systems', 'update')).toBe(true);
+    expect(facade.capabilities().systems.canWrite).toBe(true);
   });
 });
-

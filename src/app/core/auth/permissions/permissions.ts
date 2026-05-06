@@ -1,9 +1,6 @@
 export interface FeatureCapability {
-  canAccess: boolean;
   canRead: boolean;
-  canCreate: boolean;
-  canUpdate: boolean;
-  canDelete: boolean;
+  canWrite: boolean;
 }
 
 export interface AuthCapabilities extends Record<string, FeatureCapability> {
@@ -13,18 +10,12 @@ export interface AuthCapabilities extends Record<string, FeatureCapability> {
 
 export const EMPTY_AUTH_CAPABILITIES: AuthCapabilities = {
   systems: {
-    canAccess: false,
     canRead: false,
-    canCreate: false,
-    canUpdate: false,
-    canDelete: false,
+    canWrite: false,
   },
   perfumes: {
-    canAccess: false,
     canRead: false,
-    canCreate: false,
-    canUpdate: false,
-    canDelete: false,
+    canWrite: false,
   },
 };
 
@@ -42,7 +33,7 @@ export const AUTH_SCOPES = {
 type ScopeGroup = (typeof AUTH_SCOPES)[keyof typeof AUTH_SCOPES];
 
 export type AuthScope = ScopeGroup[keyof ScopeGroup];
-export type CapabilityAction = 'access' | 'read' | 'write' | 'create' | 'update' | 'delete';
+export type CapabilityAction = 'read' | 'write';
 
 export function hasScope(scopes: readonly string[], scope: string): boolean {
   return scopes.includes(scope);
@@ -67,23 +58,14 @@ export function can(
     return false;
   }
 
-  if (action === 'access') {
-    return resourceCapabilities.canAccess;
-  }
-
   if (action === 'read') {
     return resourceCapabilities.canRead;
   }
 
   if (action === 'write') {
-    return (
-      resourceCapabilities.canCreate ||
-      resourceCapabilities.canUpdate ||
-      resourceCapabilities.canDelete
-    );
+    return resourceCapabilities.canWrite;
   }
 
-  const capabilityName = `can${action.charAt(0).toUpperCase()}${action.slice(1)}`;
-  return Boolean(resourceCapabilities[capabilityName as keyof typeof resourceCapabilities]);
+  return false;
 }
 
