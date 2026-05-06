@@ -1,7 +1,7 @@
 import { Component, input, output } from '@angular/core';
 import { MatIconModule } from '@angular/material/icon';
 
-import { AppButtonComponent } from '../button/app-button.component';
+import { AppButtonComponent } from '../../primitives/button/app-button.component';
 
 @Component({
   selector: 'app-error-state',

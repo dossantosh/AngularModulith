@@ -1,10 +1,10 @@
 import { booleanAttribute, Component, input, output } from '@angular/core';
 
-import { AppCardComponent } from '../card/app-card.component';
-import { AppEmptyStateComponent } from '../empty-state/app-empty-state.component';
-import { AppErrorStateComponent } from '../error-state/app-error-state.component';
-import { AppLoadingStateComponent } from '../loading-state/app-loading-state.component';
-import { AppPaginationBarComponent } from '../pagination-bar/app-pagination-bar.component';
+import { AppEmptyStateComponent } from '../../feedback/empty-state/app-empty-state.component';
+import { AppErrorStateComponent } from '../../feedback/error-state/app-error-state.component';
+import { AppLoadingStateComponent } from '../../feedback/loading-state/app-loading-state.component';
+import { AppCardComponent } from '../../layout/card/app-card.component';
+import { AppPaginationBarComponent } from '../../navigation/pagination-bar/app-pagination-bar.component';
 
 @Component({
   selector: 'app-search-results',

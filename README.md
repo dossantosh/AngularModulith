@@ -44,6 +44,11 @@ src/app
 |       `-- users.routes.ts
 `-- shared
     `-- ui
+        |-- feedback
+        |-- layout
+        |-- navigation
+        |-- primitives
+        `-- search
 ```
 
 `src/styles.scss` define tokens globales, theme light/dark y ajustes de Angular Material. `src/tailwind.css` carga Tailwind y consume el spacing base. Tailwind no es la fuente de colores de producto.
@@ -56,7 +61,18 @@ Codigo transversal de aplicacion: autenticacion, guards, interceptores, layout p
 
 ### shared/ui
 
-Componentes presentacionales y reutilizables que no conocen dominios: botones, cards, page shell, command bar, text field, badges, estados y pagination bar. Un wrapper compartido se crea solo cuando aporta una API de producto, accesibilidad consistente o elimina repeticion real.
+Componentes presentacionales y reutilizables que no conocen dominios. Se agrupan por intencion de uso:
+
+```text
+shared/ui/
+|-- primitives/  # wrappers pequenos o piezas base: button, text-field, status-badge
+|-- layout/      # estructura visual: page, card, command-bar
+|-- navigation/  # navegacion: sidebar, breadcrumb, pagination-bar
+|-- feedback/    # estados: loading, error, empty
+`-- search/      # patrones reutilizables para vistas search/list report
+```
+
+Un wrapper compartido se crea solo cuando aporta una API de producto, accesibilidad consistente o elimina repeticion real.
 
 No crear wrappers triviales para cada componente de Material. Si `mat-select`, `mat-datepicker` o `mat-dialog` se usan bien una sola vez, se pueden usar directamente en la feature.
 
@@ -105,11 +121,12 @@ Para un listado enterprise:
 
 1. Crear una feature route en `domains/<domain>/features/<screen>`.
 2. Usar `app-page` para el marco de pantalla.
-3. Usar `app-command-bar` para filtros y acciones compactas.
+3. Usar `app-search-filters` para filtros y acciones compactas de vistas search/list report.
 4. Usar controles Material o wrappers existentes (`app-text-field`) con Reactive Forms.
 5. Mantener filtros, paginacion, loading/error/empty en una facade si la pantalla deja de ser trivial.
-6. Renderizar tablas con Angular Material (`mat-table`) y Tailwind solo para overflow/layout externo.
-7. Usar `app-loading-state`, `app-error-state`, `app-empty-state`, `app-status-badge` y `app-pagination-bar` para consistencia.
+6. Usar `app-search-results` para estados de resultados, error, empty y paginacion.
+7. Renderizar tablas con Angular Material (`mat-table`) y Tailwind solo para overflow/layout externo.
+8. Usar `app-loading-state`, `app-error-state`, `app-empty-state`, `app-status-badge` y `app-pagination-bar` para consistencia cuando se necesiten de forma directa.
 
 No crear un form-engine o schema-table hasta que existan varios CRUDs con repeticion demostrada.
 

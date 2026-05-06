@@ -20,9 +20,9 @@
         Limpiar
       </app-button>
 
-      <app-text-field label="ID" type="number" inputMode="numeric" [control]="filtersForm.controls.id" />
+      <app-text-field label="ID" type="number" inputMode="numeric" [control]="filtersForm.controls.id" ></app-text-field>
 
-      <app-text-field label="Username" autocomplete="username" [control]="filtersForm.controls.username" />
+      <app-text-field label="Username" autocomplete="username" [control]="filtersForm.controls.username" ></app-text-field>
 
       <app-text-field
         class="sm:col-span-2 lg:col-span-1"
@@ -30,7 +30,7 @@
         type="email"
         autocomplete="email"
         [control]="filtersForm.controls.email"
-      />
+      ></app-text-field>
     </app-search-filters>
   </form>
 
@@ -104,7 +104,7 @@
                 [label]="user.enabled ? 'Activo' : 'Inactivo'"
                 [icon]="user.enabled ? 'check_circle' : 'cancel'"
                 [variant]="user.enabled ? 'success' : 'danger'"
-              />
+              ></app-status-badge>
             </td>
           </ng-container>
 

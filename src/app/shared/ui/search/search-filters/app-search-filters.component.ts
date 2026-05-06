@@ -1,6 +1,6 @@
 import { Component, input } from '@angular/core';
 
-import { AppCommandBarComponent } from '../command-bar/app-command-bar.component';
+import { AppCommandBarComponent } from '../../layout/command-bar/app-command-bar.component';
 
 @Component({
   selector: 'app-search-filters',

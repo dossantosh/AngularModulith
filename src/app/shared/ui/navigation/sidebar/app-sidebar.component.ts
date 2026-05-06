@@ -139,10 +139,10 @@ export class AppSidebarComponent {
 
   readonly navigated = output<void>();
 
-  private readonly collapsedGroups = signal<readonly string[]>([]);
+  private readonly expandedGroups = signal<readonly string[]>([]);
 
   isGroupExpanded(item: AppSidebarItem): boolean {
-    return !this.collapsedGroups().includes(item.key);
+    return this.expandedGroups().includes(item.key);
   }
 
   isGroupActive(item: AppSidebarItem): boolean {
@@ -152,10 +152,10 @@ export class AppSidebarComponent {
   }
 
   toggleGroup(key: string): void {
-    this.collapsedGroups.update((collapsedGroups) =>
-      collapsedGroups.includes(key)
-        ? collapsedGroups.filter((groupKey) => groupKey !== key)
-        : [...collapsedGroups, key]
+    this.expandedGroups.update((expandedGroups) =>
+      expandedGroups.includes(key)
+        ? expandedGroups.filter((groupKey) => groupKey !== key)
+        : [...expandedGroups, key]
     );
   }
 }

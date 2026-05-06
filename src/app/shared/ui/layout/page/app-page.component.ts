@@ -1,6 +1,6 @@
 import { Component, computed, input } from '@angular/core';
 
-import { AppBreadcrumbComponent, AppBreadcrumbItem } from '../breadcrumb/app-breadcrumb.component';
+import { AppBreadcrumbComponent, AppBreadcrumbItem } from '../../navigation/breadcrumb/app-breadcrumb.component';
 
 type AppPageLayout = 'default' | 'wide' | 'full';
 

@@ -1,6 +1,6 @@
 import { booleanAttribute, Component, input, output } from '@angular/core';
 
-import { AppButtonComponent } from '../button/app-button.component';
+import { AppButtonComponent } from '../../primitives/button/app-button.component';
 
 @Component({
   selector: 'app-pagination-bar',
