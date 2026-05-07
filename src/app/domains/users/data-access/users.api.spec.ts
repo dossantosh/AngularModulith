@@ -5,8 +5,8 @@ import { firstValueFrom, of } from 'rxjs';
 import { vi } from 'vitest';
 
 import { authInterceptor } from '../../../core/auth/http/auth.interceptor';
-import { provideNgOpenapi } from '../../../generated/openapi/providers';
-import { UserControllerService } from '../../../generated/openapi/services/userController.service';
+import { provideNgOpenapi } from '../../../generated/openapi';
+import { UserControllerService } from '../../../generated/openapi';
 import { UsersApi } from './users.api';
 
 function setup(client: { getUsers: (...args: unknown[]) => unknown }) {

@@ -1,9 +1,8 @@
 import { Injectable, inject } from '@angular/core';
 import { Observable, map } from 'rxjs';
 
-import { KeysetPageUserSummaryView, UserSummaryView } from '../../../generated/openapi/models';
-import { UserControllerService } from '../../../generated/openapi/services/userController.service';
-import { UserPageDto, UserSummaryDto } from './users.dto';
+import { KeysetPageUserSummaryView, UserSummaryView } from '../../../generated/openapi';
+import { UserControllerService } from '../../../generated/openapi';
 
 interface UsersSearchRequest {
   limit: number;
@@ -14,6 +13,23 @@ interface UsersSearchRequest {
     username: string;
     email: string;
   };
+}
+
+interface UserSummaryDto {
+  id: number;
+  username: string;
+  email: string;
+  enabled: boolean;
+  isAdmin: boolean;
+}
+
+export interface UserPageDto {
+  content: UserSummaryDto[];
+  hasNext: boolean;
+  hasPrevious: boolean;
+  nextId: number | null;
+  previousId: number | null;
+  empty: boolean;
 }
 
 @Injectable({ providedIn: 'root' })
