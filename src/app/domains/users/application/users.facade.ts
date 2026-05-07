@@ -86,6 +86,8 @@ export class UsersFacade {
   setFilters(partial: Partial<UserSearchFilters>): void {
     this.patchState((state) => ({
       filters: { ...state.filters, ...partial },
+      direction: 'NEXT',
+      lastId: null,
     }));
   }
 
