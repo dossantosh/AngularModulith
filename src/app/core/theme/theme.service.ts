@@ -59,3 +59,4 @@ export class ThemeService {
 function isThemeMode(value: string | null | undefined): value is ThemeMode {
   return value === 'light' || value === 'dark';
 }
+

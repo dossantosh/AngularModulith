@@ -49,3 +49,4 @@ export class DashboardPage {
   readonly scopes = AUTH_SCOPES;
   readonly breadcrumbs = [{ label: 'Inicio' }];
 }
+

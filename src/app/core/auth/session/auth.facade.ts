@@ -2,7 +2,7 @@ import { Injectable, inject } from '@angular/core';
 import { Observable, catchError, map, shareReplay, switchMap, tap, throwError } from 'rxjs';
 
 import { AuthApi } from '../api/auth.api';
-import { CapabilityAction, can, hasAllScopes, hasAnyScope, hasScope } from '../permissions/permissions';
+import { AuthScope, hasAllScopes, hasAnyScope, hasScope } from '../permissions/permissions';
 import { AuthSessionStore } from './auth-session.store';
 import { AuthenticatedUser, BackendDataSource } from './session.model';
 
@@ -22,22 +22,18 @@ export class AuthFacade {
   readonly username = this.sessionStore.username;
   readonly dataSource = this.sessionStore.dataSource;
   readonly scopes = this.sessionStore.scopes;
-  readonly capabilities = this.sessionStore.capabilities;
+  readonly navigation = this.sessionStore.navigation;
 
-  hasScope(scope: string): boolean {
+  hasScope(scope: AuthScope): boolean {
     return hasScope(this.scopes(), scope);
   }
 
-  hasAnyScope(scopes: readonly string[]): boolean {
+  hasAnyScope(scopes: readonly AuthScope[]): boolean {
     return hasAnyScope(this.scopes(), scopes);
   }
 
-  hasAllScopes(scopes: readonly string[]): boolean {
+  hasAllScopes(scopes: readonly AuthScope[]): boolean {
     return hasAllScopes(this.scopes(), scopes);
-  }
-
-  can(resource: string, action: CapabilityAction): boolean {
-    return can(this.capabilities(), resource, action);
   }
 
   loadSession(): Observable<AuthenticatedUser> {
@@ -45,7 +41,7 @@ export class AuthFacade {
       tap((response) => {
         this.sessionStore.setDataSource(response.dataSource ?? 'prod');
         this.sessionStore.setScopes(response.scopes ?? []);
-        this.sessionStore.setCapabilities(response.capabilities);
+        this.sessionStore.setNavigation(response.navigation ?? []);
       }),
       map((response) => ({
         username: response.username,
@@ -88,3 +84,4 @@ export class AuthFacade {
     this.sessionOnce$ = undefined;
   }
 }
+

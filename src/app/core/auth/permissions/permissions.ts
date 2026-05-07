@@ -1,100 +1,53 @@
-export interface FeatureCapability {
-  canAccess: boolean;
-  canRead: boolean;
-  canCreate: boolean;
-  canUpdate: boolean;
-  canDelete: boolean;
-}
-
-export interface AuthCapabilities extends Record<string, FeatureCapability> {
-  users: FeatureCapability;
-  perfumes: FeatureCapability;
-}
-
-export const EMPTY_AUTH_CAPABILITIES: AuthCapabilities = {
-  users: {
-    canAccess: false,
-    canRead: false,
-    canCreate: false,
-    canUpdate: false,
-    canDelete: false,
-  },
-  perfumes: {
-    canAccess: false,
-    canRead: false,
-    canCreate: false,
-    canUpdate: false,
-    canDelete: false,
-  },
-};
-
 export const AUTH_SCOPES = {
-  users: {
-    read: 'users:read',
-    create: 'users:create',
-    update: 'users:update',
-    delete: 'users:delete',
+  systems: {
+    read: 'systems:read',
+    write: 'systems:write',
   },
   perfumes: {
     read: 'perfumes:read',
-    create: 'perfumes:create',
-    update: 'perfumes:update',
-    delete: 'perfumes:delete',
-  },
-  roles: {
-    read: 'role:read',
-    assign: 'role:assign',
-  },
-  scopes: {
-    read: 'scope:read',
-    assign: 'scope:assign',
+    write: 'perfumes:write',
   },
 } as const;
 
 type ScopeGroup = (typeof AUTH_SCOPES)[keyof typeof AUTH_SCOPES];
 
 export type AuthScope = ScopeGroup[keyof ScopeGroup];
-export type CapabilityAction = 'access' | 'read' | 'write' | 'create' | 'update' | 'delete';
 
-export function hasScope(scopes: readonly string[], scope: string): boolean {
-  return scopes.includes(scope);
+export interface RequiredScopesRouteData {
+  readonly requiredScopes: readonly AuthScope[];
 }
 
-export function hasAnyScope(scopes: readonly string[], requiredScopes: readonly string[]): boolean {
-  return requiredScopes.some((scope) => hasScope(scopes, scope));
+const AUTH_SCOPE_VALUES = Object.values(AUTH_SCOPES).flatMap((group) => Object.values(group)) as readonly AuthScope[];
+const AUTH_SCOPE_SET = new Set<AuthScope>(AUTH_SCOPE_VALUES);
+
+export function requireScopes(
+  ...requiredScopes: readonly [AuthScope, ...AuthScope[]]
+): RequiredScopesRouteData {
+  return { requiredScopes };
 }
 
-export function hasAllScopes(scopes: readonly string[], requiredScopes: readonly string[]): boolean {
-  return requiredScopes.every((scope) => hasScope(scopes, scope));
+export function isAuthScope(value: unknown): value is AuthScope {
+  return typeof value === 'string' && AUTH_SCOPE_SET.has(value as AuthScope);
 }
 
-export function can(
-  capabilities: AuthCapabilities,
-  resource: string,
-  action: CapabilityAction
-): boolean {
-  const resourceCapabilities = capabilities[resource];
-
-  if (!resourceCapabilities) {
+export function isRequiredScopesRouteData(value: unknown): value is RequiredScopesRouteData {
+  if (typeof value !== 'object' || value == null || !('requiredScopes' in value)) {
     return false;
   }
 
-  if (action === 'access') {
-    return resourceCapabilities.canAccess;
-  }
-
-  if (action === 'read') {
-    return resourceCapabilities.canRead;
-  }
-
-  if (action === 'write') {
-    return (
-      resourceCapabilities.canCreate ||
-      resourceCapabilities.canUpdate ||
-      resourceCapabilities.canDelete
-    );
-  }
-
-  const capabilityName = `can${action.charAt(0).toUpperCase()}${action.slice(1)}`;
-  return Boolean(resourceCapabilities[capabilityName as keyof typeof resourceCapabilities]);
+  const requiredScopes = value.requiredScopes;
+  return Array.isArray(requiredScopes) && requiredScopes.length > 0 && requiredScopes.every(isAuthScope);
 }
+
+export function hasScope(scopes: readonly AuthScope[], scope: AuthScope): boolean {
+  return scopes.includes(scope);
+}
+
+export function hasAnyScope(scopes: readonly AuthScope[], requiredScopes: readonly AuthScope[]): boolean {
+  return requiredScopes.some((scope) => hasScope(scopes, scope));
+}
+
+export function hasAllScopes(scopes: readonly AuthScope[], requiredScopes: readonly AuthScope[]): boolean {
+  return requiredScopes.every((scope) => hasScope(scopes, scope));
+}
+

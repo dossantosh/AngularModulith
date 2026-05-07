@@ -83,3 +83,4 @@ describe('UsersSearchPage', () => {
     expect(facade.loadNext).toHaveBeenCalledOnce();
   });
 });
+

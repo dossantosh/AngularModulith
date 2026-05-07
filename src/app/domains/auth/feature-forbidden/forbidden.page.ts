@@ -26,7 +26,7 @@ import {
           <div class="space-y-4 text-center">
             <app-error-state
               title="No tienes acceso a este modulo"
-              message="La sesion es valida, pero tus capabilities no permiten abrir esta pantalla."
+              message="La sesion es valida, pero te falta el scope requerido para abrir esta pantalla."
             />
 
             <div class="flex flex-col justify-center gap-3 sm:flex-row">
@@ -68,3 +68,4 @@ export class ForbiddenPage {
       });
   }
 }
+

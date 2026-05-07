@@ -6,3 +6,4 @@ export const USERS_ROUTES: Routes = [
   { path: '', pathMatch: 'full', redirectTo: 'search' },
   { path: 'search', component: UsersSearchPage },
 ];
+

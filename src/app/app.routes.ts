@@ -2,7 +2,7 @@ import { Routes } from '@angular/router';
 
 import { authGuard } from './core/auth/guards/auth.guard';
 import { scopeGuard } from './core/auth/guards/scope.guard';
-import { AUTH_SCOPES } from './core/auth/permissions/permissions';
+import { AUTH_SCOPES, requireScopes } from './core/auth/permissions/permissions';
 import { ShellContainer } from './core/layout/shell.container';
 import { ForbiddenPage } from './domains/auth/feature-forbidden/forbidden.page';
 import { LoginPage } from './domains/auth/feature-login/login.page';
@@ -25,9 +25,7 @@ export const routes: Routes = [
       {
         path: 'users',
         canActivate: [scopeGuard],
-        data: {
-          requiredScopes: [AUTH_SCOPES.users.read],
-        },
+        data: requireScopes(AUTH_SCOPES.systems.read),
         loadChildren: () => import('./domains/users/users.routes').then((m) => m.USERS_ROUTES),
       },
     ],
@@ -35,3 +33,4 @@ export const routes: Routes = [
   { path: 'login', component: LoginPage },
   { path: '**', redirectTo: 'forbidden' },
 ];
+

@@ -73,3 +73,4 @@ export class HeaderComponent {
   readonly menuToggle = output<void>();
   readonly logout = output<void>();
 }
+

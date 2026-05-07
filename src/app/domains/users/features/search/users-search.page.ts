@@ -82,7 +82,7 @@ export class UsersSearchPage implements OnInit {
   });
   readonly breadcrumbs = [
     { label: 'Inicio', routerLink: '/' },
-    { label: 'Administracion' },
+    { label: 'Sistemas' },
     { label: 'Usuarios' },
   ];
   readonly displayedColumns = ['id', 'username', 'email', 'enabled', 'admin'];
@@ -136,3 +136,4 @@ function sameUserSearchFilters(
     (previous.email ?? '') === (current.email ?? '')
   );
 }
+

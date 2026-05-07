@@ -135,6 +135,36 @@ describe('UsersFacade', () => {
     );
   });
 
+  it('resets keyset pagination when filters change before a new search', () => {
+    const api = {
+      search: vi.fn(() =>
+        of(
+          userPage({
+            hasNext: true,
+            nextId: 123,
+          })
+        )
+      ),
+    };
+    const facade = setup(api);
+
+    facade.search();
+    facade.loadNext();
+    api.search.mockClear();
+
+    facade.setFilters({ username: 'ana' });
+    facade.search();
+
+    expect(api.search).toHaveBeenCalledOnce();
+    expect(api.search).toHaveBeenCalledWith(
+      expect.objectContaining({
+        direction: 'NEXT',
+        lastId: null,
+        filters: expect.objectContaining({ username: 'ana' }),
+      })
+    );
+  });
+
   it('loadNext does nothing when hasNext is false or nextId is null', () => {
     const api = { search: vi.fn(() => of(userPage())) };
     const facade = setup(api);
@@ -174,3 +204,4 @@ describe('UsersFacade', () => {
     );
   });
 });
+

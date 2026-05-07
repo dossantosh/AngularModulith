@@ -8,7 +8,7 @@ import { HasScopeDirective } from './has-scope.directive';
 @Component({
   standalone: true,
   imports: [HasScopeDirective],
-  template: `<span *appHasScope="'users:create'">Create user</span>`,
+  template: `<span *appHasScope="'systems:write'">Create user</span>`,
 })
 class HostComponent {}
 
@@ -51,3 +51,4 @@ describe('HasScopeDirective', () => {
     expect(fixture.nativeElement.textContent).not.toContain('Create user');
   });
 });
+

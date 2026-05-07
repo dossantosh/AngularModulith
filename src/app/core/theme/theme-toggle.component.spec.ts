@@ -43,3 +43,4 @@ describe('ThemeToggleComponent', () => {
     expect(themeService.theme()).toBe('dark');
   });
 });
+

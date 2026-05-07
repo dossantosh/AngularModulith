@@ -1,5 +1,6 @@
 import { Directive, TemplateRef, ViewContainerRef, computed, effect, inject, input } from '@angular/core';
 
+import { AuthScope } from './permissions';
 import { AuthFacade } from '../session/auth.facade';
 
 @Directive({
@@ -10,7 +11,7 @@ export class HasScopeDirective {
   private readonly auth = inject(AuthFacade);
   private readonly templateRef = inject(TemplateRef<unknown>);
   private readonly viewContainer = inject(ViewContainerRef);
-  readonly appHasScope = input<string | readonly string[] | null | undefined>(undefined);
+  readonly appHasScope = input<AuthScope | readonly AuthScope[] | null | undefined>(undefined);
   private readonly requiredScopes = computed(() => normalizeScopes(this.appHasScope()));
 
   private hasView = false;
@@ -34,9 +35,10 @@ export class HasScopeDirective {
 
 }
 
-function normalizeScopes(value: string | readonly string[] | null | undefined): readonly string[] {
+function normalizeScopes(value: AuthScope | readonly AuthScope[] | null | undefined): readonly AuthScope[] {
   if (!value) {
     return [];
   }
   return typeof value === 'string' ? [value] : [...value];
 }
+

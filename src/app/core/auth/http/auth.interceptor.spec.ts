@@ -88,3 +88,4 @@ describe('authInterceptor', () => {
 function intercept(request: HttpRequest<unknown>, next: HttpHandlerFn): Observable<HttpEvent<unknown>> {
   return TestBed.runInInjectionContext(() => authInterceptor(request, next));
 }
+

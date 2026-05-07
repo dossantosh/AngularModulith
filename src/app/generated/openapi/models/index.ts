@@ -19,21 +19,9 @@ export interface UpdateUserRequest {
 
 export interface UserAccessRequest {
     roleIds: Array<number>;
-    moduleIds?: Array<number>;
-    submoduleIds?: Array<number>;
-}
-
-export interface ModuleView {
-    id?: number;
-    name?: string;
 }
 
 export interface RoleView {
-    id?: number;
-    name?: string;
-}
-
-export interface SubmoduleView {
     id?: number;
     name?: string;
 }
@@ -45,8 +33,6 @@ export interface UserDetailsView {
     enabled?: boolean;
     isAdmin?: boolean;
     roles?: Array<RoleView>;
-    modules?: Array<ModuleView>;
-    submodules?: Array<SubmoduleView>;
 }
 
 export interface CreateUserRequest {
@@ -74,9 +60,9 @@ export interface UserSummaryView {
 }
 
 export interface CsrfToken {
-    headerName?: string;
     parameterName?: string;
     token?: string;
+    headerName?: string;
 }
 
 /** Request Options for Angular HttpClient requests */

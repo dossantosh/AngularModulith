@@ -2,8 +2,7 @@ import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { DestroyRef, Injectable, computed, inject, signal } from '@angular/core';
 import { EMPTY, Subject, catchError, switchMap, tap } from 'rxjs';
 
-import { UsersApi } from '../data-access/users.api';
-import { UserPageDto } from '../data-access/users.dto';
+import { UsersApi, UserPageDto } from '../data-access/users.api';
 
 type PageDirection = 'NEXT' | 'PREVIOUS';
 type LoadStatus = 'idle' | 'loading' | 'success' | 'error';
@@ -87,6 +86,8 @@ export class UsersFacade {
   setFilters(partial: Partial<UserSearchFilters>): void {
     this.patchState((state) => ({
       filters: { ...state.filters, ...partial },
+      direction: 'NEXT',
+      lastId: null,
     }));
   }
 
@@ -172,3 +173,4 @@ export class UsersFacade {
     }));
   }
 }
+
