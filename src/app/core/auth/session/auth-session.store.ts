@@ -1,12 +1,13 @@
 import { Injectable, signal } from '@angular/core';
 
+import { AuthScope } from '../permissions/permissions';
 import { AuthenticatedUser, AuthNavigationModule, BackendDataSource } from './session.model';
 
 @Injectable({ providedIn: 'root' })
 export class AuthSessionStore {
   private readonly _username = signal<string | null>(null);
   private readonly _dataSource = signal<BackendDataSource>('prod');
-  private readonly _scopes = signal<readonly string[]>([]);
+  private readonly _scopes = signal<readonly AuthScope[]>([]);
   private readonly _navigation = signal<readonly AuthNavigationModule[]>([]);
 
   readonly username = this._username.asReadonly();
@@ -22,7 +23,7 @@ export class AuthSessionStore {
     this._dataSource.set(dataSource);
   }
 
-  setScopes(scopes: readonly string[]): void {
+  setScopes(scopes: readonly AuthScope[]): void {
     this._scopes.set([...scopes]);
   }
 

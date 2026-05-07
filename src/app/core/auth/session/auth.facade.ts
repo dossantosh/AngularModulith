@@ -2,7 +2,7 @@ import { Injectable, inject } from '@angular/core';
 import { Observable, catchError, map, shareReplay, switchMap, tap, throwError } from 'rxjs';
 
 import { AuthApi } from '../api/auth.api';
-import { hasAllScopes, hasAnyScope, hasScope } from '../permissions/permissions';
+import { AuthScope, hasAllScopes, hasAnyScope, hasScope } from '../permissions/permissions';
 import { AuthSessionStore } from './auth-session.store';
 import { AuthenticatedUser, BackendDataSource } from './session.model';
 
@@ -24,15 +24,15 @@ export class AuthFacade {
   readonly scopes = this.sessionStore.scopes;
   readonly navigation = this.sessionStore.navigation;
 
-  hasScope(scope: string): boolean {
+  hasScope(scope: AuthScope): boolean {
     return hasScope(this.scopes(), scope);
   }
 
-  hasAnyScope(scopes: readonly string[]): boolean {
+  hasAnyScope(scopes: readonly AuthScope[]): boolean {
     return hasAnyScope(this.scopes(), scopes);
   }
 
-  hasAllScopes(scopes: readonly string[]): boolean {
+  hasAllScopes(scopes: readonly AuthScope[]): boolean {
     return hasAllScopes(this.scopes(), scopes);
   }
 

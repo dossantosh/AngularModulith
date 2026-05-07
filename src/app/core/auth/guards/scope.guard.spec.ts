@@ -3,7 +3,7 @@ import { ActivatedRouteSnapshot, Router, RouterStateSnapshot, UrlTree } from '@a
 import { firstValueFrom, from, isObservable, of, throwError } from 'rxjs';
 import { vi } from 'vitest';
 
-import { AUTH_SCOPES } from '../permissions/permissions';
+import { AUTH_SCOPES, requireScopes } from '../permissions/permissions';
 import { AuthFacade } from '../session/auth.facade';
 import { scopeGuard } from './scope.guard';
 
@@ -47,7 +47,7 @@ describe('scopeGuard', () => {
       hasAllScopes: ReturnType<typeof vi.fn>;
     };
     const route = {
-      data: { requiredScopes: [AUTH_SCOPES.systems.read] },
+      data: requireScopes(AUTH_SCOPES.systems.read),
     } as unknown as ActivatedRouteSnapshot;
 
     auth.loadSession.mockReturnValue(of({ username: 'john' }));
@@ -58,16 +58,37 @@ describe('scopeGuard', () => {
     expect(createUrlTree).not.toHaveBeenCalled();
   });
 
-  it('allows navigation when the route has no explicit scopes', async () => {
+  it('redirects to forbidden when the route has no valid requiredScopes metadata', async () => {
     const auth = TestBed.inject(AuthFacade) as unknown as {
       loadSession: ReturnType<typeof vi.fn>;
       hasAllScopes: ReturnType<typeof vi.fn>;
     };
+    const forbiddenTree = { redirected: true } as unknown as UrlTree;
     const route = { data: {} } as ActivatedRouteSnapshot;
 
+    createUrlTree.mockReturnValue(forbiddenTree);
     auth.loadSession.mockReturnValue(of({ username: 'john' }));
 
-    await expect(runGuard(route)).resolves.toBe(true);
+    await expect(runGuard(route)).resolves.toBe(forbiddenTree);
+    expect(createUrlTree).toHaveBeenCalledWith(['/forbidden']);
+    expect(auth.hasAllScopes).not.toHaveBeenCalled();
+  });
+
+  it('redirects to forbidden when requiredScopes is not an array of known scopes', async () => {
+    const auth = TestBed.inject(AuthFacade) as unknown as {
+      loadSession: ReturnType<typeof vi.fn>;
+      hasAllScopes: ReturnType<typeof vi.fn>;
+    };
+    const forbiddenTree = { redirected: true } as unknown as UrlTree;
+    const route = {
+      data: { requiredScopes: 'systems:read' },
+    } as unknown as ActivatedRouteSnapshot;
+
+    createUrlTree.mockReturnValue(forbiddenTree);
+    auth.loadSession.mockReturnValue(of({ username: 'john' }));
+
+    await expect(runGuard(route)).resolves.toBe(forbiddenTree);
+    expect(createUrlTree).toHaveBeenCalledWith(['/forbidden']);
     expect(auth.hasAllScopes).not.toHaveBeenCalled();
   });
 
@@ -78,7 +99,7 @@ describe('scopeGuard', () => {
     };
     const forbiddenTree = { redirected: true } as unknown as UrlTree;
     const route = {
-      data: { requiredScopes: [AUTH_SCOPES.systems.read] },
+      data: requireScopes(AUTH_SCOPES.systems.read),
     } as unknown as ActivatedRouteSnapshot;
 
     createUrlTree.mockReturnValue(forbiddenTree);
@@ -96,7 +117,7 @@ describe('scopeGuard', () => {
     };
     const loginTree = { redirected: true } as unknown as UrlTree;
     const route = {
-      data: { requiredScopes: [AUTH_SCOPES.systems.read] },
+      data: requireScopes(AUTH_SCOPES.systems.read),
     } as unknown as ActivatedRouteSnapshot;
 
     createUrlTree.mockReturnValue(loginTree);
