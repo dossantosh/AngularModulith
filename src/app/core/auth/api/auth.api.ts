@@ -24,8 +24,7 @@ export class AuthApi {
   initCsrf() {
     return this.http.get(`${this.baseUrl}auth/csrf`).pipe(
       map(() => void 0),
-      catchError(() => of(void 0))
+      catchError(() => of(void 0)),
     );
   }
 }
-

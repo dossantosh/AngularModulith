@@ -17,7 +17,9 @@ export interface RequiredScopesRouteData {
   readonly requiredScopes: readonly AuthScope[];
 }
 
-const AUTH_SCOPE_VALUES = Object.values(AUTH_SCOPES).flatMap((group) => Object.values(group)) as readonly AuthScope[];
+const AUTH_SCOPE_VALUES = Object.values(AUTH_SCOPES).flatMap((group) =>
+  Object.values(group),
+) as readonly AuthScope[];
 const AUTH_SCOPE_SET = new Set<AuthScope>(AUTH_SCOPE_VALUES);
 
 export function requireScopes(
@@ -36,18 +38,25 @@ export function isRequiredScopesRouteData(value: unknown): value is RequiredScop
   }
 
   const requiredScopes = value.requiredScopes;
-  return Array.isArray(requiredScopes) && requiredScopes.length > 0 && requiredScopes.every(isAuthScope);
+  return (
+    Array.isArray(requiredScopes) && requiredScopes.length > 0 && requiredScopes.every(isAuthScope)
+  );
 }
 
 export function hasScope(scopes: readonly AuthScope[], scope: AuthScope): boolean {
   return scopes.includes(scope);
 }
 
-export function hasAnyScope(scopes: readonly AuthScope[], requiredScopes: readonly AuthScope[]): boolean {
+export function hasAnyScope(
+  scopes: readonly AuthScope[],
+  requiredScopes: readonly AuthScope[],
+): boolean {
   return requiredScopes.some((scope) => hasScope(scopes, scope));
 }
 
-export function hasAllScopes(scopes: readonly AuthScope[], requiredScopes: readonly AuthScope[]): boolean {
+export function hasAllScopes(
+  scopes: readonly AuthScope[],
+  requiredScopes: readonly AuthScope[],
+): boolean {
   return requiredScopes.every((scope) => hasScope(scopes, scope));
 }
-

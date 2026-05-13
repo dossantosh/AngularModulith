@@ -1,8 +1,8 @@
-import { type AuthNavigationModule } from '../auth/session/session.model';
 import { type AppSidebarItem } from '../../shared/ui';
+import { type AuthNavigationModule } from '../auth/session/session.model';
 
 export function buildSidebarNavigation(
-  navigation: readonly AuthNavigationModule[] = []
+  navigation: readonly AuthNavigationModule[] = [],
 ): readonly AppSidebarItem[] {
   return [dashboardLink(), ...navigation.map(toSidebarModuleFromBackend)];
 }
@@ -35,4 +35,3 @@ function toSidebarModuleFromBackend(module: AuthNavigationModule): AppSidebarIte
     })),
   };
 }
-

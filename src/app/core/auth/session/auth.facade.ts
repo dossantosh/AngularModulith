@@ -51,7 +51,7 @@ export class AuthFacade {
         this.clearSession();
         return throwError(() => error);
       }),
-      shareReplay({ bufferSize: 1, refCount: true })
+      shareReplay({ bufferSize: 1, refCount: true }),
     );
 
     return this.sessionOnce$;
@@ -61,14 +61,12 @@ export class AuthFacade {
     return this.api.login(command).pipe(
       tap(() => this.resetSessionCache()),
       switchMap(() => this.loadSession()),
-      map((user) => user.username)
+      map((user) => user.username),
     );
   }
 
   logout() {
-    return this.api.logout().pipe(
-      tap(() => this.clearSession())
-    );
+    return this.api.logout().pipe(tap(() => this.clearSession()));
   }
 
   clearSessionAfterUnauthorized(): void {
@@ -84,4 +82,3 @@ export class AuthFacade {
     this.sessionOnce$ = undefined;
   }
 }
-

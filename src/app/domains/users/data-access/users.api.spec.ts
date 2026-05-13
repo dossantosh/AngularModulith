@@ -5,8 +5,7 @@ import { firstValueFrom, of } from 'rxjs';
 import { vi } from 'vitest';
 
 import { authInterceptor } from '../../../core/auth/http/auth.interceptor';
-import { provideNgOpenapi } from '../../../generated/openapi';
-import { UserControllerService } from '../../../generated/openapi';
+import { provideNgOpenapi, UserControllerService } from '../../../generated/openapi';
 import { UsersApi } from './users.api';
 
 function setup(client: { getUsers: (...args: unknown[]) => unknown }) {
@@ -31,7 +30,7 @@ describe('UsersApi', () => {
           hasPrevious: false,
           nextId: null,
           previousId: null,
-        })
+        }),
       ),
     };
     const api = setup(client);
@@ -42,7 +41,7 @@ describe('UsersApi', () => {
         direction: 'NEXT',
         lastId: 99,
         filters: { id: 1, username: '  john  ', email: '  a@b.com  ' },
-      })
+      }),
     );
 
     expect(client.getUsers).toHaveBeenCalledOnce();
@@ -61,7 +60,7 @@ describe('UsersApi', () => {
         direction: 'NEXT',
         lastId: null,
         filters: { id: null, username: '   ', email: '' },
-      })
+      }),
     );
 
     expect(client.getUsers).toHaveBeenCalledWith(
@@ -70,7 +69,7 @@ describe('UsersApi', () => {
       undefined,
       undefined,
       10,
-      'NEXT'
+      'NEXT',
     );
   });
 
@@ -83,7 +82,7 @@ describe('UsersApi', () => {
           hasPrevious: false,
           nextId: 25,
           previousId: null,
-        })
+        }),
       ),
     };
     const api = setup(client);
@@ -94,7 +93,7 @@ describe('UsersApi', () => {
         direction: 'NEXT',
         lastId: null,
         filters: { id: null, username: '', email: '' },
-      })
+      }),
     );
 
     expect(page).toEqual({
@@ -119,7 +118,7 @@ describe('UsersApi', () => {
         direction: 'NEXT',
         lastId: null,
         filters: { id: null, username: '', email: '' },
-      })
+      }),
     );
 
     expect(page.empty).toBe(true);
@@ -137,7 +136,7 @@ describe('UsersApi', () => {
         direction: 'NEXT',
         lastId: null,
         filters: { id: null, username: '', email: '' },
-      })
+      }),
     );
 
     expect(page.empty).toBe(false);
@@ -169,4 +168,3 @@ describe('UsersApi', () => {
     http.verify();
   });
 });
-

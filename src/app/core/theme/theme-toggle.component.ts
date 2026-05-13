@@ -24,4 +24,3 @@ import { ThemeService } from './theme.service';
 export class ThemeToggleComponent {
   readonly themeService = inject(ThemeService);
 }
-

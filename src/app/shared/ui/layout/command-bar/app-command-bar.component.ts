@@ -6,7 +6,9 @@ import { Component, input } from '@angular/core';
   template: `
     <section class="app-rounded-lg border app-border app-surface app-shadow-sm">
       @if (title() || subtitle()) {
-        <header class="flex flex-col gap-1 border-b app-border px-4 py-3 md:flex-row md:items-center md:justify-between">
+        <header
+          class="flex flex-col gap-1 border-b app-border px-4 py-3 md:flex-row md:items-center md:justify-between"
+        >
           <div>
             @if (title()) {
               <h2 class="text-sm app-text">{{ title() }}</h2>
@@ -33,4 +35,3 @@ export class AppCommandBarComponent {
   readonly title = input('');
   readonly subtitle = input('');
 }
-

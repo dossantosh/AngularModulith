@@ -1,8 +1,8 @@
-import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { DestroyRef, Injectable, computed, inject, signal } from '@angular/core';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { EMPTY, Subject, catchError, switchMap, tap } from 'rxjs';
 
-import { UsersApi, UserPageDto } from '../data-access/users.api';
+import { UserPageDto, UsersApi } from '../data-access/users.api';
 
 type PageDirection = 'NEXT' | 'PREVIOUS';
 type LoadStatus = 'idle' | 'loading' | 'success' | 'error';
@@ -75,10 +75,10 @@ export class UsersFacade {
             catchError(() => {
               this.setError('Failed to load users');
               return EMPTY;
-            })
-          )
+            }),
+          ),
         ),
-        takeUntilDestroyed(this.destroyRef)
+        takeUntilDestroyed(this.destroyRef),
       )
       .subscribe();
   }
@@ -165,7 +165,7 @@ export class UsersFacade {
   private patchState(patch: Partial<UsersState>): void;
   private patchState(project: (state: UsersState) => Partial<UsersState>): void;
   private patchState(
-    patchOrProject: Partial<UsersState> | ((state: UsersState) => Partial<UsersState>)
+    patchOrProject: Partial<UsersState> | ((state: UsersState) => Partial<UsersState>),
   ): void {
     this.state.update((state) => ({
       ...state,
@@ -173,4 +173,3 @@ export class UsersFacade {
     }));
   }
 }
-

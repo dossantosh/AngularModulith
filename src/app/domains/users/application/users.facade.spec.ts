@@ -45,7 +45,7 @@ describe('UsersFacade', () => {
         hasNext: true,
         nextId: 10,
         empty: false,
-      })
+      }),
     );
     subject.complete();
 
@@ -111,8 +111,8 @@ describe('UsersFacade', () => {
             hasPrevious: true,
             nextId: 123,
             previousId: 55,
-          })
-        )
+          }),
+        ),
       ),
     };
     const facade = setup(api);
@@ -123,7 +123,7 @@ describe('UsersFacade', () => {
     facade.loadNext();
     expect(api.search).toHaveBeenCalledOnce();
     expect(api.search).toHaveBeenCalledWith(
-      expect.objectContaining({ direction: 'NEXT', lastId: 123 })
+      expect.objectContaining({ direction: 'NEXT', lastId: 123 }),
     );
 
     api.search.mockClear();
@@ -131,7 +131,7 @@ describe('UsersFacade', () => {
     facade.loadPrevious();
     expect(api.search).toHaveBeenCalledOnce();
     expect(api.search).toHaveBeenCalledWith(
-      expect.objectContaining({ direction: 'PREVIOUS', lastId: 55 })
+      expect.objectContaining({ direction: 'PREVIOUS', lastId: 55 }),
     );
   });
 
@@ -142,8 +142,8 @@ describe('UsersFacade', () => {
           userPage({
             hasNext: true,
             nextId: 123,
-          })
-        )
+          }),
+        ),
       ),
     };
     const facade = setup(api);
@@ -161,7 +161,7 @@ describe('UsersFacade', () => {
         direction: 'NEXT',
         lastId: null,
         filters: expect.objectContaining({ username: 'ana' }),
-      })
+      }),
     );
   });
 
@@ -200,8 +200,7 @@ describe('UsersFacade', () => {
         direction: 'NEXT',
         lastId: null,
         filters: { id: null, username: '', email: '' },
-      })
+      }),
     );
   });
 });
-

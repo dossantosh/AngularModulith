@@ -35,7 +35,10 @@ export interface AppSidebarItem {
       <div class="flex-1 space-y-4 overflow-y-auto px-3 py-4">
         @for (item of items(); track item.key) {
           @if (item.kind === 'group') {
-            <section class="app-sidebar__group" [class.app-sidebar__group--active]="isGroupActive(item)">
+            <section
+              class="app-sidebar__group"
+              [class.app-sidebar__group--active]="isGroupActive(item)"
+            >
               <button
                 type="button"
                 class="app-sidebar__module-button flex w-full items-center gap-3 app-rounded-md px-3 py-2 text-left text-sm font-medium app-sidebar-link transition"
@@ -147,7 +150,7 @@ export class AppSidebarComponent {
 
   isGroupActive(item: AppSidebarItem): boolean {
     return (item.items ?? []).some(
-      (child) => child.routerLink && this.router.isActive(child.routerLink, child.exact ?? false)
+      (child) => child.routerLink && this.router.isActive(child.routerLink, child.exact ?? false),
     );
   }
 
@@ -155,8 +158,7 @@ export class AppSidebarComponent {
     this.expandedGroups.update((expandedGroups) =>
       expandedGroups.includes(key)
         ? expandedGroups.filter((groupKey) => groupKey !== key)
-        : [...expandedGroups, key]
+        : [...expandedGroups, key],
     );
   }
 }
-

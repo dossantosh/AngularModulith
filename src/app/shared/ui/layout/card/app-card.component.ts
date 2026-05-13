@@ -27,12 +27,11 @@ import { MatCardModule } from '@angular/material/card';
     }
   `,
   template: `
-    <mat-card
-      appearance="outlined"
-      [class.overflow-hidden]="overflowHidden()"
-    >
+    <mat-card appearance="outlined" [class.overflow-hidden]="overflowHidden()">
       @if (title() || subtitle()) {
-        <header class="app-card__header flex flex-col gap-2 border-b px-4 py-3 sm:flex-row sm:items-center sm:justify-between">
+        <header
+          class="app-card__header flex flex-col gap-2 border-b px-4 py-3 sm:flex-row sm:items-center sm:justify-between"
+        >
           <div>
             @if (title()) {
               <h2 class="app-card__title">
@@ -66,4 +65,3 @@ export class AppCardComponent {
   readonly spacious = input(false, { transform: booleanAttribute });
   readonly overflowHidden = input(false, { transform: booleanAttribute });
 }
-

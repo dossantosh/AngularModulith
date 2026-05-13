@@ -96,7 +96,8 @@ export default tseslint.config(
             '../../feature-*',
             '../../feature-*/*',
           ],
-          message: 'Application services should orchestrate state/data and must not depend on pages.',
+          message:
+            'Application services should orchestrate state/data and must not depend on pages.',
         },
       ]),
     },
@@ -123,7 +124,8 @@ export default tseslint.config(
             '../../feature-*',
             '../../feature-*/*',
           ],
-          message: 'Data-access should stay an adapter layer and must not depend on app orchestration or pages.',
+          message:
+            'Data-access should stay an adapter layer and must not depend on app orchestration or pages.',
         },
       ]),
     },

@@ -1,8 +1,11 @@
 import { Injectable, inject } from '@angular/core';
 import { Observable, map } from 'rxjs';
 
-import { KeysetPageUserSummaryView, UserSummaryView } from '../../../generated/openapi';
-import { UserControllerService } from '../../../generated/openapi';
+import {
+  KeysetPageUserSummaryView,
+  UserControllerService,
+  UserSummaryView,
+} from '../../../generated/openapi';
 
 interface UsersSearchRequest {
   limit: number;
@@ -48,7 +51,7 @@ export class UsersApi {
         email,
         lastId ?? undefined,
         query.limit,
-        query.direction
+        query.direction,
       )
       .pipe(map(mapUserPage));
   }
@@ -76,4 +79,3 @@ function mapUserSummary(user: UserSummaryView): UserSummaryDto {
     isAdmin: user.isAdmin ?? false,
   };
 }
-

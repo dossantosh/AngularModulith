@@ -127,4 +127,3 @@ describe('scopeGuard', () => {
     expect(createUrlTree).toHaveBeenCalledWith(['/login']);
   });
 });
-

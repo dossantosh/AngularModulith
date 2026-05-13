@@ -4,11 +4,13 @@
   "scripts": {
     "ng": "ng",
     "start": "ng serve",
-    "build": "ng build",
+    "build": "npm run format && npm run lint && npm run test:ci && ng build",
     "lint": "ng lint",
+    "format": "prettier . --write",
     "watch": "ng build --watch --configuration development",
     "api:generate": "ng-openapi -c openapi.config.ts",
     "test": "ng test",
+    "test:ci": "ng test --watch=false",
     "test:run": "ng test --watch=false",
     "test:coverage": "ng test --watch=false --coverage",
     "e2e": "playwright test",
@@ -17,7 +19,18 @@
   "prettier": {
     "printWidth": 100,
     "singleQuote": true,
+    "endOfLine": "auto",
+    "plugins": [
+      "prettier-plugin-organize-imports"
+    ],
+    "organizeImportsSkipDestructiveCodeActions": true,
     "overrides": [
+      {
+        "files": ".github/workflows/*.{yml,yaml}",
+        "options": {
+          "singleQuote": false
+        }
+      },
       {
         "files": "*.html",
         "options": {
@@ -61,6 +74,8 @@
     "jsdom": "^27.1.0",
     "ng-openapi": "^0.2.18",
     "postcss": "^8.5.6",
+    "prettier": "^3.8.1",
+    "prettier-plugin-organize-imports": "^4.3.0",
     "tailwindcss": "^4.1.18",
     "typescript": "~5.9.2",
     "typescript-eslint": "^8.40.0",

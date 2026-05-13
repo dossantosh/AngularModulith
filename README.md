@@ -187,8 +187,10 @@ Politica de cache de sesion:
 ```bash
 npm install
 npm start
+npm run format
 npm run lint
 npm test
+npm run test:ci
 npm run test:run
 npm run build
 npm run e2e

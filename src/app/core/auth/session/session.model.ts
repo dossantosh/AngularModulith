@@ -19,4 +19,3 @@ export interface AuthNavigationModule {
   icon: string;
   items: readonly AuthNavigationItem[];
 }
-

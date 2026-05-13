@@ -16,9 +16,10 @@ export const scopeGuard: CanActivateFn = (route: ActivatedRouteSnapshot) => {
         return router.createUrlTree(['/forbidden']);
       }
 
-      return auth.hasAllScopes(routeData.requiredScopes) ? true : router.createUrlTree(['/forbidden']);
+      return auth.hasAllScopes(routeData.requiredScopes)
+        ? true
+        : router.createUrlTree(['/forbidden']);
     }),
-    catchError(() => of(router.createUrlTree(['/login'])))
+    catchError(() => of(router.createUrlTree(['/login']))),
   );
 };
-

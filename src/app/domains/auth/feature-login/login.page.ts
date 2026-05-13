@@ -58,9 +58,9 @@ export class LoginPage {
         error: () => {
           this.isSubmitting.set(false);
           this.loginForm.enable({ emitEvent: false });
-          this.loginError = 'No se pudo iniciar sesion. Revisa tus credenciales e intentalo de nuevo.';
+          this.loginError =
+            'No se pudo iniciar sesion. Revisa tus credenciales e intentalo de nuevo.';
         },
       });
   }
 }
-

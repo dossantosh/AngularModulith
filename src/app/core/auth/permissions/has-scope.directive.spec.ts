@@ -51,4 +51,3 @@ describe('HasScopeDirective', () => {
     expect(fixture.nativeElement.textContent).not.toContain('Create user');
   });
 });
-

@@ -17,10 +17,7 @@ export interface AppBreadcrumbItem {
           @for (item of items(); track item.label; let last = $last) {
             <li class="flex items-center gap-1">
               @if (item.routerLink && !last) {
-                <a
-                  [routerLink]="item.routerLink"
-                  class="app-rounded-sm app-link-muted"
-                >
+                <a [routerLink]="item.routerLink" class="app-rounded-sm app-link-muted">
                   {{ item.label }}
                 </a>
               } @else {
@@ -40,4 +37,3 @@ export interface AppBreadcrumbItem {
 export class AppBreadcrumbComponent {
   readonly items = input<readonly AppBreadcrumbItem[]>([]);
 }
-

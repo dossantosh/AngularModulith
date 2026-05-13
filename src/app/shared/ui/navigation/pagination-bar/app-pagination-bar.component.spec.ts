@@ -56,4 +56,3 @@ describe('AppPaginationBarComponent', () => {
     expect(buttons[1].nativeElement.disabled).toBe(false);
   });
 });
-

@@ -1,18 +1,18 @@
-import { defineConfig, devices } from "@playwright/test";
+import { defineConfig, devices } from '@playwright/test';
 
 export default defineConfig({
-  testDir: "e2e",
+  testDir: 'e2e',
   use: {
-    baseURL: "http://localhost:4200",
-    trace: "on-first-retry",
-    screenshot: "only-on-failure",
-    video: "retain-on-failure"
+    baseURL: 'http://localhost:4200',
+    trace: 'on-first-retry',
+    screenshot: 'only-on-failure',
+    video: 'retain-on-failure',
   },
   webServer: {
-    command: "npm run start -- --port 4200",
-    url: "http://localhost:4200",
+    command: 'npm run start -- --port 4200',
+    url: 'http://localhost:4200',
     reuseExistingServer: !process.env.CI,
-    timeout: 120000
+    timeout: 120000,
   },
-  projects: [{ name: "chromium", use: { ...devices["Desktop Chrome"] } }]
+  projects: [{ name: 'chromium', use: { ...devices['Desktop Chrome'] } }],
 });

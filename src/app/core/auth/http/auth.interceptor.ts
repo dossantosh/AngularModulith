@@ -17,7 +17,7 @@ export const authInterceptor: HttpInterceptorFn = (req, next) => {
       }
 
       return throwError(() => error);
-    })
+    }),
   );
 };
 
@@ -33,4 +33,3 @@ function isProtectedApiRequest(url: string): boolean {
 function getPath(url: string): string {
   return new URL(url, 'http://localhost').pathname;
 }
-

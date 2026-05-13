@@ -4,7 +4,10 @@ export { AppLoadingStateComponent } from './feedback/loading-state/app-loading-s
 export { AppCardComponent } from './layout/card/app-card.component';
 export { AppCommandBarComponent } from './layout/command-bar/app-command-bar.component';
 export { AppPageComponent } from './layout/page/app-page.component';
-export { AppBreadcrumbComponent, type AppBreadcrumbItem } from './navigation/breadcrumb/app-breadcrumb.component';
+export {
+  AppBreadcrumbComponent,
+  type AppBreadcrumbItem,
+} from './navigation/breadcrumb/app-breadcrumb.component';
 export { AppPaginationBarComponent } from './navigation/pagination-bar/app-pagination-bar.component';
 export {
   AppSidebarComponent,
@@ -15,4 +18,3 @@ export { AppStatusBadgeComponent } from './primitives/status-badge/app-status-ba
 export { AppTextFieldComponent } from './primitives/text-field/app-text-field.component';
 export { AppSearchFiltersComponent } from './search/search-filters/app-search-filters.component';
 export { AppSearchResultsComponent } from './search/search-results/app-search-results.component';
-

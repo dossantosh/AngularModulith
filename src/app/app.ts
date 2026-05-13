@@ -11,6 +11,4 @@ import { RouterModule } from '@angular/router';
   selector: 'app-root',
   template: `<router-outlet></router-outlet>`,
 })
-export class App {
-}
-
+export class App {}

@@ -9,7 +9,7 @@ import { authGuard } from './auth.guard';
 describe('authGuard', () => {
   const route = {} as ActivatedRouteSnapshot;
   const state = {} as RouterStateSnapshot;
-  const createUrlTree = vi.fn(() => ({ redirected: true } as unknown as UrlTree));
+  const createUrlTree = vi.fn(() => ({ redirected: true }) as unknown as UrlTree);
 
   beforeEach(() => {
     createUrlTree.mockReset();
@@ -55,4 +55,3 @@ describe('authGuard', () => {
     expect(createUrlTree).toHaveBeenCalledWith(['/login']);
   });
 });
-

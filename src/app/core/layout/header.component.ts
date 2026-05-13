@@ -49,18 +49,14 @@ type ShellDataSource = 'prod' | 'historic';
 
         <app-theme-toggle />
 
-        <span class="hidden items-center gap-2 app-rounded-full app-surface-container px-3 py-1.5 text-sm app-text-muted sm:inline-flex">
+        <span
+          class="hidden items-center gap-2 app-rounded-full app-surface-container px-3 py-1.5 text-sm app-text-muted sm:inline-flex"
+        >
           <mat-icon class="app-icon-sm" aria-hidden="true">account_circle</mat-icon>
           <span class="font-medium app-text">{{ userName() }}</span>
         </span>
 
-        <app-button
-          variant="danger"
-          type="button"
-          (clicked)="logout.emit()"
-        >
-          Salir
-        </app-button>
+        <app-button variant="danger" type="button" (clicked)="logout.emit()"> Salir </app-button>
       </div>
     </mat-toolbar>
   `,
@@ -73,4 +69,3 @@ export class HeaderComponent {
   readonly menuToggle = output<void>();
   readonly logout = output<void>();
 }
-

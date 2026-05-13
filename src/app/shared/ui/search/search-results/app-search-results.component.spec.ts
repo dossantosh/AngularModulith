@@ -89,7 +89,7 @@ describe('AppSearchResultsComponent', () => {
     fixture.detectChanges();
 
     const buttons = Array.from(
-      fixture.nativeElement.querySelectorAll('button')
+      fixture.nativeElement.querySelectorAll('button'),
     ) as HTMLButtonElement[];
     const button = buttons.find((element) => element.textContent?.includes('Reintentar'));
 
@@ -110,4 +110,3 @@ describe('AppSearchResultsComponent', () => {
     expect(fixture.componentInstance.next).toHaveBeenCalledOnce();
   });
 });
-

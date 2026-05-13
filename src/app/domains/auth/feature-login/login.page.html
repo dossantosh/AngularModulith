@@ -6,12 +6,8 @@
         <p class="text-sm app-text">Seb's Perfumes</p>
       </div>
 
-      <h1 class="text-center text-2xl font-medium app-text">
-        Iniciar sesion
-      </h1>
-      <p class="mt-1 text-center text-sm app-text-muted">
-        Accede con tu usuario y contrasena
-      </p>
+      <h1 class="text-center text-2xl font-medium app-text">Iniciar sesion</h1>
+      <p class="mt-1 text-center text-sm app-text-muted">Accede con tu usuario y contrasena</p>
 
       <form [formGroup]="loginForm" (ngSubmit)="onSubmit()" class="mt-6 space-y-4">
         @if (loginError) {
@@ -49,16 +45,10 @@
           [errorMessages]="{ required: 'Contrasena es obligatoria.' }"
         />
 
-        <app-button
-          variant="primary"
-          type="submit"
-          [fullWidth]="true"
-          [loading]="isSubmitting()"
-        >
+        <app-button variant="primary" type="submit" [fullWidth]="true" [loading]="isSubmitting()">
           Entrar
         </app-button>
       </form>
     </mat-card-content>
   </mat-card>
 </main>
-

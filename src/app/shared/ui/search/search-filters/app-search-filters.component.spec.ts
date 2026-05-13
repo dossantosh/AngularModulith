@@ -45,4 +45,3 @@ describe('AppSearchFiltersComponent', () => {
     expect(text).toContain('Limpiar');
   });
 });
-

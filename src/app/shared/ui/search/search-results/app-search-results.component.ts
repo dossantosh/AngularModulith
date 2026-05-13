@@ -17,12 +17,7 @@ import { AppPaginationBarComponent } from '../../navigation/pagination-bar/app-p
     AppPaginationBarComponent,
   ],
   template: `
-    <app-card
-      [title]="title()"
-      [subtitle]="subtitle()"
-      [padded]="false"
-      [overflowHidden]="true"
-    >
+    <app-card [title]="title()" [subtitle]="subtitle()" [padded]="false" [overflowHidden]="true">
       <span card-actions>
         @if (loading()) {
           <span role="status" aria-live="polite" class="text-sm app-text-muted">
@@ -45,11 +40,7 @@ import { AppPaginationBarComponent } from '../../navigation/pagination-bar/app-p
       } @else if (loading() && empty()) {
         <app-loading-state [message]="loadingMessage()" />
       } @else if (empty()) {
-        <app-empty-state
-          [icon]="emptyIcon()"
-          [title]="emptyTitle()"
-          [message]="emptyMessage()"
-        >
+        <app-empty-state [icon]="emptyIcon()" [title]="emptyTitle()" [message]="emptyMessage()">
           <ng-content select="[empty-actions]" />
         </app-empty-state>
       } @else {
@@ -95,4 +86,3 @@ export class AppSearchResultsComponent {
   readonly previous = output<void>();
   readonly next = output<void>();
 }
-

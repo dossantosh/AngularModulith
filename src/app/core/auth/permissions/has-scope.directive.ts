@@ -1,7 +1,15 @@
-import { Directive, TemplateRef, ViewContainerRef, computed, effect, inject, input } from '@angular/core';
+import {
+  Directive,
+  TemplateRef,
+  ViewContainerRef,
+  computed,
+  effect,
+  inject,
+  input,
+} from '@angular/core';
 
-import { AuthScope } from './permissions';
 import { AuthFacade } from '../session/auth.facade';
+import { AuthScope } from './permissions';
 
 @Directive({
   selector: '[appHasScope]',
@@ -32,13 +40,13 @@ export class HasScopeDirective {
       }
     });
   }
-
 }
 
-function normalizeScopes(value: AuthScope | readonly AuthScope[] | null | undefined): readonly AuthScope[] {
+function normalizeScopes(
+  value: AuthScope | readonly AuthScope[] | null | undefined,
+): readonly AuthScope[] {
   if (!value) {
     return [];
   }
   return typeof value === 'string' ? [value] : [...value];
 }
-

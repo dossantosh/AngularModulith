@@ -1,6 +1,9 @@
 import { Component, computed, input } from '@angular/core';
 
-import { AppBreadcrumbComponent, AppBreadcrumbItem } from '../../navigation/breadcrumb/app-breadcrumb.component';
+import {
+  AppBreadcrumbComponent,
+  AppBreadcrumbItem,
+} from '../../navigation/breadcrumb/app-breadcrumb.component';
 
 type AppPageLayout = 'default' | 'wide' | 'full';
 
@@ -29,7 +32,9 @@ type AppPageLayout = 'default' | 'wide' | 'full';
         <app-breadcrumb [items]="breadcrumbs()" />
 
         @if (title() || subtitle()) {
-          <header class="mb-4 flex flex-col gap-3 border-b app-border pb-4 md:flex-row md:items-end md:justify-between">
+          <header
+            class="mb-4 flex flex-col gap-3 border-b app-border pb-4 md:flex-row md:items-end md:justify-between"
+          >
             <div class="min-w-0">
               @if (eyebrow()) {
                 <p class="app-page__eyebrow uppercase">
@@ -78,4 +83,3 @@ export class AppPageComponent {
     return widths[this.layout()];
   });
 }
-

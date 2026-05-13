@@ -8,12 +8,7 @@ import { AppButtonComponent } from './app-button.component';
   standalone: true,
   imports: [AppButtonComponent],
   template: `
-    <app-button
-      variant="primary"
-      type="button"
-      [loading]="loading"
-      (clicked)="onClicked()"
-    >
+    <app-button variant="primary" type="button" [loading]="loading" (clicked)="onClicked()">
       Guardar
     </app-button>
   `,
@@ -57,4 +52,3 @@ describe('AppButtonComponent', () => {
     expect(fixture.nativeElement.textContent).toContain('Guardar');
   });
 });
-

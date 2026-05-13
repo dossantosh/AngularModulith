@@ -63,7 +63,8 @@ export class AppTextFieldComponent {
     }
 
     const firstError = Object.keys(control.errors)[0];
-    return this.errorMessages()[firstError] ?? DEFAULT_ERROR_MESSAGES[firstError] ?? 'Valor no valido.';
+    return (
+      this.errorMessages()[firstError] ?? DEFAULT_ERROR_MESSAGES[firstError] ?? 'Valor no valido.'
+    );
   }
 }
-

@@ -35,26 +35,28 @@ describe('AuthFacade', () => {
     expect(request.request.method).toBe('POST');
 
     request.flush({ username: 'john' });
-    http.expectOne((req) => req.url === '/api/auth/me').flush({
-      username: 'john',
-      dataSource: 'historic',
-      scopes: ['systems:read'],
-      navigation: [
-        {
-          key: 'systems',
-          label: 'Sistemas',
-          icon: 'settings',
-          items: [
-            {
-              key: 'users_search',
-              label: 'Usuarios',
-              icon: 'group',
-              route: '/users/search',
-            },
-          ],
-        },
-      ],
-    });
+    http
+      .expectOne((req) => req.url === '/api/auth/me')
+      .flush({
+        username: 'john',
+        dataSource: 'historic',
+        scopes: ['systems:read'],
+        navigation: [
+          {
+            key: 'systems',
+            label: 'Sistemas',
+            icon: 'settings',
+            items: [
+              {
+                key: 'users_search',
+                label: 'Usuarios',
+                icon: 'group',
+                route: '/users/search',
+              },
+            ],
+          },
+        ],
+      });
 
     expect(result).toBe('john');
     expect(facade.username()).toBe('john');
@@ -108,11 +110,13 @@ describe('AuthFacade', () => {
     expect(facade.dataSource()).toBe('prod');
 
     facade.loadSession().subscribe();
-    http.expectOne((req) => req.url === '/api/auth/me').flush({
-      username: 'john',
-      dataSource: 'historic',
-      scopes: [],
-    });
+    http
+      .expectOne((req) => req.url === '/api/auth/me')
+      .flush({
+        username: 'john',
+        dataSource: 'historic',
+        scopes: [],
+      });
 
     expect(facade.username()).toBe('john');
     expect(facade.dataSource()).toBe('historic');
@@ -121,11 +125,13 @@ describe('AuthFacade', () => {
   it('logout() resets username, scopes, navigation, and data source', () => {
     facade.login({ username: 'john', password: 'pw', dataSource: 'historic' }).subscribe();
     http.expectOne((req) => req.url === '/api/auth/login').flush({ username: 'john' });
-    http.expectOne((req) => req.url === '/api/auth/me').flush({
-      username: 'john',
-      dataSource: 'historic',
-      scopes: ['systems:read'],
-    });
+    http
+      .expectOne((req) => req.url === '/api/auth/me')
+      .flush({
+        username: 'john',
+        dataSource: 'historic',
+        scopes: ['systems:read'],
+      });
 
     facade.logout().subscribe();
 
@@ -142,11 +148,13 @@ describe('AuthFacade', () => {
   it('clearSessionAfterUnauthorized() resets session and invalidates the cached /me response', () => {
     facade.loadSession().subscribe();
 
-    http.expectOne((req) => req.url === '/api/auth/me').flush({
-      username: 'john',
-      dataSource: 'historic',
-      scopes: ['systems:read'],
-    });
+    http
+      .expectOne((req) => req.url === '/api/auth/me')
+      .flush({
+        username: 'john',
+        dataSource: 'historic',
+        scopes: ['systems:read'],
+      });
 
     expect(facade.username()).toBe('john');
 
@@ -157,11 +165,13 @@ describe('AuthFacade', () => {
     expect(facade.hasScope('systems:read')).toBe(false);
 
     facade.loadSession().subscribe();
-    http.expectOne((req) => req.url === '/api/auth/me').flush({
-      username: 'jane',
-      dataSource: 'prod',
-      scopes: [],
-    });
+    http
+      .expectOne((req) => req.url === '/api/auth/me')
+      .flush({
+        username: 'jane',
+        dataSource: 'prod',
+        scopes: [],
+      });
 
     expect(facade.username()).toBe('jane');
   });
@@ -169,11 +179,13 @@ describe('AuthFacade', () => {
   it('loadSession() reads scopes as the permission contract', () => {
     facade.loadSession().subscribe();
 
-    http.expectOne((req) => req.url === '/api/auth/me').flush({
-      username: 'john',
-      dataSource: 'prod',
-      scopes: ['systems:write'],
-    });
+    http
+      .expectOne((req) => req.url === '/api/auth/me')
+      .flush({
+        username: 'john',
+        dataSource: 'prod',
+        scopes: ['systems:write'],
+      });
 
     expect(facade.hasScope('systems:write')).toBe(true);
     expect(facade.hasAnyScope(['systems:read', 'systems:write'])).toBe(true);

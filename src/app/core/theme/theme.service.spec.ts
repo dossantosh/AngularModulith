@@ -47,4 +47,3 @@ describe('ThemeService', () => {
     expect(document.documentElement.classList.contains('dark')).toBe(true);
   });
 });
-

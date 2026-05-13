@@ -30,15 +30,9 @@ import {
             />
 
             <div class="flex flex-col justify-center gap-3 sm:flex-row">
-              <app-button variant="primary" routerLink="/">
-                Volver al inicio
-              </app-button>
+              <app-button variant="primary" routerLink="/"> Volver al inicio </app-button>
 
-              <app-button
-                variant="secondary"
-                type="button"
-                (clicked)="changeUser()"
-              >
+              <app-button variant="secondary" type="button" (clicked)="changeUser()">
                 Cambiar de usuario
               </app-button>
             </div>
@@ -68,4 +62,3 @@ export class ForbiddenPage {
       });
   }
 }
-

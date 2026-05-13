@@ -38,4 +38,3 @@ export class AppErrorStateComponent {
 
   readonly retry = output<void>();
 }
-

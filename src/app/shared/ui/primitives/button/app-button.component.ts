@@ -45,7 +45,11 @@ type MaterialButtonAppearance = 'filled' | 'outlined' | 'text';
       --mat-button-filled-container-color: var(--color-danger);
       --mat-button-filled-label-text-color: var(--mat-sys-on-error);
       --mat-button-filled-state-layer-color: var(--mat-sys-on-error);
-      --mat-button-filled-ripple-color: color-mix(in srgb, var(--mat-sys-on-error) 12%, transparent);
+      --mat-button-filled-ripple-color: color-mix(
+        in srgb,
+        var(--mat-sys-on-error) 12%,
+        transparent
+      );
     }
 
     .app-button--loading {
@@ -128,13 +132,9 @@ export class AppButtonComponent {
     return appearances[this.variant()];
   });
   protected readonly buttonClasses = computed(() =>
-    [
-      'app-button',
-      this.fullWidth() ? 'w-full' : '',
-      this.loading() ? 'app-button--loading' : '',
-    ]
+    ['app-button', this.fullWidth() ? 'w-full' : '', this.loading() ? 'app-button--loading' : '']
       .filter(Boolean)
-      .join(' ')
+      .join(' '),
   );
 
   handleClick(event: Event): void {
@@ -147,4 +147,3 @@ export class AppButtonComponent {
     this.clicked.emit(event);
   }
 }
-

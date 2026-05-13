@@ -94,7 +94,7 @@ export class UsersSearchPage implements OnInit {
       .pipe(
         debounceTime(400),
         distinctUntilChanged(sameUserSearchFilters),
-        takeUntilDestroyed(this.destroyRef)
+        takeUntilDestroyed(this.destroyRef),
       )
       .subscribe((value) => {
         this.facade.setFilters({
@@ -128,7 +128,7 @@ export class UsersSearchPage implements OnInit {
 
 function sameUserSearchFilters(
   previous: UserSearchFormValue,
-  current: UserSearchFormValue
+  current: UserSearchFormValue,
 ): boolean {
   return (
     (previous.id ?? null) === (current.id ?? null) &&
@@ -136,4 +136,3 @@ function sameUserSearchFilters(
     (previous.email ?? '') === (current.email ?? '')
   );
 }
-
