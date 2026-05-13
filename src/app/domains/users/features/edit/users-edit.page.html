@@ -1,97 +1,200 @@
-<app-page
-  title="Modificar usuario"
-  subtitle="Actualiza datos principales y permisos operativos del usuario seleccionado."
-  eyebrow="Sistemas"
-  layout="full"
-  [breadcrumbs]="breadcrumbs"
->
-  @if (loading()) {
-    <app-loading-state message="Cargando usuario..." />
-  } @else if (loadError()) {
-    <app-error-state
-      title="No se pudo cargar el usuario"
-      [message]="loadError() ?? 'Intentalo de nuevo.'"
-      actionLabel="Reintentar"
-      (retry)="reloadUser()"
-    />
-  } @else {
-    <form [formGroup]="userForm" (ngSubmit)="saveUser()" class="space-y-4">
-      @if (saveError()) {
-        <app-error-state
-          title="No se pudieron guardar los cambios"
-          [message]="saveError() ?? 'Intentalo de nuevo.'"
-        />
-      }
+@if (loading()) {
+  <app-loading-state message="Cargando datos personales..." />
+} @else if (loadError()) {
+  <app-error-state
+    title="No se pudieron cargar los datos personales"
+    [message]="loadError() ?? 'Intentalo de nuevo.'"
+    actionLabel="Reintentar"
+    (retry)="reload()"
+  />
+} @else {
+  <form [formGroup]="personalDataForm" (ngSubmit)="savePersonalData()" class="space-y-4">
+    @if (saveSuccess()) {
+      <p role="status" class="users-edit-success">Datos personales actualizados.</p>
+    }
 
-      <app-command-bar
-        title="Datos del usuario"
-        subtitle="Actualiza los datos principales y permisos operativos."
-      >
-        <div command-actions class="flex flex-wrap items-center gap-2">
-          <app-status-badge
-            [label]="userForm.controls.enabled.value ? 'Activo' : 'Inactivo'"
-            [icon]="userForm.controls.enabled.value ? 'check_circle' : 'cancel'"
-            [variant]="userForm.controls.enabled.value ? 'success' : 'danger'"
-          />
+    @if (saveError()) {
+      <app-error-state
+        title="No se pudieron guardar los datos personales"
+        [message]="saveError() ?? 'Intentalo de nuevo.'"
+      />
+    }
 
-          <app-button variant="secondary" type="button" [disabled]="saving()" (clicked)="cancel()">
-            Cancelar
-          </app-button>
-
-          <app-button
-            variant="primary"
-            type="submit"
-            icon="save"
-            [disabled]="userForm.invalid || saving()"
-            [loading]="saving()"
-          >
-            Guardar cambios
-          </app-button>
-        </div>
-
-        <div class="users-edit-form-grid">
-          <app-text-field
-            label="Username"
-            autocomplete="username"
-            [control]="userForm.controls.username"
-            [showErrors]="submitted"
-            [errorMessages]="{
-              required: 'Username es obligatorio.',
-              maxlength: 'Username no puede superar 40 caracteres.',
-            }"
-          />
-
-          <app-text-field
-            label="Email"
-            type="email"
-            autocomplete="email"
-            [control]="userForm.controls.email"
-            [showErrors]="submitted"
-            [errorMessages]="{
-              required: 'Email es obligatorio.',
-              email: 'Introduce un email valido.',
-              maxlength: 'Email no puede superar 100 caracteres.',
-            }"
-          />
-        </div>
-
-        <section
-          class="mt-4 app-rounded-lg border app-border app-surface-container px-4 py-3 text-sm"
-          aria-label="Roles actuales"
+    <app-command-bar
+      title="Modificar datos personales"
+      subtitle="Actualiza la informacion de empleado asociada a este usuario."
+    >
+      <div command-actions class="flex flex-wrap items-center gap-2">
+        <app-button
+          variant="secondary"
+          type="button"
+          [routerLink]="cancelLink()"
+          [disabled]="saving()"
         >
-          <p class="font-medium app-text">Roles actuales</p>
-          <p class="mt-1 app-text-muted">{{ rolesLabel() }}</p>
-        </section>
+          Cancelar
+        </app-button>
 
-        <div class="users-edit-options mt-4">
-          <div class="users-edit-option">
-            <mat-checkbox formControlName="enabled">Usuario activo</mat-checkbox>
-          </div>
-          <div class="users-edit-option">
-            <mat-checkbox formControlName="isAdmin">Administrador</mat-checkbox>
-          </div>
-        </div>
-      </app-command-bar>
-    </form>
-  }
-</app-page>
+        <app-button
+          variant="primary"
+          type="submit"
+          icon="save"
+          [disabled]="personalDataForm.invalid || saving()"
+          [loading]="saving()"
+        >
+          Guardar cambios
+        </app-button>
+      </div>
+
+      <div class="users-edit-form-grid">
+        <app-text-field
+          label="Codigo interno"
+          [control]="personalDataForm.controls.employeeCode"
+          [showErrors]="submitted"
+          [errorMessages]="{ maxlength: 'Codigo interno no puede superar 30 caracteres.' }"
+        />
+
+        <app-text-field
+          label="Nombre"
+          autocomplete="given-name"
+          [control]="personalDataForm.controls.firstName"
+          [showErrors]="submitted"
+          [errorMessages]="{ maxlength: 'Nombre no puede superar 80 caracteres.' }"
+        />
+
+        <app-text-field
+          label="Apellidos"
+          autocomplete="family-name"
+          [control]="personalDataForm.controls.lastName"
+          [showErrors]="submitted"
+          [errorMessages]="{ maxlength: 'Apellidos no puede superar 120 caracteres.' }"
+        />
+
+        <app-text-field
+          label="Email corporativo"
+          type="email"
+          autocomplete="email"
+          [control]="personalDataForm.controls.corporateEmail"
+          [showErrors]="submitted"
+          [errorMessages]="{
+            email: 'Introduce un email valido.',
+            maxlength: 'Email corporativo no puede superar 120 caracteres.',
+          }"
+        />
+
+        <app-text-field
+          label="Telefono"
+          type="tel"
+          autocomplete="tel"
+          [control]="personalDataForm.controls.phone"
+          [showErrors]="submitted"
+          [errorMessages]="{ maxlength: 'Telefono no puede superar 30 caracteres.' }"
+        />
+
+        <app-text-field
+          label="Documento de identidad"
+          [control]="personalDataForm.controls.identityDocument"
+          [showErrors]="submitted"
+          [errorMessages]="{ maxlength: 'Documento no puede superar 40 caracteres.' }"
+        />
+
+        <app-text-field
+          label="Fecha de nacimiento"
+          type="date"
+          [control]="personalDataForm.controls.birthDate"
+        />
+
+        <app-text-field
+          label="Direccion"
+          autocomplete="street-address"
+          [control]="personalDataForm.controls.address"
+          [showErrors]="submitted"
+          [errorMessages]="{ maxlength: 'Direccion no puede superar 160 caracteres.' }"
+        />
+
+        <app-text-field
+          label="Ciudad"
+          autocomplete="address-level2"
+          [control]="personalDataForm.controls.city"
+          [showErrors]="submitted"
+          [errorMessages]="{ maxlength: 'Ciudad no puede superar 80 caracteres.' }"
+        />
+
+        <app-text-field
+          label="Provincia / estado"
+          autocomplete="address-level1"
+          [control]="personalDataForm.controls.stateProvince"
+          [showErrors]="submitted"
+          [errorMessages]="{ maxlength: 'Provincia no puede superar 80 caracteres.' }"
+        />
+
+        <app-text-field
+          label="Codigo postal"
+          autocomplete="postal-code"
+          [control]="personalDataForm.controls.postalCode"
+          [showErrors]="submitted"
+          [errorMessages]="{ maxlength: 'Codigo postal no puede superar 20 caracteres.' }"
+        />
+
+        <app-text-field
+          label="Pais"
+          autocomplete="country-name"
+          [control]="personalDataForm.controls.country"
+          [showErrors]="submitted"
+          [errorMessages]="{ maxlength: 'Pais no puede superar 80 caracteres.' }"
+        />
+
+        <app-text-field
+          label="Puesto"
+          [control]="personalDataForm.controls.jobTitle"
+          [showErrors]="submitted"
+          [errorMessages]="{ maxlength: 'Puesto no puede superar 100 caracteres.' }"
+        />
+
+        <app-text-field
+          label="Departamento"
+          [control]="personalDataForm.controls.department"
+          [showErrors]="submitted"
+          [errorMessages]="{ maxlength: 'Departamento no puede superar 100 caracteres.' }"
+        />
+
+        <app-text-field
+          label="Fecha de alta"
+          type="date"
+          [control]="personalDataForm.controls.hireDate"
+        />
+
+        <mat-form-field appearance="outline" class="w-full">
+          <mat-label>Estado del empleado</mat-label>
+          <mat-select formControlName="status">
+            @for (status of statusOptions; track status.value) {
+              <mat-option [value]="status.value">{{ status.label }}</mat-option>
+            }
+          </mat-select>
+        </mat-form-field>
+
+        <mat-form-field appearance="outline" class="w-full">
+          <mat-label>Tipo de contrato</mat-label>
+          <mat-select formControlName="contractType">
+            <mat-option [value]="null">Sin especificar</mat-option>
+            @for (contractType of contractTypeOptions; track contractType.value) {
+              <mat-option [value]="contractType.value">{{ contractType.label }}</mat-option>
+            }
+          </mat-select>
+        </mat-form-field>
+
+        <mat-form-field appearance="outline" class="users-edit-form-grid__wide w-full">
+          <mat-label>Observaciones internas</mat-label>
+          <textarea
+            matInput
+            rows="4"
+            formControlName="internalNotes"
+            [attr.aria-invalid]="personalDataForm.controls.internalNotes.invalid"
+          ></textarea>
+          @if (personalDataForm.controls.internalNotes.hasError('maxlength')) {
+            <mat-error>Observaciones no puede superar 1000 caracteres.</mat-error>
+          }
+        </mat-form-field>
+      </div>
+    </app-command-bar>
+  </form>
+}

@@ -21,6 +21,10 @@ export interface UserAccessRequest {
   roleIds: Array<number>;
 }
 
+export interface UpdateUserRolesRequest {
+  roleIds: Array<number>;
+}
+
 export interface RoleView {
   id?: number;
   name?: string;
@@ -33,6 +37,57 @@ export interface UserDetailsView {
   enabled?: boolean;
   isAdmin?: boolean;
   roles?: Array<RoleView>;
+}
+
+export interface UserRolesView {
+  userId?: number;
+  username?: string;
+  roles?: Array<RoleView>;
+  availableRoles?: Array<RoleView>;
+}
+
+export interface UpdateUserPersonalDataRequest {
+  employeeCode?: string;
+  firstName?: string;
+  lastName?: string;
+  corporateEmail?: string;
+  phone?: string;
+  identityDocument?: string;
+  birthDate?: string;
+  address?: string;
+  city?: string;
+  stateProvince?: string;
+  postalCode?: string;
+  country?: string;
+  jobTitle?: string;
+  department?: string;
+  hireDate?: string;
+  status?: 'ACTIVE' | 'INACTIVE' | 'TERMINATED' | 'ON_LEAVE';
+  contractType?: 'FULL_TIME' | 'PART_TIME' | 'TEMPORARY' | 'CONTRACTOR' | 'INTERN' | 'OTHER';
+  internalNotes?: string;
+}
+
+export interface UserPersonalDataView {
+  userId?: number;
+  username?: string;
+  employeeCode?: string;
+  firstName?: string;
+  lastName?: string;
+  corporateEmail?: string;
+  phone?: string;
+  identityDocument?: string;
+  birthDate?: string;
+  address?: string;
+  city?: string;
+  stateProvince?: string;
+  postalCode?: string;
+  country?: string;
+  jobTitle?: string;
+  department?: string;
+  hireDate?: string;
+  status?: 'ACTIVE' | 'INACTIVE' | 'TERMINATED' | 'ON_LEAVE';
+  contractType?: 'FULL_TIME' | 'PART_TIME' | 'TEMPORARY' | 'CONTRACTOR' | 'INTERN' | 'OTHER';
+  internalNotes?: string;
 }
 
 export interface CreateUserRequest {

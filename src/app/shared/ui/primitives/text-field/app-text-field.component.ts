@@ -3,7 +3,7 @@ import { FormControl, ReactiveFormsModule } from '@angular/forms';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
 
-type TextFieldType = 'text' | 'number' | 'email' | 'password' | 'search';
+type TextFieldType = 'text' | 'number' | 'email' | 'password' | 'search' | 'date' | 'tel';
 
 const DEFAULT_ERROR_MESSAGES: Record<string, string> = {
   required: 'Este campo es obligatorio.',

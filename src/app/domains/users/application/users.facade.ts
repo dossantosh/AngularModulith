@@ -2,9 +2,23 @@ import { DestroyRef, Injectable, computed, inject, signal } from '@angular/core'
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { EMPTY, Subject, catchError, switchMap, tap } from 'rxjs';
 
-import { type UpdateUserCommand, type UserPageDto, UsersApi } from '../data-access/users.api';
+import {
+  type UpdateUserCommand,
+  type UpdateUserPersonalDataCommand,
+  type UserPageDto,
+  UsersApi,
+} from '../data-access/users.api';
 
-export type { UpdateUserCommand, UserDetailsDto } from '../data-access/users.api';
+export type {
+  ContractTypeDto,
+  EmployeeStatusDto,
+  UpdateUserCommand,
+  UpdateUserPersonalDataCommand,
+  UserDetailsDto,
+  UserPersonalDataDto,
+  UserRoleDto,
+  UserRolesDto,
+} from '../data-access/users.api';
 
 type PageDirection = 'NEXT' | 'PREVIOUS';
 type LoadStatus = 'idle' | 'loading' | 'success' | 'error';
@@ -132,6 +146,22 @@ export class UsersFacade {
 
   updateUser(userId: number, command: UpdateUserCommand) {
     return this.api.update(userId, command);
+  }
+
+  loadPersonalData(userId: number) {
+    return this.api.getPersonalData(userId);
+  }
+
+  updatePersonalData(userId: number, command: UpdateUserPersonalDataCommand) {
+    return this.api.updatePersonalData(userId, command);
+  }
+
+  loadRoles(userId: number) {
+    return this.api.getRoles(userId);
+  }
+
+  updateRoles(userId: number, roleIds: readonly number[]) {
+    return this.api.updateRoles(userId, roleIds);
   }
 
   private resetFilters(): void {

@@ -136,8 +136,8 @@ export class UsersSearchPage implements OnInit {
     this.facade.loadPrevious();
   }
 
-  editUserLink(userId: number): readonly unknown[] {
-    return ['/users', userId, 'edit'];
+  userDetailsLink(userId: number): readonly unknown[] {
+    return ['/users', userId, 'personal-data'];
   }
 }
 

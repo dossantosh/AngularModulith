@@ -17,7 +17,13 @@ function userPage(overrides = {}) {
   };
 }
 
-type UsersApiStub = Pick<UsersApi, 'search'> & Partial<Pick<UsersApi, 'getById' | 'update'>>;
+type UsersApiStub = Pick<UsersApi, 'search'> &
+  Partial<
+    Pick<
+      UsersApi,
+      'getById' | 'update' | 'getPersonalData' | 'updatePersonalData' | 'getRoles' | 'updateRoles'
+    >
+  >;
 
 function setup(api: UsersApiStub) {
   TestBed.configureTestingModule({
@@ -239,5 +245,54 @@ describe('UsersFacade', () => {
       enabled: true,
       isAdmin: false,
     });
+  });
+
+  it('delegates personal data and roles operations to the users API', () => {
+    const personalData = {
+      userId: 7,
+      username: 'ana',
+      employeeCode: 'EMP-7',
+      firstName: 'Ana',
+      lastName: 'Lopez',
+      corporateEmail: 'ana@company.local',
+      phone: '',
+      identityDocument: '',
+      birthDate: '',
+      address: '',
+      city: '',
+      stateProvince: '',
+      postalCode: '',
+      country: '',
+      jobTitle: '',
+      department: '',
+      hireDate: '',
+      status: 'ACTIVE' as const,
+      contractType: null,
+      internalNotes: '',
+    };
+    const roles = {
+      userId: 7,
+      username: 'ana',
+      roles: [{ id: 1, name: 'SYSTEMS' }],
+      availableRoles: [{ id: 1, name: 'SYSTEMS' }],
+    };
+    const api = {
+      search: vi.fn(() => of(userPage())),
+      getPersonalData: vi.fn(() => of(personalData)),
+      updatePersonalData: vi.fn(() => of(personalData)),
+      getRoles: vi.fn(() => of(roles)),
+      updateRoles: vi.fn(() => of(roles)),
+    };
+    const facade = setup(api);
+
+    facade.loadPersonalData(7).subscribe();
+    facade.updatePersonalData(7, personalData).subscribe();
+    facade.loadRoles(7).subscribe();
+    facade.updateRoles(7, [1]).subscribe();
+
+    expect(api.getPersonalData).toHaveBeenCalledWith(7);
+    expect(api.updatePersonalData).toHaveBeenCalledWith(7, personalData);
+    expect(api.getRoles).toHaveBeenCalledWith(7);
+    expect(api.updateRoles).toHaveBeenCalledWith(7, [1]);
   });
 });

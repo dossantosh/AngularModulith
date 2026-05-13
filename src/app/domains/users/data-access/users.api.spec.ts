@@ -9,7 +9,16 @@ import { provideNgOpenapi, UserControllerService } from '../../../generated/open
 import { UsersApi } from './users.api';
 
 type UsersClientStub = Partial<
-  Record<'getUsers' | 'getUserDetails' | 'updateUser', (...args: unknown[]) => unknown>
+  Record<
+    | 'getUsers'
+    | 'getUserDetails'
+    | 'updateUser'
+    | 'getUserPersonalData'
+    | 'updateUserPersonalData'
+    | 'getUserRoles'
+    | 'updateUserRoles',
+    (...args: unknown[]) => unknown
+  >
 >;
 
 function setup(client: UsersClientStub) {
@@ -258,5 +267,132 @@ describe('UsersApi', () => {
       isAdmin: false,
       roles: [],
     });
+  });
+
+  it('loads and maps personal data through the generated client', async () => {
+    const client = {
+      getUserPersonalData: vi.fn(() =>
+        of({
+          userId: 7,
+          username: 'ana',
+          employeeCode: 'EMP-7',
+          firstName: 'Ana',
+          lastName: 'Lopez',
+          corporateEmail: 'ana.lopez@company.local',
+          status: 'ACTIVE',
+          contractType: 'FULL_TIME',
+        }),
+      ),
+    };
+    const api = setup(client);
+
+    const data = await firstValueFrom(api.getPersonalData(7));
+
+    expect(client.getUserPersonalData).toHaveBeenCalledWith(7);
+    expect(data).toEqual(
+      expect.objectContaining({
+        userId: 7,
+        employeeCode: 'EMP-7',
+        firstName: 'Ana',
+        status: 'ACTIVE',
+        contractType: 'FULL_TIME',
+      }),
+    );
+  });
+
+  it('updates personal data with trimmed optional values', async () => {
+    const client = {
+      updateUserPersonalData: vi.fn(() =>
+        of({
+          userId: 7,
+          username: 'ana',
+          firstName: 'Ana',
+          status: 'ACTIVE',
+        }),
+      ),
+    };
+    const api = setup(client);
+
+    await firstValueFrom(
+      api.updatePersonalData(7, {
+        employeeCode: ' EMP-7 ',
+        firstName: ' Ana ',
+        lastName: '',
+        corporateEmail: ' ana.lopez@company.local ',
+        phone: '',
+        identityDocument: '',
+        birthDate: '',
+        address: '',
+        city: '',
+        stateProvince: '',
+        postalCode: '',
+        country: '',
+        jobTitle: '',
+        department: '',
+        hireDate: '',
+        status: 'ACTIVE',
+        contractType: null,
+        internalNotes: '',
+      }),
+    );
+
+    expect(client.updateUserPersonalData).toHaveBeenCalledWith(7, {
+      employeeCode: 'EMP-7',
+      firstName: 'Ana',
+      lastName: undefined,
+      corporateEmail: 'ana.lopez@company.local',
+      phone: undefined,
+      identityDocument: undefined,
+      birthDate: undefined,
+      address: undefined,
+      city: undefined,
+      stateProvince: undefined,
+      postalCode: undefined,
+      country: undefined,
+      jobTitle: undefined,
+      department: undefined,
+      hireDate: undefined,
+      status: 'ACTIVE',
+      contractType: undefined,
+      internalNotes: undefined,
+    });
+  });
+
+  it('loads and updates user roles through the generated client', async () => {
+    const client = {
+      getUserRoles: vi.fn(() =>
+        of({
+          userId: 7,
+          username: 'ana',
+          roles: [{ id: 1, name: 'SYSTEMS' }],
+          availableRoles: [
+            { id: 1, name: 'SYSTEMS' },
+            { id: 2, name: 'PERFUMES' },
+          ],
+        }),
+      ),
+      updateUserRoles: vi.fn(() =>
+        of({
+          userId: 7,
+          username: 'ana',
+          roles: [{ id: 2, name: 'PERFUMES' }],
+          availableRoles: [{ id: 2, name: 'PERFUMES' }],
+        }),
+      ),
+    };
+    const api = setup(client);
+
+    await expect(firstValueFrom(api.getRoles(7))).resolves.toEqual({
+      userId: 7,
+      username: 'ana',
+      roles: [{ id: 1, name: 'SYSTEMS' }],
+      availableRoles: [
+        { id: 1, name: 'SYSTEMS' },
+        { id: 2, name: 'PERFUMES' },
+      ],
+    });
+    await firstValueFrom(api.updateRoles(7, [2]));
+
+    expect(client.updateUserRoles).toHaveBeenCalledWith(7, { roleIds: [2] });
   });
 });

@@ -135,11 +135,11 @@
             <td mat-cell *matCellDef="let user" class="users-results-table__actions">
               <a
                 mat-icon-button
-                [routerLink]="editUserLink(user.id)"
-                [attr.aria-label]="'Modificar usuario ' + user.username"
-                [attr.title]="'Modificar usuario ' + user.username"
+                [routerLink]="userDetailsLink(user.id)"
+                [attr.aria-label]="'Abrir usuario ' + user.username"
+                [attr.title]="'Abrir usuario ' + user.username"
               >
-                <mat-icon aria-hidden="true">edit</mat-icon>
+                <mat-icon aria-hidden="true">manage_accounts</mat-icon>
               </a>
             </td>
           </ng-container>

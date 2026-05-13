@@ -1,19 +1,30 @@
-import { Component, DestroyRef, OnInit, computed, inject, signal } from '@angular/core';
+import { Component, DestroyRef, OnInit, inject, signal } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
-import { MatCheckboxModule } from '@angular/material/checkbox';
-import { ActivatedRoute, Router } from '@angular/router';
+import { MatFormFieldModule } from '@angular/material/form-field';
+import { MatInputModule } from '@angular/material/input';
+import { MatSelectModule } from '@angular/material/select';
+import { ActivatedRoute } from '@angular/router';
 
 import {
   AppButtonComponent,
   AppCommandBarComponent,
   AppErrorStateComponent,
   AppLoadingStateComponent,
-  AppPageComponent,
-  AppStatusBadgeComponent,
   AppTextFieldComponent,
 } from '../../../../shared/ui';
-import { type UserDetailsDto, UsersFacade } from '../../application/users.facade';
+import {
+  type ContractTypeDto,
+  type EmployeeStatusDto,
+  type UserPersonalDataDto,
+  UsersFacade,
+} from '../../application/users.facade';
+import { userIdFromRoute } from '../detail/users-detail-route';
+
+interface SelectOption<T> {
+  value: T;
+  label: string;
+}
 
 @Component({
   standalone: true,
@@ -23,10 +34,10 @@ import { type UserDetailsDto, UsersFacade } from '../../application/users.facade
     AppCommandBarComponent,
     AppErrorStateComponent,
     AppLoadingStateComponent,
-    AppPageComponent,
-    AppStatusBadgeComponent,
     AppTextFieldComponent,
-    MatCheckboxModule,
+    MatFormFieldModule,
+    MatInputModule,
+    MatSelectModule,
     ReactiveFormsModule,
   ],
   templateUrl: './users-edit.page.html',
@@ -37,26 +48,27 @@ import { type UserDetailsDto, UsersFacade } from '../../application/users.facade
       grid-template-columns: 1fr;
     }
 
-    .users-edit-options {
-      display: grid;
-      gap: 0.75rem;
-      grid-template-columns: 1fr;
+    .users-edit-form-grid__wide {
+      grid-column: 1 / -1;
     }
 
-    .users-edit-option {
-      align-items: center;
-      background-color: var(--color-surface-muted);
-      border: 1px solid var(--color-border);
+    .users-edit-success {
+      background: var(--color-success-container);
+      border: 1px solid color-mix(in srgb, var(--color-success) 35%, var(--color-border));
       border-radius: var(--radius-lg);
-      display: flex;
-      min-block-size: 3.5rem;
-      padding: 0.5rem 0.75rem;
+      color: var(--color-success);
+      padding: 0.75rem 1rem;
     }
 
     @media (min-width: 768px) {
-      .users-edit-form-grid,
-      .users-edit-options {
+      .users-edit-form-grid {
         grid-template-columns: repeat(2, minmax(0, 1fr));
+      }
+    }
+
+    @media (min-width: 1200px) {
+      .users-edit-form-grid {
+        grid-template-columns: repeat(3, minmax(0, 1fr));
       }
     }
   `,
@@ -68,122 +80,153 @@ export class UsersEditPage implements OnInit {
   readonly saving = signal(false);
   readonly loadError = signal<string | null>(null);
   readonly saveError = signal<string | null>(null);
-  readonly user = signal<UserDetailsDto | null>(null);
-  readonly userId = signal<number | null>(null);
-  readonly rolesLabel = computed(() => {
-    const roles = this.user()?.roles ?? [];
+  readonly saveSuccess = signal(false);
 
-    return roles.length ? roles.map((role) => role.name).join(', ') : 'Sin roles asignados';
-  });
-
-  readonly breadcrumbs = [
-    { label: 'Inicio', routerLink: '/' },
-    { label: 'Sistemas' },
-    { label: 'Usuarios', routerLink: '/users/search' },
-    { label: 'Modificar' },
+  readonly statusOptions: readonly SelectOption<EmployeeStatusDto>[] = [
+    { value: 'ACTIVE', label: 'Activo' },
+    { value: 'INACTIVE', label: 'Inactivo' },
+    { value: 'TERMINATED', label: 'Baja' },
+    { value: 'ON_LEAVE', label: 'Ausencia' },
+  ];
+  readonly contractTypeOptions: readonly SelectOption<ContractTypeDto>[] = [
+    { value: 'FULL_TIME', label: 'Jornada completa' },
+    { value: 'PART_TIME', label: 'Jornada parcial' },
+    { value: 'TEMPORARY', label: 'Temporal' },
+    { value: 'CONTRACTOR', label: 'Contratista' },
+    { value: 'INTERN', label: 'Practicas' },
+    { value: 'OTHER', label: 'Otro' },
   ];
 
   private readonly fb = inject(FormBuilder);
   private readonly route = inject(ActivatedRoute);
-  private readonly router = inject(Router);
   private readonly facade = inject(UsersFacade);
   private readonly destroyRef = inject(DestroyRef);
 
-  readonly userForm = this.fb.nonNullable.group({
-    username: ['', [Validators.required, Validators.maxLength(40)]],
-    email: ['', [Validators.required, Validators.email, Validators.maxLength(100)]],
-    enabled: true,
-    isAdmin: false,
+  readonly personalDataForm = this.fb.group({
+    employeeCode: this.fb.nonNullable.control('', [Validators.maxLength(30)]),
+    firstName: this.fb.nonNullable.control('', [Validators.maxLength(80)]),
+    lastName: this.fb.nonNullable.control('', [Validators.maxLength(120)]),
+    corporateEmail: this.fb.nonNullable.control('', [Validators.email, Validators.maxLength(120)]),
+    phone: this.fb.nonNullable.control('', [Validators.maxLength(30)]),
+    identityDocument: this.fb.nonNullable.control('', [Validators.maxLength(40)]),
+    birthDate: this.fb.nonNullable.control(''),
+    address: this.fb.nonNullable.control('', [Validators.maxLength(160)]),
+    city: this.fb.nonNullable.control('', [Validators.maxLength(80)]),
+    stateProvince: this.fb.nonNullable.control('', [Validators.maxLength(80)]),
+    postalCode: this.fb.nonNullable.control('', [Validators.maxLength(20)]),
+    country: this.fb.nonNullable.control('', [Validators.maxLength(80)]),
+    jobTitle: this.fb.nonNullable.control('', [Validators.maxLength(100)]),
+    department: this.fb.nonNullable.control('', [Validators.maxLength(100)]),
+    hireDate: this.fb.nonNullable.control(''),
+    status: this.fb.nonNullable.control<EmployeeStatusDto>('ACTIVE', [Validators.required]),
+    contractType: this.fb.control<ContractTypeDto | null>(null),
+    internalNotes: this.fb.nonNullable.control('', [Validators.maxLength(1000)]),
   });
 
   ngOnInit(): void {
-    this.route.paramMap.pipe(takeUntilDestroyed(this.destroyRef)).subscribe((params) => {
-      const userId = Number(params.get('id'));
-
-      if (!Number.isInteger(userId) || userId <= 0) {
-        this.userId.set(null);
-        this.loading.set(false);
-        this.loadError.set('La ruta no contiene un identificador de usuario valido.');
-        return;
-      }
-
-      this.userId.set(userId);
-      this.loadUser(userId);
-    });
+    this.loadPersonalData();
   }
 
-  reloadUser(): void {
-    const userId = this.userId();
-
-    if (userId != null) {
-      this.loadUser(userId);
-    }
+  reload(): void {
+    this.loadPersonalData();
   }
 
-  saveUser(): void {
+  savePersonalData(): void {
     this.submitted = true;
     this.saveError.set(null);
+    this.saveSuccess.set(false);
 
-    if (this.userForm.invalid) {
-      this.userForm.markAllAsTouched();
+    if (this.personalDataForm.invalid) {
+      this.personalDataForm.markAllAsTouched();
       return;
     }
 
-    const userId = this.userId();
+    const userId = userIdFromRoute(this.route);
     if (userId == null) {
       this.saveError.set('No se pudo identificar el usuario a modificar.');
       return;
     }
 
     this.saving.set(true);
-    this.userForm.disable({ emitEvent: false });
+    this.personalDataForm.disable({ emitEvent: false });
 
     this.facade
-      .updateUser(userId, this.userForm.getRawValue())
+      .updatePersonalData(userId, this.personalDataForm.getRawValue())
       .pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe({
-        next: () => void this.router.navigateByUrl('/users/search'),
+        next: (personalData) => {
+          this.patchPersonalData(personalData);
+          this.saving.set(false);
+          this.personalDataForm.enable({ emitEvent: false });
+          this.saveSuccess.set(true);
+        },
         error: () => {
           this.saving.set(false);
-          this.userForm.enable({ emitEvent: false });
-          this.saveError.set('No se pudieron guardar los cambios del usuario.');
+          this.personalDataForm.enable({ emitEvent: false });
+          this.saveError.set('No se pudieron guardar los datos personales del usuario.');
         },
       });
   }
 
-  cancel(): void {
-    void this.router.navigateByUrl('/users/search');
+  cancelLink(): string {
+    const userId = userIdFromRoute(this.route);
+
+    return userId == null ? '/users/search' : `/users/${userId}/personal-data`;
   }
 
-  private loadUser(userId: number): void {
+  private loadPersonalData(): void {
+    const userId = userIdFromRoute(this.route);
+    if (userId == null) {
+      this.loading.set(false);
+      this.loadError.set('La ruta no contiene un identificador de usuario valido.');
+      return;
+    }
+
     this.loading.set(true);
     this.loadError.set(null);
     this.saveError.set(null);
-    this.userForm.disable({ emitEvent: false });
+    this.saveSuccess.set(false);
+    this.personalDataForm.disable({ emitEvent: false });
 
     this.facade
-      .loadUser(userId)
+      .loadPersonalData(userId)
       .pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe({
-        next: (user) => {
-          this.user.set(user);
-          this.userForm.reset(
-            {
-              username: user.username,
-              email: user.email,
-              enabled: user.enabled,
-              isAdmin: user.isAdmin,
-            },
-            { emitEvent: false },
-          );
-          this.userForm.enable({ emitEvent: false });
+        next: (personalData) => {
+          this.patchPersonalData(personalData);
+          this.personalDataForm.enable({ emitEvent: false });
           this.loading.set(false);
         },
         error: () => {
-          this.user.set(null);
           this.loading.set(false);
-          this.loadError.set('No se pudo cargar el usuario seleccionado.');
+          this.loadError.set('No se pudieron cargar los datos personales del usuario.');
         },
       });
+  }
+
+  private patchPersonalData(personalData: UserPersonalDataDto): void {
+    this.personalDataForm.reset(
+      {
+        employeeCode: personalData.employeeCode,
+        firstName: personalData.firstName,
+        lastName: personalData.lastName,
+        corporateEmail: personalData.corporateEmail,
+        phone: personalData.phone,
+        identityDocument: personalData.identityDocument,
+        birthDate: personalData.birthDate,
+        address: personalData.address,
+        city: personalData.city,
+        stateProvince: personalData.stateProvince,
+        postalCode: personalData.postalCode,
+        country: personalData.country,
+        jobTitle: personalData.jobTitle,
+        department: personalData.department,
+        hireDate: personalData.hireDate,
+        status: personalData.status,
+        contractType: personalData.contractType,
+        internalNotes: personalData.internalNotes,
+      },
+      { emitEvent: false },
+    );
   }
 }

@@ -51,7 +51,7 @@ describe('app navigation', () => {
       },
     ]);
 
-    const active = resolveActiveNavigation(tree, '/users/7/edit');
+    const active = resolveActiveNavigation(tree, '/users/7/personal-data/edit');
 
     expect(active.primary?.key).toBe('systems');
     expect(active.secondary?.key).toBe('users');

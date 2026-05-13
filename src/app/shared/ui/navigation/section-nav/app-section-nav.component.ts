@@ -18,6 +18,7 @@ import { type AppNavNode } from '../app-nav-node';
                   [routerLink]="item.route"
                   routerLinkActive="app-section-nav__link--active"
                   [routerLinkActiveOptions]="{ exact: item.exact ?? true }"
+                  ariaCurrentWhenActive="page"
                   class="app-section-nav__link"
                   [class.app-section-nav__link--active]="isActive(item)"
                   [attr.aria-current]="isActive(item) ? 'page' : null"
