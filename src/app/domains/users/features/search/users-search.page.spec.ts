@@ -82,4 +82,9 @@ describe('UsersSearchPage', () => {
     expect(facade.loadPrevious).toHaveBeenCalledOnce();
     expect(facade.loadNext).toHaveBeenCalledOnce();
   });
+
+  it('exposes the edit action as the last table column', () => {
+    expect(fixture.componentInstance.displayedColumns.at(-1)).toBe('actions');
+    expect(fixture.componentInstance.editUserLink(7)).toEqual(['/users', 7, 'edit']);
+  });
 });

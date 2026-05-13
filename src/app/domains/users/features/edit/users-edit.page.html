@@ -1,0 +1,97 @@
+<app-page
+  title="Modificar usuario"
+  subtitle="Actualiza datos principales y permisos operativos del usuario seleccionado."
+  eyebrow="Sistemas"
+  layout="full"
+  [breadcrumbs]="breadcrumbs"
+>
+  @if (loading()) {
+    <app-loading-state message="Cargando usuario..." />
+  } @else if (loadError()) {
+    <app-error-state
+      title="No se pudo cargar el usuario"
+      [message]="loadError() ?? 'Intentalo de nuevo.'"
+      actionLabel="Reintentar"
+      (retry)="reloadUser()"
+    />
+  } @else {
+    <form [formGroup]="userForm" (ngSubmit)="saveUser()" class="space-y-4">
+      @if (saveError()) {
+        <app-error-state
+          title="No se pudieron guardar los cambios"
+          [message]="saveError() ?? 'Intentalo de nuevo.'"
+        />
+      }
+
+      <app-command-bar
+        title="Datos del usuario"
+        subtitle="Actualiza los datos principales y permisos operativos."
+      >
+        <div command-actions class="flex flex-wrap items-center gap-2">
+          <app-status-badge
+            [label]="userForm.controls.enabled.value ? 'Activo' : 'Inactivo'"
+            [icon]="userForm.controls.enabled.value ? 'check_circle' : 'cancel'"
+            [variant]="userForm.controls.enabled.value ? 'success' : 'danger'"
+          />
+
+          <app-button variant="secondary" type="button" [disabled]="saving()" (clicked)="cancel()">
+            Cancelar
+          </app-button>
+
+          <app-button
+            variant="primary"
+            type="submit"
+            icon="save"
+            [disabled]="userForm.invalid || saving()"
+            [loading]="saving()"
+          >
+            Guardar cambios
+          </app-button>
+        </div>
+
+        <div class="users-edit-form-grid">
+          <app-text-field
+            label="Username"
+            autocomplete="username"
+            [control]="userForm.controls.username"
+            [showErrors]="submitted"
+            [errorMessages]="{
+              required: 'Username es obligatorio.',
+              maxlength: 'Username no puede superar 40 caracteres.',
+            }"
+          />
+
+          <app-text-field
+            label="Email"
+            type="email"
+            autocomplete="email"
+            [control]="userForm.controls.email"
+            [showErrors]="submitted"
+            [errorMessages]="{
+              required: 'Email es obligatorio.',
+              email: 'Introduce un email valido.',
+              maxlength: 'Email no puede superar 100 caracteres.',
+            }"
+          />
+        </div>
+
+        <section
+          class="mt-4 app-rounded-lg border app-border app-surface-container px-4 py-3 text-sm"
+          aria-label="Roles actuales"
+        >
+          <p class="font-medium app-text">Roles actuales</p>
+          <p class="mt-1 app-text-muted">{{ rolesLabel() }}</p>
+        </section>
+
+        <div class="users-edit-options mt-4">
+          <div class="users-edit-option">
+            <mat-checkbox formControlName="enabled">Usuario activo</mat-checkbox>
+          </div>
+          <div class="users-edit-option">
+            <mat-checkbox formControlName="isAdmin">Administrador</mat-checkbox>
+          </div>
+        </div>
+      </app-command-bar>
+    </form>
+  }
+</app-page>

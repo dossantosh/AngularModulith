@@ -17,7 +17,9 @@ function userPage(overrides = {}) {
   };
 }
 
-function setup(api: Pick<UsersApi, 'search'>) {
+type UsersApiStub = Pick<UsersApi, 'search'> & Partial<Pick<UsersApi, 'getById' | 'update'>>;
+
+function setup(api: UsersApiStub) {
   TestBed.configureTestingModule({
     providers: [UsersFacade, { provide: UsersApi, useValue: api }],
   });
@@ -202,5 +204,40 @@ describe('UsersFacade', () => {
         filters: { id: null, username: '', email: '' },
       }),
     );
+  });
+
+  it('delegates user detail loading and updates to the users API', async () => {
+    const user = {
+      id: 7,
+      username: 'ana',
+      email: 'ana@example.com',
+      enabled: true,
+      isAdmin: false,
+      roles: [],
+    };
+    const api = {
+      search: vi.fn(() => of(userPage())),
+      getById: vi.fn(() => of(user)),
+      update: vi.fn(() => of(user)),
+    };
+    const facade = setup(api);
+
+    facade.loadUser(7).subscribe();
+    facade
+      .updateUser(7, {
+        username: 'ana',
+        email: 'ana@example.com',
+        enabled: true,
+        isAdmin: false,
+      })
+      .subscribe();
+
+    expect(api.getById).toHaveBeenCalledWith(7);
+    expect(api.update).toHaveBeenCalledWith(7, {
+      username: 'ana',
+      email: 'ana@example.com',
+      enabled: true,
+      isAdmin: false,
+    });
   });
 });

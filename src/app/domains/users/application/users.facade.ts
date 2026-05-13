@@ -2,7 +2,9 @@ import { DestroyRef, Injectable, computed, inject, signal } from '@angular/core'
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { EMPTY, Subject, catchError, switchMap, tap } from 'rxjs';
 
-import { UserPageDto, UsersApi } from '../data-access/users.api';
+import { type UpdateUserCommand, type UserPageDto, UsersApi } from '../data-access/users.api';
+
+export type { UpdateUserCommand, UserDetailsDto } from '../data-access/users.api';
 
 type PageDirection = 'NEXT' | 'PREVIOUS';
 type LoadStatus = 'idle' | 'loading' | 'success' | 'error';
@@ -122,6 +124,14 @@ export class UsersFacade {
 
     this.setPagination('PREVIOUS', previousId);
     this.search();
+  }
+
+  loadUser(userId: number) {
+    return this.api.getById(userId);
+  }
+
+  updateUser(userId: number, command: UpdateUserCommand) {
+    return this.api.update(userId, command);
   }
 
   private resetFilters(): void {

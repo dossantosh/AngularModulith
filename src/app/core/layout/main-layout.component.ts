@@ -1,19 +1,43 @@
-import { Component, input, output, signal } from '@angular/core';
+import { Component, HostListener, computed, input, output, signal } from '@angular/core';
 
-import { AppSidebarComponent, type AppSidebarItem } from '../../shared/ui';
+import {
+  AppNavigationRailComponent,
+  AppSectionNavComponent,
+  AppSidebarComponent,
+  type AppActiveNavigation,
+  type AppNavNode,
+} from '../../shared/ui';
 import { HeaderComponent } from './header.component';
 
 type ShellDataSource = 'prod' | 'historic';
 
+const EMPTY_ACTIVE_NAVIGATION: AppActiveNavigation = {
+  primary: null,
+  secondary: null,
+  tertiary: null,
+  path: [],
+};
+
 @Component({
   selector: 'app-main-layout',
   standalone: true,
-  imports: [AppSidebarComponent, HeaderComponent],
+  imports: [
+    AppNavigationRailComponent,
+    AppSectionNavComponent,
+    AppSidebarComponent,
+    HeaderComponent,
+  ],
   template: `
     <div class="flex h-dvh overflow-hidden app-bg-background app-text">
-      @if (!sidebarCollapsed()) {
+      <app-navigation-rail
+        class="app-layout__desktop-rail shrink-0"
+        [items]="navigationTree()"
+        [activeItemKey]="activePrimary()?.key ?? null"
+      />
+
+      @if (!sidebarCollapsed() && hasContextSidebar()) {
         <aside class="app-layout__desktop-sidebar shrink-0">
-          <app-sidebar [productName]="companyName()" [items]="navigationItems()" />
+          <app-sidebar [primaryItem]="activePrimary()" [activePathKeys]="activePathKeys()" />
         </aside>
       }
 
@@ -25,12 +49,27 @@ type ShellDataSource = 'prod' | 'historic';
             aria-label="Cerrar navegacion"
             (click)="closeSidebar()"
           ></button>
-          <aside class="relative h-full">
-            <app-sidebar
-              [productName]="companyName()"
-              [items]="navigationItems()"
+
+          <aside
+            class="app-layout__mobile-drawer relative flex h-full max-w-full"
+            role="dialog"
+            aria-modal="true"
+            aria-label="Navegacion"
+          >
+            <app-navigation-rail
+              class="shrink-0"
+              [items]="navigationTree()"
+              [activeItemKey]="activePrimary()?.key ?? null"
               (navigated)="closeSidebar()"
             />
+
+            @if (hasContextSidebar()) {
+              <app-sidebar
+                [primaryItem]="activePrimary()"
+                [activePathKeys]="activePathKeys()"
+                (navigated)="closeSidebar()"
+              />
+            }
           </aside>
         </div>
       }
@@ -45,6 +84,12 @@ type ShellDataSource = 'prod' | 'historic';
           (logout)="logout.emit()"
         />
 
+        <app-section-nav
+          class="shrink-0"
+          [items]="sectionItems()"
+          [activeItemKey]="activeTertiary()?.key ?? null"
+        />
+
         <main class="min-h-0 flex-1 overflow-y-auto app-bg-background">
           <ng-content></ng-content>
         </main>
@@ -52,6 +97,7 @@ type ShellDataSource = 'prod' | 'historic';
     </div>
   `,
   styles: `
+    .app-layout__desktop-rail,
     .app-layout__desktop-sidebar {
       display: none;
     }
@@ -60,7 +106,12 @@ type ShellDataSource = 'prod' | 'historic';
       display: block;
     }
 
+    .app-layout__mobile-drawer {
+      box-shadow: var(--mat-sys-level2);
+    }
+
     @media (min-width: 1024px) {
+      .app-layout__desktop-rail,
       .app-layout__desktop-sidebar {
         display: block;
       }
@@ -75,12 +126,25 @@ export class MainLayoutComponent {
   readonly companyName = input('My Company');
   readonly userName = input('User');
   readonly dataSource = input<ShellDataSource>('prod');
-  readonly navigationItems = input<readonly AppSidebarItem[]>([]);
+  readonly navigationTree = input<readonly AppNavNode[]>([]);
+  readonly activeNavigation = input<AppActiveNavigation>(EMPTY_ACTIVE_NAVIGATION);
 
   readonly logout = output<void>();
 
   readonly sidebarOpen = signal(false);
   readonly sidebarCollapsed = signal(false);
+
+  protected readonly activePrimary = computed(() => this.activeNavigation().primary);
+  protected readonly activeTertiary = computed(() => this.activeNavigation().tertiary);
+  protected readonly activePathKeys = computed(() =>
+    this.activeNavigation().path.map((item) => item.key),
+  );
+  protected readonly sectionItems = computed(
+    () => this.activeNavigation().secondary?.children ?? [],
+  );
+  protected readonly hasContextSidebar = computed(() =>
+    Boolean(this.activePrimary()?.children?.length),
+  );
 
   toggleSidebar(): void {
     if (this.isDesktopViewport()) {
@@ -94,7 +158,13 @@ export class MainLayoutComponent {
 
   closeSidebar(): void {
     this.sidebarOpen.set(false);
-    this.sidebarCollapsed.set(false);
+  }
+
+  @HostListener('document:keydown.escape')
+  closeSidebarOnEscape(): void {
+    if (this.sidebarOpen()) {
+      this.closeSidebar();
+    }
   }
 
   private isDesktopViewport(): boolean {

@@ -1,7 +1,10 @@
 import { Component, DestroyRef, OnInit, inject } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { FormBuilder, ReactiveFormsModule } from '@angular/forms';
+import { MatButtonModule } from '@angular/material/button';
+import { MatIconModule } from '@angular/material/icon';
 import { MatTableModule } from '@angular/material/table';
+import { RouterLink } from '@angular/router';
 import { debounceTime, distinctUntilChanged } from 'rxjs';
 
 import {
@@ -30,8 +33,11 @@ type UserSearchFormValue = Partial<{
     AppSearchResultsComponent,
     AppStatusBadgeComponent,
     AppTextFieldComponent,
+    MatButtonModule,
+    MatIconModule,
     MatTableModule,
     ReactiveFormsModule,
+    RouterLink,
   ],
   templateUrl: './users-search.page.html',
   styles: `
@@ -55,6 +61,11 @@ type UserSearchFormValue = Partial<{
     .users-results-table__status,
     .users-results-table__admin {
       width: 10rem;
+    }
+
+    .users-results-table__actions {
+      text-align: right;
+      width: 5rem;
     }
 
     .users-results-table th,
@@ -85,7 +96,7 @@ export class UsersSearchPage implements OnInit {
     { label: 'Sistemas' },
     { label: 'Usuarios' },
   ];
-  readonly displayedColumns = ['id', 'username', 'email', 'enabled', 'admin'];
+  readonly displayedColumns = ['id', 'username', 'email', 'enabled', 'admin', 'actions'];
 
   ngOnInit(): void {
     this.filtersForm.patchValue(this.facade.filters(), { emitEvent: false });
@@ -123,6 +134,10 @@ export class UsersSearchPage implements OnInit {
 
   loadPrevious(): void {
     this.facade.loadPrevious();
+  }
+
+  editUserLink(userId: number): readonly unknown[] {
+    return ['/users', userId, 'edit'];
   }
 }
 

@@ -8,7 +8,11 @@ import { authInterceptor } from '../../../core/auth/http/auth.interceptor';
 import { provideNgOpenapi, UserControllerService } from '../../../generated/openapi';
 import { UsersApi } from './users.api';
 
-function setup(client: { getUsers: (...args: unknown[]) => unknown }) {
+type UsersClientStub = Partial<
+  Record<'getUsers' | 'getUserDetails' | 'updateUser', (...args: unknown[]) => unknown>
+>;
+
+function setup(client: UsersClientStub) {
   TestBed.configureTestingModule({
     providers: [UsersApi, { provide: UserControllerService, useValue: client }],
   });
@@ -166,5 +170,93 @@ describe('UsersApi', () => {
 
     request.flush({ content: [], hasNext: false, hasPrevious: false });
     http.verify();
+  });
+
+  it('loads user details through the generated client', async () => {
+    const client = {
+      getUserDetails: vi.fn(() =>
+        of({
+          id: 7,
+          username: 'ana',
+          email: 'ana@example.com',
+          enabled: true,
+          isAdmin: false,
+          roles: [{ id: 1, name: 'Reader' }],
+        }),
+      ),
+    };
+    const api = setup(client);
+
+    const user = await firstValueFrom(api.getById(7));
+
+    expect(client.getUserDetails).toHaveBeenCalledWith(7);
+    expect(user).toEqual({
+      id: 7,
+      username: 'ana',
+      email: 'ana@example.com',
+      enabled: true,
+      isAdmin: false,
+      roles: [{ id: 1, name: 'Reader' }],
+    });
+  });
+
+  it('updates users with trimmed editable values', async () => {
+    const client = {
+      updateUser: vi.fn(() =>
+        of({
+          id: 7,
+          username: 'ana',
+          email: 'ana@example.com',
+          enabled: false,
+          isAdmin: true,
+          roles: [],
+        }),
+      ),
+    };
+    const api = setup(client);
+
+    await firstValueFrom(
+      api.update(7, {
+        username: '  ana  ',
+        email: '  ana@example.com  ',
+        enabled: false,
+        isAdmin: true,
+      }),
+    );
+
+    expect(client.updateUser).toHaveBeenCalledWith(7, {
+      username: 'ana',
+      email: 'ana@example.com',
+      enabled: false,
+      isAdmin: true,
+    });
+  });
+
+  it('parses generated blob responses for user details endpoints', async () => {
+    const client = {
+      getUserDetails: vi.fn(() =>
+        of(
+          new Blob([
+            JSON.stringify({
+              id: 9,
+              username: 'blob-user',
+              email: 'blob@example.com',
+              enabled: true,
+              isAdmin: false,
+            }),
+          ]),
+        ),
+      ),
+    };
+    const api = setup(client);
+
+    await expect(firstValueFrom(api.getById(9))).resolves.toEqual({
+      id: 9,
+      username: 'blob-user',
+      email: 'blob@example.com',
+      enabled: true,
+      isAdmin: false,
+      roles: [],
+    });
   });
 });
