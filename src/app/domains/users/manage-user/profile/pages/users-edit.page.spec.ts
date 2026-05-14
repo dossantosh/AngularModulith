@@ -1,12 +1,16 @@
+import { signal } from '@angular/core';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { ActivatedRoute, convertToParamMap } from '@angular/router';
-import { of, throwError } from 'rxjs';
 import { vi } from 'vitest';
 
-import { UserProfileFacade } from '../application/user-profile.facade';
+import {
+  UserProfileFacade,
+  type UpdateUserPersonalDataCommand,
+  type UserPersonalDataDto,
+} from '../application/user-profile.facade';
 import { UsersEditPage } from './users-edit.page';
 
-const personalData = {
+const personalData: UserPersonalDataDto = {
   userId: 7,
   username: 'ana',
   employeeCode: 'EMP-7',
@@ -30,9 +34,40 @@ const personalData = {
 };
 
 function createFacadeStub() {
+  const profile = signal<UserPersonalDataDto | null>(null);
+  const loading = signal(false);
+  const saving = signal(false);
+  const loadError = signal<string | null>(null);
+  const saveError = signal<string | null>(null);
+  const saveSuccess = signal(false);
+
   return {
-    loadPersonalData: vi.fn(() => of(personalData)),
-    updatePersonalData: vi.fn(() => of(personalData)),
+    profile,
+    loading,
+    saving,
+    loadError,
+    saveError,
+    saveSuccess,
+    loadProfile: vi.fn(() => profile.set(personalData)),
+    reloadProfile: vi.fn(() => profile.set(personalData)),
+    updateProfile: vi.fn((_: number, command: UpdateUserPersonalDataCommand) => {
+      profile.set({ ...personalData, ...command });
+      saveSuccess.set(true);
+    }),
+    clearSaveState: vi.fn(() => {
+      saveError.set(null);
+      saveSuccess.set(false);
+    }),
+    setLoadError: vi.fn((message: string) => {
+      profile.set(null);
+      loading.set(false);
+      loadError.set(message);
+    }),
+    setSaveError: vi.fn((message: string) => {
+      saving.set(false);
+      saveError.set(message);
+      saveSuccess.set(false);
+    }),
   };
 }
 
@@ -69,7 +104,7 @@ describe('UsersEditPage', () => {
   });
 
   it('loads personal data from the selected route user and patches the form', () => {
-    expect(facade.loadPersonalData).toHaveBeenCalledWith(7);
+    expect(facade.loadProfile).toHaveBeenCalledWith(7);
     expect(fixture.componentInstance.loading()).toBe(false);
     expect(fixture.componentInstance.personalDataForm.getRawValue()).toEqual({
       firstName: 'Ana',
@@ -92,7 +127,7 @@ describe('UsersEditPage', () => {
 
     fixture.componentInstance.savePersonalData();
 
-    expect(facade.updatePersonalData).toHaveBeenCalledWith(
+    expect(facade.updateProfile).toHaveBeenCalledWith(
       7,
       expect.objectContaining({
         employeeCode: 'EMP-7',
@@ -113,12 +148,15 @@ describe('UsersEditPage', () => {
 
     fixture.componentInstance.savePersonalData();
 
-    expect(facade.updatePersonalData).not.toHaveBeenCalled();
+    expect(facade.updateProfile).not.toHaveBeenCalled();
     expect(fixture.componentInstance.submitted).toBe(true);
   });
 
   it('shows a save error and re-enables the form when update fails', () => {
-    facade.updatePersonalData.mockReturnValueOnce(throwError(() => new Error('boom')));
+    facade.updateProfile.mockImplementationOnce(() => {
+      facade.saving.set(false);
+      facade.saveError.set('No se pudieron guardar los datos personales del usuario.');
+    });
 
     fixture.componentInstance.savePersonalData();
 

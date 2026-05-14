@@ -1,5 +1,4 @@
-import { Component, DestroyRef, OnInit, computed, inject, signal } from '@angular/core';
-import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
+import { Component, OnInit, inject } from '@angular/core';
 import { MatCheckboxChange, MatCheckboxModule } from '@angular/material/checkbox';
 import { ActivatedRoute } from '@angular/router';
 
@@ -10,12 +9,8 @@ import {
   AppLoadingStateComponent,
   AppStatusBadgeComponent,
 } from '../../../../../shared/ui';
-import {
-  type UserRoleDto,
-  type UserRolesDto,
-  UserRolesApi,
-} from '../data-access/user-roles.api';
 import { userIdFromRoute } from '../../shell/users-detail-route';
+import { UserRolesFacade } from '../application/user-roles.facade';
 
 @Component({
   standalone: true,
@@ -123,108 +118,56 @@ import { userIdFromRoute } from '../../shell/users-detail-route';
   `,
 })
 export class UsersRolesPage implements OnInit {
-  readonly loading = signal(true);
-  readonly saving = signal(false);
-  readonly loadError = signal<string | null>(null);
-  readonly saveError = signal<string | null>(null);
-  readonly saveSuccess = signal(false);
-  readonly userRoles = signal<UserRolesDto | null>(null);
-  readonly selectedRoleIds = signal<readonly number[]>([]);
-  readonly availableRoles = computed<readonly UserRoleDto[]>(
-    () => this.userRoles()?.availableRoles ?? [],
-  );
-
   private readonly route = inject(ActivatedRoute);
-  private readonly api = inject(UserRolesApi);
-  private readonly destroyRef = inject(DestroyRef);
+  private readonly facade = inject(UserRolesFacade);
+
+  readonly loading = this.facade.loading;
+  readonly saving = this.facade.saving;
+  readonly loadError = this.facade.loadError;
+  readonly saveError = this.facade.saveError;
+  readonly saveSuccess = this.facade.saveSuccess;
+  readonly userRoles = this.facade.userRoles;
+  readonly selectedRoleIds = this.facade.selectedRoleIds;
+  readonly availableRoles = this.facade.availableRoles;
 
   ngOnInit(): void {
     this.loadRoles();
   }
 
   reload(): void {
-    this.loadRoles();
+    this.loadRoles({ force: true });
   }
 
   isSelected(roleId: number): boolean {
-    return this.selectedRoleIds().includes(roleId);
+    return this.facade.isSelected(roleId);
   }
 
   toggleRole(roleId: number, event: MatCheckboxChange): void {
-    this.saveSuccess.set(false);
-
-    if (event.checked) {
-      this.selectedRoleIds.update((roleIds) => [...new Set([...roleIds, roleId])]);
-      return;
-    }
-
-    this.selectedRoleIds.update((roleIds) => roleIds.filter((id) => id !== roleId));
+    this.facade.setRoleSelected(roleId, event.checked);
   }
 
   saveRoles(): void {
     const userId = userIdFromRoute(this.route);
     if (userId == null) {
-      this.saveError.set('No se pudo identificar el usuario a modificar.');
+      this.facade.setSaveError('No se pudo identificar el usuario a modificar.');
       return;
     }
 
-    const roleIds = this.selectedRoleIds();
-    if (!roleIds.length) {
-      this.saveError.set('Selecciona al menos un rol.');
-      return;
-    }
-
-    this.saving.set(true);
-    this.saveError.set(null);
-    this.saveSuccess.set(false);
-
-    this.api
-      .updateUserRoles(userId, roleIds)
-      .pipe(takeUntilDestroyed(this.destroyRef))
-      .subscribe({
-        next: (userRoles) => {
-          this.applyRoles(userRoles);
-          this.saving.set(false);
-          this.saveSuccess.set(true);
-        },
-        error: () => {
-          this.saving.set(false);
-          this.saveError.set('No se pudieron guardar los roles del usuario.');
-        },
-      });
+    this.facade.saveRoles(userId);
   }
 
-  private loadRoles(): void {
+  private loadRoles(options: { force?: boolean } = {}): void {
     const userId = userIdFromRoute(this.route);
     if (userId == null) {
-      this.loading.set(false);
-      this.loadError.set('La ruta no contiene un identificador de usuario valido.');
+      this.facade.setLoadError('La ruta no contiene un identificador de usuario valido.');
       return;
     }
 
-    this.loading.set(true);
-    this.loadError.set(null);
-    this.saveError.set(null);
-    this.saveSuccess.set(false);
+    if (options.force) {
+      this.facade.reloadRoles(userId);
+      return;
+    }
 
-    this.api
-      .getUserRoles(userId)
-      .pipe(takeUntilDestroyed(this.destroyRef))
-      .subscribe({
-        next: (userRoles) => {
-          this.applyRoles(userRoles);
-          this.loading.set(false);
-        },
-        error: () => {
-          this.userRoles.set(null);
-          this.loading.set(false);
-          this.loadError.set('No se pudieron cargar los roles del usuario.');
-        },
-      });
-  }
-
-  private applyRoles(userRoles: UserRolesDto): void {
-    this.userRoles.set(userRoles);
-    this.selectedRoleIds.set(userRoles.roles.map((role) => role.id));
+    this.facade.loadRoles(userId);
   }
 }

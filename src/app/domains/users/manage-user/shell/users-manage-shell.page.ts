@@ -1,7 +1,7 @@
 import { Component, DestroyRef, computed, inject, signal } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { ActivatedRoute, NavigationEnd, Router, RouterOutlet } from '@angular/router';
-import { catchError, filter, map, of, switchMap, tap } from 'rxjs';
+import { filter, map, tap } from 'rxjs';
 
 import {
   AppPageComponent,
@@ -9,10 +9,7 @@ import {
   type AppBreadcrumbItem,
   type AppNavNode,
 } from '../../../../shared/ui';
-import {
-  type UserPersonalDataDto,
-  UserProfileFacade,
-} from '../profile/application/user-profile.facade';
+import { UserProfileFacade } from '../profile/application/user-profile.facade';
 
 @Component({
   standalone: true,
@@ -43,15 +40,14 @@ export class UsersManageShellPage {
   private readonly destroyRef = inject(DestroyRef);
 
   readonly userId = signal<number | null>(null);
-  readonly userDisplayName = signal<string | null>(null);
   private readonly currentUrl = signal(this.router.url);
 
-  readonly pageTitle = computed(() => this.userDisplayName() ?? 'Usuario');
+  readonly pageTitle = computed(() => this.facade.displayName());
   readonly breadcrumbs = computed<readonly AppBreadcrumbItem[]>(() => [
     { label: 'Inicio', routerLink: '/' },
     { label: 'Sistemas' },
     { label: 'Usuarios', routerLink: '/users/search' },
-    { label: this.userDisplayName() ?? 'Usuario' },
+    { label: this.facade.displayName() },
   ]);
 
   readonly sectionItems = computed<readonly AppNavNode[]>(() => {
@@ -106,19 +102,16 @@ export class UsersManageShellPage {
         }),
         tap((userId) => {
           this.userId.set(userId);
-          this.userDisplayName.set(null);
+          if (userId == null) {
+            this.facade.setLoadError('La ruta no contiene un identificador de usuario valido.');
+            return;
+          }
+
+          this.facade.loadProfile(userId);
         }),
-        switchMap((userId) =>
-          userId == null
-            ? of(null)
-            : this.facade.loadPersonalData(userId).pipe(
-                map(displayNameFor),
-                catchError(() => of('Usuario')),
-              ),
-        ),
         takeUntilDestroyed(this.destroyRef),
       )
-      .subscribe((displayName) => this.userDisplayName.set(displayName));
+      .subscribe();
 
     this.router.events
       .pipe(
@@ -127,10 +120,4 @@ export class UsersManageShellPage {
       )
       .subscribe((event) => this.currentUrl.set(event.urlAfterRedirects));
   }
-}
-
-function displayNameFor(personalData: UserPersonalDataDto): string {
-  const fullName = [personalData.firstName, personalData.lastName].filter(Boolean).join(' ').trim();
-
-  return fullName || personalData.username || 'Usuario';
 }

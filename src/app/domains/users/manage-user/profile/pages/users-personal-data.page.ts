@@ -1,5 +1,4 @@
-import { Component, DestroyRef, OnInit, computed, inject, signal } from '@angular/core';
-import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
+import { Component, OnInit, computed, inject } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 
 import {
@@ -9,11 +8,8 @@ import {
   AppLoadingStateComponent,
   AppStatusBadgeComponent,
 } from '../../../../../shared/ui';
-import {
-  type UserPersonalDataDto,
-  UserProfileFacade,
-} from '../application/user-profile.facade';
 import { userIdFromRoute } from '../../shell/users-detail-route';
+import { type UserPersonalDataDto, UserProfileFacade } from '../application/user-profile.facade';
 
 interface PersonalDataItem {
   label: string;
@@ -143,15 +139,13 @@ const CONTRACT_LABELS: Record<NonNullable<UserPersonalDataDto['contractType']>, 
   `,
 })
 export class UsersPersonalDataPage implements OnInit {
-  readonly loading = signal(true);
-  readonly loadError = signal<string | null>(null);
-  readonly personalData = signal<UserPersonalDataDto | null>(null);
-  readonly fullName = computed(() => {
-    const data = this.personalData();
-    const name = [data?.firstName, data?.lastName].filter(Boolean).join(' ').trim();
+  private readonly route = inject(ActivatedRoute);
+  private readonly facade = inject(UserProfileFacade);
 
-    return name || data?.username || 'Usuario';
-  });
+  readonly loading = this.facade.loading;
+  readonly loadError = this.facade.loadError;
+  readonly personalData = this.facade.profile;
+  readonly fullName = this.facade.displayName;
   readonly statusLabel = computed(() => {
     const status = this.personalData()?.status ?? 'ACTIVE';
 
@@ -185,16 +179,12 @@ export class UsersPersonalDataPage implements OnInit {
     ];
   });
 
-  private readonly route = inject(ActivatedRoute);
-  private readonly facade = inject(UserProfileFacade);
-  private readonly destroyRef = inject(DestroyRef);
-
   ngOnInit(): void {
-    this.loadPersonalData();
+    this.loadProfile();
   }
 
   reload(): void {
-    this.loadPersonalData();
+    this.loadProfile({ force: true });
   }
 
   editLink(): string {
@@ -203,30 +193,18 @@ export class UsersPersonalDataPage implements OnInit {
     return userId == null ? '/users/search' : `/users/${userId}/personal-data/edit`;
   }
 
-  private loadPersonalData(): void {
+  private loadProfile(options: { force?: boolean } = {}): void {
     const userId = userIdFromRoute(this.route);
     if (userId == null) {
-      this.loading.set(false);
-      this.loadError.set('La ruta no contiene un identificador de usuario valido.');
+      this.facade.setLoadError('La ruta no contiene un identificador de usuario valido.');
       return;
     }
 
-    this.loading.set(true);
-    this.loadError.set(null);
+    if (options.force) {
+      this.facade.reloadProfile(userId);
+      return;
+    }
 
-    this.facade
-      .loadPersonalData(userId)
-      .pipe(takeUntilDestroyed(this.destroyRef))
-      .subscribe({
-        next: (personalData) => {
-          this.personalData.set(personalData);
-          this.loading.set(false);
-        },
-        error: () => {
-          this.personalData.set(null);
-          this.loading.set(false);
-          this.loadError.set('No se pudieron cargar los datos personales del usuario.');
-        },
-      });
+    this.facade.loadProfile(userId);
   }
 }

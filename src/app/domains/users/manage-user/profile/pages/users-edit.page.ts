@@ -1,5 +1,4 @@
-import { Component, DestroyRef, OnInit, inject, signal } from '@angular/core';
-import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
+import { Component, OnInit, effect, inject } from '@angular/core';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { ActivatedRoute } from '@angular/router';
 
@@ -10,12 +9,12 @@ import {
   AppLoadingStateComponent,
   AppTextFieldComponent,
 } from '../../../../../shared/ui';
+import { userIdFromRoute } from '../../shell/users-detail-route';
 import {
   type UpdateUserPersonalDataCommand,
   type UserPersonalDataDto,
   UserProfileFacade,
 } from '../application/user-profile.facade';
-import { userIdFromRoute } from '../../shell/users-detail-route';
 
 @Component({
   standalone: true,
@@ -60,17 +59,16 @@ import { userIdFromRoute } from '../../shell/users-detail-route';
 export class UsersEditPage implements OnInit {
   submitted = false;
 
-  readonly loading = signal(true);
-  readonly saving = signal(false);
-  readonly loadError = signal<string | null>(null);
-  readonly saveError = signal<string | null>(null);
-  readonly saveSuccess = signal(false);
-  readonly currentPersonalData = signal<UserPersonalDataDto | null>(null);
-
   private readonly fb = inject(FormBuilder);
   private readonly route = inject(ActivatedRoute);
   private readonly facade = inject(UserProfileFacade);
-  private readonly destroyRef = inject(DestroyRef);
+
+  readonly loading = this.facade.loading;
+  readonly saving = this.facade.saving;
+  readonly loadError = this.facade.loadError;
+  readonly saveError = this.facade.saveError;
+  readonly saveSuccess = this.facade.saveSuccess;
+  readonly currentPersonalData = this.facade.profile;
 
   readonly personalDataForm = this.fb.group({
     firstName: this.fb.nonNullable.control('', [Validators.maxLength(80)]),
@@ -84,18 +82,37 @@ export class UsersEditPage implements OnInit {
     country: this.fb.nonNullable.control('', [Validators.maxLength(80)]),
   });
 
+  private readonly profileFormEffect = effect(() => {
+    const personalData = this.facade.profile();
+    if (!personalData) {
+      return;
+    }
+
+    this.patchPersonalData(personalData);
+  });
+
+  private readonly formDisabledEffect = effect(() => {
+    if (this.facade.loading() || this.facade.saving()) {
+      this.personalDataForm.disable({ emitEvent: false });
+      return;
+    }
+
+    if (!this.facade.loadError()) {
+      this.personalDataForm.enable({ emitEvent: false });
+    }
+  });
+
   ngOnInit(): void {
-    this.loadPersonalData();
+    this.loadProfile();
   }
 
   reload(): void {
-    this.loadPersonalData();
+    this.loadProfile({ force: true });
   }
 
   savePersonalData(): void {
     this.submitted = true;
-    this.saveError.set(null);
-    this.saveSuccess.set(false);
+    this.facade.clearSaveState();
 
     if (this.personalDataForm.invalid) {
       this.personalDataForm.markAllAsTouched();
@@ -104,37 +121,18 @@ export class UsersEditPage implements OnInit {
 
     const userId = userIdFromRoute(this.route);
     if (userId == null) {
-      this.saveError.set('No se pudo identificar el usuario a modificar.');
+      this.facade.setSaveError('No se pudo identificar el usuario a modificar.');
       return;
     }
 
     const currentPersonalData = this.currentPersonalData();
     if (!currentPersonalData) {
-      this.saveError.set('No se pudieron cargar los datos originales del usuario.');
+      this.facade.setSaveError('No se pudieron cargar los datos originales del usuario.');
       return;
     }
 
     const command = this.buildUpdateCommand(currentPersonalData);
-
-    this.saving.set(true);
-    this.personalDataForm.disable({ emitEvent: false });
-
-    this.facade
-      .updatePersonalData(userId, command)
-      .pipe(takeUntilDestroyed(this.destroyRef))
-      .subscribe({
-        next: (personalData) => {
-          this.patchPersonalData(personalData);
-          this.saving.set(false);
-          this.personalDataForm.enable({ emitEvent: false });
-          this.saveSuccess.set(true);
-        },
-        error: () => {
-          this.saving.set(false);
-          this.personalDataForm.enable({ emitEvent: false });
-          this.saveError.set('No se pudieron guardar los datos personales del usuario.');
-        },
-      });
+    this.facade.updateProfile(userId, command);
   }
 
   cancelLink(): string {
@@ -143,39 +141,22 @@ export class UsersEditPage implements OnInit {
     return userId == null ? '/users/search' : `/users/${userId}/personal-data`;
   }
 
-  private loadPersonalData(): void {
+  private loadProfile(options: { force?: boolean } = {}): void {
     const userId = userIdFromRoute(this.route);
     if (userId == null) {
-      this.loading.set(false);
-      this.loadError.set('La ruta no contiene un identificador de usuario valido.');
+      this.facade.setLoadError('La ruta no contiene un identificador de usuario valido.');
       return;
     }
 
-    this.loading.set(true);
-    this.currentPersonalData.set(null);
-    this.loadError.set(null);
-    this.saveError.set(null);
-    this.saveSuccess.set(false);
-    this.personalDataForm.disable({ emitEvent: false });
+    if (options.force) {
+      this.facade.reloadProfile(userId);
+      return;
+    }
 
-    this.facade
-      .loadPersonalData(userId)
-      .pipe(takeUntilDestroyed(this.destroyRef))
-      .subscribe({
-        next: (personalData) => {
-          this.patchPersonalData(personalData);
-          this.personalDataForm.enable({ emitEvent: false });
-          this.loading.set(false);
-        },
-        error: () => {
-          this.loading.set(false);
-          this.loadError.set('No se pudieron cargar los datos personales del usuario.');
-        },
-      });
+    this.facade.loadProfile(userId);
   }
 
   private patchPersonalData(personalData: UserPersonalDataDto): void {
-    this.currentPersonalData.set(personalData);
     this.personalDataForm.reset(
       {
         firstName: personalData.firstName,

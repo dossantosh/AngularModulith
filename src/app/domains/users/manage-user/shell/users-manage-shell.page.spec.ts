@@ -1,3 +1,4 @@
+import { signal } from '@angular/core';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { ActivatedRoute, Router, convertToParamMap } from '@angular/router';
 import { EMPTY, of } from 'rxjs';
@@ -6,37 +7,19 @@ import { vi } from 'vitest';
 import { UserProfileFacade } from '../profile/application/user-profile.facade';
 import { UsersManageShellPage } from './users-manage-shell.page';
 
-const personalData = {
-  userId: 7,
-  username: 'ana',
-  employeeCode: 'EMP-7',
-  firstName: 'Ana',
-  lastName: 'Lopez',
-  corporateEmail: 'ana.lopez@company.local',
-  phone: '',
-  identityDocument: '',
-  birthDate: '',
-  address: '',
-  city: '',
-  stateProvince: '',
-  postalCode: '',
-  country: '',
-  jobTitle: '',
-  department: '',
-  hireDate: '',
-  status: 'ACTIVE' as const,
-  contractType: null,
-  internalNotes: '',
-};
-
 describe('UsersManageShellPage', () => {
   let fixture: ComponentFixture<UsersManageShellPage>;
+  const displayName = signal('Usuario');
   const facade = {
-    loadPersonalData: vi.fn(() => of(personalData)),
+    displayName,
+    loadProfile: vi.fn(() => displayName.set('Ana Lopez')),
+    setLoadError: vi.fn(),
   };
 
   beforeEach(() => {
-    facade.loadPersonalData.mockClear();
+    displayName.set('Usuario');
+    facade.loadProfile.mockClear();
+    facade.setLoadError.mockClear();
 
     TestBed.configureTestingModule({
       providers: [
@@ -70,7 +53,7 @@ describe('UsersManageShellPage', () => {
   });
 
   it('uses the user full name in breadcrumbs instead of the technical route id', () => {
-    expect(facade.loadPersonalData).toHaveBeenCalledWith(7);
+    expect(facade.loadProfile).toHaveBeenCalledWith(7);
     expect(fixture.componentInstance.breadcrumbs()).toEqual([
       { label: 'Inicio', routerLink: '/' },
       { label: 'Sistemas' },
