@@ -11,6 +11,56 @@ html {
     )
   );
 
+  @include mat.theme-overrides(
+    (
+      primary: var(--color-primary),
+      on-primary: var(--color-on-primary),
+      primary-container: var(--color-primary-container),
+      on-primary-container: var(--color-on-primary-container),
+      secondary: var(--color-secondary),
+      on-secondary: var(--color-on-secondary),
+      secondary-container: var(--color-info-container),
+      on-secondary-container: var(--color-on-info-container),
+      error: var(--color-danger),
+      on-error: var(--color-on-danger),
+      error-container: var(--color-danger-container),
+      on-error-container: var(--color-on-danger-container),
+      surface: var(--color-background),
+      surface-container-lowest: var(--color-surface),
+      surface-container-low: var(--color-surface-muted),
+      surface-container: var(--color-surface-container),
+      surface-variant: var(--color-surface-container),
+      on-surface: var(--color-text),
+      on-surface-variant: var(--color-text-muted),
+      outline: var(--color-border-strong),
+      outline-variant: var(--color-border),
+      inverse-surface: var(--color-sidebar),
+      inverse-on-surface: var(--color-sidebar-foreground),
+      corner-small: var(--radius-sm),
+      corner-medium: var(--radius-md),
+      corner-large: var(--radius-lg),
+      corner-full: var(--radius-full),
+      level1: var(--shadow-sm),
+      level2: var(--shadow-md),
+    )
+  );
+
+  @include mat.card-overrides(
+    (
+      outlined-container-color: var(--color-surface),
+      outlined-container-shape: var(--radius-lg),
+      outlined-outline-color: var(--color-border),
+    )
+  );
+
+  @include mat.strong-focus-indicators(
+    (
+      border-color: var(--color-focus),
+      border-radius: var(--radius-sm),
+      border-width: 2px,
+    )
+  );
+
   --spacing-base: 0.25rem;
   --radius-sm: 0.25rem;
   --radius-md: 0.5rem;
@@ -18,35 +68,6 @@ html {
   --radius-full: 9999px;
   --shadow-sm: 0 1px 3px 0 rgb(15 23 42 / 0.12), 0 1px 2px -1px rgb(15 23 42 / 0.12);
   --shadow-md: 0 8px 20px -12px rgb(15 23 42 / 0.35);
-
-  --mat-sys-primary: var(--color-primary);
-  --mat-sys-on-primary: var(--color-on-primary);
-  --mat-sys-primary-container: var(--color-primary-container);
-  --mat-sys-on-primary-container: var(--color-on-primary-container);
-  --mat-sys-secondary: var(--color-secondary);
-  --mat-sys-on-secondary: var(--color-on-secondary);
-  --mat-sys-secondary-container: var(--color-info-container);
-  --mat-sys-on-secondary-container: var(--color-on-info-container);
-  --mat-sys-error: var(--color-danger);
-  --mat-sys-on-error: var(--color-on-danger);
-  --mat-sys-error-container: var(--color-danger-container);
-  --mat-sys-on-error-container: var(--color-on-danger-container);
-  --mat-sys-surface: var(--color-background);
-  --mat-sys-surface-container-lowest: var(--color-surface);
-  --mat-sys-surface-container-low: var(--color-surface-muted);
-  --mat-sys-surface-container: var(--color-surface-container);
-  --mat-sys-on-surface: var(--color-text);
-  --mat-sys-on-surface-variant: var(--color-text-muted);
-  --mat-sys-outline: var(--color-border-strong);
-  --mat-sys-outline-variant: var(--color-border);
-  --mat-sys-inverse-surface: var(--color-sidebar);
-  --mat-sys-inverse-on-surface: var(--color-sidebar-foreground);
-  --mat-sys-corner-small: var(--radius-sm);
-  --mat-sys-corner-medium: var(--radius-md);
-  --mat-sys-corner-large: var(--radius-lg);
-  --mat-sys-corner-full: var(--radius-full);
-  --mat-sys-level1: var(--shadow-sm);
-  --mat-sys-level2: var(--shadow-md);
 }
 
 html:not(.dark) {
@@ -122,15 +143,15 @@ html.dark {
 }
 
 body {
-  background-color: var(--color-background);
-  color: var(--color-text);
+  background-color: var(--mat-sys-surface);
+  color: var(--mat-sys-on-surface);
   font: var(--mat-sys-body-medium);
   margin: 0;
   min-height: 100vh;
 }
 
 * {
-  scrollbar-color: var(--color-border-strong) transparent;
+  scrollbar-color: var(--mat-sys-outline) transparent;
 }
 
 :focus-visible {
@@ -139,47 +160,47 @@ body {
 }
 
 .app-bg-background {
-  background-color: var(--color-background);
+  background-color: var(--mat-sys-surface);
 }
 
 .app-surface {
-  background-color: var(--color-surface);
+  background-color: var(--mat-sys-surface-container-lowest);
 }
 
 .app-surface-muted {
-  background-color: var(--color-surface-muted);
+  background-color: var(--mat-sys-surface-container-low);
 }
 
 .app-surface-container {
-  background-color: var(--color-surface-container);
+  background-color: var(--mat-sys-surface-container);
 }
 
 .app-text {
-  color: var(--color-text);
+  color: var(--mat-sys-on-surface);
 }
 
 .app-text-muted {
-  color: var(--color-text-muted);
+  color: var(--mat-sys-on-surface-variant);
 }
 
 .app-text-primary {
-  color: var(--color-primary);
+  color: var(--mat-sys-primary);
 }
 
 .app-link-muted {
-  color: var(--color-text-muted);
+  color: var(--mat-sys-on-surface-variant);
 }
 
 .app-link-muted:hover {
-  color: var(--color-text);
+  color: var(--mat-sys-on-surface);
 }
 
 .app-border {
-  border-color: var(--color-border);
+  border-color: var(--mat-sys-outline-variant);
 }
 
 .app-border-strong {
-  border-color: var(--color-border-strong);
+  border-color: var(--mat-sys-outline);
 }
 
 .app-rounded-sm {
@@ -198,11 +219,7 @@ body {
   border-radius: var(--radius-full);
 }
 
-.app-card-content-padded.mat-mdc-card-content {
-  padding: calc(var(--spacing-base) * 6);
-}
-
-.app-icon-sm.mat-icon {
+.app-icon-sm {
   block-size: calc(var(--spacing-base) * 4);
   font-size: 1rem;
   inline-size: calc(var(--spacing-base) * 4);
@@ -213,20 +230,20 @@ body {
 }
 
 .app-danger-border {
-  border-color: var(--color-danger);
+  border-color: var(--mat-sys-error);
 }
 
 .app-danger-surface {
-  background-color: var(--color-danger-container);
+  background-color: var(--mat-sys-error-container);
 }
 
 .app-danger-text {
-  color: var(--color-on-danger-container);
+  color: var(--mat-sys-on-error-container);
 }
 
 .app-sidebar {
-  background-color: var(--color-sidebar);
-  color: var(--color-sidebar-foreground);
+  background-color: var(--mat-sys-inverse-surface);
+  color: var(--mat-sys-inverse-on-surface);
 }
 
 .app-sidebar-muted {
@@ -244,14 +261,33 @@ body {
 
 .app-sidebar-active {
   background-color: var(--color-sidebar-active);
-  color: var(--color-on-primary);
+  color: var(--mat-sys-on-primary);
 }
 
 .app-sidebar-active:hover {
   background-color: var(--color-sidebar-active);
-  color: var(--color-on-primary);
+  color: var(--mat-sys-on-primary);
 }
 
 .app-shadow-sm {
   box-shadow: var(--shadow-sm);
+}
+
+.app-button--danger {
+  @include mat.button-overrides(
+    (
+      filled-container-color: var(--mat-sys-error),
+      filled-label-text-color: var(--mat-sys-on-error),
+      filled-ripple-color: color-mix(in srgb, var(--mat-sys-on-error) 12%, transparent),
+      filled-state-layer-color: var(--mat-sys-on-error),
+    )
+  );
+}
+
+.app-button__spinner {
+  @include mat.progress-spinner-overrides(
+    (
+      active-indicator-color: currentColor,
+    )
+  );
 }

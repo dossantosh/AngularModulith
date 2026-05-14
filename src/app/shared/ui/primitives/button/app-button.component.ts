@@ -41,23 +41,8 @@ type MaterialButtonAppearance = 'filled' | 'outlined' | 'text';
       line-height: 1.25rem;
     }
 
-    .app-button--danger {
-      --mat-button-filled-container-color: var(--color-danger);
-      --mat-button-filled-label-text-color: var(--mat-sys-on-error);
-      --mat-button-filled-state-layer-color: var(--mat-sys-on-error);
-      --mat-button-filled-ripple-color: color-mix(
-        in srgb,
-        var(--mat-sys-on-error) 12%,
-        transparent
-      );
-    }
-
     .app-button--loading {
       pointer-events: none;
-    }
-
-    .app-button__spinner {
-      --mdc-circular-progress-active-indicator-color: currentColor;
     }
   `,
   template: `
