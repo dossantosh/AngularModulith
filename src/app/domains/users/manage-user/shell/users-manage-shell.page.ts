@@ -9,11 +9,14 @@ import {
   type AppBreadcrumbItem,
   type AppNavNode,
 } from '../../../../shared/ui';
-import { type UserPersonalDataDto, UsersFacade } from '../../application/users.facade';
+import {
+  type UserPersonalDataDto,
+  UserProfileFacade,
+} from '../profile/application/user-profile.facade';
 
 @Component({
   standalone: true,
-  selector: 'app-users-user-shell-page',
+  selector: 'app-users-manage-shell-page',
   imports: [AppPageComponent, AppSectionNavComponent, RouterOutlet],
   template: `
     <app-page
@@ -33,10 +36,10 @@ import { type UserPersonalDataDto, UsersFacade } from '../../application/users.f
     </app-page>
   `,
 })
-export class UsersUserShellPage {
+export class UsersManageShellPage {
   private readonly route = inject(ActivatedRoute);
   private readonly router = inject(Router);
-  private readonly facade = inject(UsersFacade);
+  private readonly facade = inject(UserProfileFacade);
   private readonly destroyRef = inject(DestroyRef);
 
   readonly userId = signal<number | null>(null);

@@ -9,9 +9,13 @@ import {
   AppErrorStateComponent,
   AppLoadingStateComponent,
   AppStatusBadgeComponent,
-} from '../../../../shared/ui';
-import { type UserRoleDto, type UserRolesDto, UsersFacade } from '../../application/users.facade';
-import { userIdFromRoute } from '../detail/users-detail-route';
+} from '../../../../../shared/ui';
+import {
+  type UserRoleDto,
+  type UserRolesDto,
+  UserRolesApi,
+} from '../data-access/user-roles.api';
+import { userIdFromRoute } from '../../shell/users-detail-route';
 
 @Component({
   standalone: true,
@@ -131,7 +135,7 @@ export class UsersRolesPage implements OnInit {
   );
 
   private readonly route = inject(ActivatedRoute);
-  private readonly facade = inject(UsersFacade);
+  private readonly api = inject(UserRolesApi);
   private readonly destroyRef = inject(DestroyRef);
 
   ngOnInit(): void {
@@ -174,8 +178,8 @@ export class UsersRolesPage implements OnInit {
     this.saveError.set(null);
     this.saveSuccess.set(false);
 
-    this.facade
-      .updateRoles(userId, roleIds)
+    this.api
+      .updateUserRoles(userId, roleIds)
       .pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe({
         next: (userRoles) => {
@@ -203,8 +207,8 @@ export class UsersRolesPage implements OnInit {
     this.saveError.set(null);
     this.saveSuccess.set(false);
 
-    this.facade
-      .loadRoles(userId)
+    this.api
+      .getUserRoles(userId)
       .pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe({
         next: (userRoles) => {

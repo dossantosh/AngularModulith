@@ -3,7 +3,7 @@ import { ActivatedRoute, convertToParamMap } from '@angular/router';
 import { of, throwError } from 'rxjs';
 import { vi } from 'vitest';
 
-import { UsersFacade } from '../../application/users.facade';
+import { UserProfileFacade } from '../application/user-profile.facade';
 import { UsersEditPage } from './users-edit.page';
 
 const personalData = {
@@ -45,7 +45,7 @@ describe('UsersEditPage', () => {
 
     TestBed.configureTestingModule({
       providers: [
-        { provide: UsersFacade, useValue: facade },
+        { provide: UserProfileFacade, useValue: facade },
         {
           provide: ActivatedRoute,
           useValue: {

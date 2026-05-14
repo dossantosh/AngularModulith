@@ -1,7 +1,7 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { vi } from 'vitest';
 
-import { UsersFacade } from '../../application/users.facade';
+import { UsersSearchFacade } from '../application/users-search.facade';
 import { UsersSearchPage } from './users-search.page';
 
 function createFacadeStub() {
@@ -23,7 +23,7 @@ describe('UsersSearchPage', () => {
     facade = createFacadeStub();
 
     TestBed.configureTestingModule({
-      providers: [{ provide: UsersFacade, useValue: facade }],
+      providers: [{ provide: UsersSearchFacade, useValue: facade }],
     });
 
     TestBed.overrideComponent(UsersSearchPage, {

@@ -9,13 +9,13 @@ import {
   AppErrorStateComponent,
   AppLoadingStateComponent,
   AppTextFieldComponent,
-} from '../../../../shared/ui';
+} from '../../../../../shared/ui';
 import {
   type UpdateUserPersonalDataCommand,
   type UserPersonalDataDto,
-  UsersFacade,
-} from '../../application/users.facade';
-import { userIdFromRoute } from '../detail/users-detail-route';
+  UserProfileFacade,
+} from '../application/user-profile.facade';
+import { userIdFromRoute } from '../../shell/users-detail-route';
 
 @Component({
   standalone: true,
@@ -69,7 +69,7 @@ export class UsersEditPage implements OnInit {
 
   private readonly fb = inject(FormBuilder);
   private readonly route = inject(ActivatedRoute);
-  private readonly facade = inject(UsersFacade);
+  private readonly facade = inject(UserProfileFacade);
   private readonly destroyRef = inject(DestroyRef);
 
   readonly personalDataForm = this.fb.group({

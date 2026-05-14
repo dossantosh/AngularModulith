@@ -3,8 +3,8 @@ import { ActivatedRoute, Router, convertToParamMap } from '@angular/router';
 import { EMPTY, of } from 'rxjs';
 import { vi } from 'vitest';
 
-import { UsersFacade } from '../../application/users.facade';
-import { UsersUserShellPage } from './users-user-shell.page';
+import { UserProfileFacade } from '../profile/application/user-profile.facade';
+import { UsersManageShellPage } from './users-manage-shell.page';
 
 const personalData = {
   userId: 7,
@@ -13,24 +13,24 @@ const personalData = {
   firstName: 'Ana',
   lastName: 'Lopez',
   corporateEmail: 'ana.lopez@company.local',
-  phone: '+34 600 000 000',
-  identityDocument: 'DNI-7',
-  birthDate: '1990-01-01',
-  address: 'Calle Mayor 1',
-  city: 'Madrid',
-  stateProvince: 'Madrid',
-  postalCode: '28001',
-  country: 'Espana',
-  jobTitle: 'Analista',
-  department: 'Sistemas',
-  hireDate: '2024-01-01',
+  phone: '',
+  identityDocument: '',
+  birthDate: '',
+  address: '',
+  city: '',
+  stateProvince: '',
+  postalCode: '',
+  country: '',
+  jobTitle: '',
+  department: '',
+  hireDate: '',
   status: 'ACTIVE' as const,
-  contractType: 'FULL_TIME' as const,
-  internalNotes: 'Notas',
+  contractType: null,
+  internalNotes: '',
 };
 
-describe('UsersUserShellPage', () => {
-  let fixture: ComponentFixture<UsersUserShellPage>;
+describe('UsersManageShellPage', () => {
+  let fixture: ComponentFixture<UsersManageShellPage>;
   const facade = {
     loadPersonalData: vi.fn(() => of(personalData)),
   };
@@ -40,7 +40,7 @@ describe('UsersUserShellPage', () => {
 
     TestBed.configureTestingModule({
       providers: [
-        { provide: UsersFacade, useValue: facade },
+        { provide: UserProfileFacade, useValue: facade },
         {
           provide: ActivatedRoute,
           useValue: {
@@ -57,11 +57,11 @@ describe('UsersUserShellPage', () => {
       ],
     });
 
-    TestBed.overrideComponent(UsersUserShellPage, {
+    TestBed.overrideComponent(UsersManageShellPage, {
       set: { template: '' },
     });
 
-    fixture = TestBed.createComponent(UsersUserShellPage);
+    fixture = TestBed.createComponent(UsersManageShellPage);
     fixture.detectChanges();
   });
 

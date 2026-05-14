@@ -8,9 +8,12 @@ import {
   AppErrorStateComponent,
   AppLoadingStateComponent,
   AppStatusBadgeComponent,
-} from '../../../../shared/ui';
-import { type UserPersonalDataDto, UsersFacade } from '../../application/users.facade';
-import { userIdFromRoute } from '../detail/users-detail-route';
+} from '../../../../../shared/ui';
+import {
+  type UserPersonalDataDto,
+  UserProfileFacade,
+} from '../application/user-profile.facade';
+import { userIdFromRoute } from '../../shell/users-detail-route';
 
 interface PersonalDataItem {
   label: string;
@@ -183,7 +186,7 @@ export class UsersPersonalDataPage implements OnInit {
   });
 
   private readonly route = inject(ActivatedRoute);
-  private readonly facade = inject(UsersFacade);
+  private readonly facade = inject(UserProfileFacade);
   private readonly destroyRef = inject(DestroyRef);
 
   ngOnInit(): void {

@@ -3,31 +3,15 @@ import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { EMPTY, Subject, catchError, switchMap, tap } from 'rxjs';
 
 import {
-  type UpdateUserCommand,
-  type UpdateUserPersonalDataCommand,
+  type PageDirection,
   type UserPageDto,
-  UsersApi,
-} from '../data-access/users.api';
+  type UserSearchFilters,
+  UsersSearchApi,
+} from '../data-access/users-search.api';
 
-export type {
-  ContractTypeDto,
-  EmployeeStatusDto,
-  UpdateUserCommand,
-  UpdateUserPersonalDataCommand,
-  UserDetailsDto,
-  UserPersonalDataDto,
-  UserRoleDto,
-  UserRolesDto,
-} from '../data-access/users.api';
-
-type PageDirection = 'NEXT' | 'PREVIOUS';
 type LoadStatus = 'idle' | 'loading' | 'success' | 'error';
 
-export interface UserSearchFilters {
-  id: number | null;
-  username: string;
-  email: string;
-}
+export type { UserSearchFilters } from '../data-access/users-search.api';
 
 const DEFAULT_USER_SEARCH_FILTERS: UserSearchFilters = {
   id: null,
@@ -35,7 +19,7 @@ const DEFAULT_USER_SEARCH_FILTERS: UserSearchFilters = {
   email: '',
 };
 
-interface UsersState {
+interface UsersSearchState {
   filters: UserSearchFilters;
   limit: number;
   direction: PageDirection;
@@ -52,7 +36,7 @@ interface UsersSearchRequest {
   filters: UserSearchFilters;
 }
 
-function createInitialState(): UsersState {
+function createInitialState(): UsersSearchState {
   return {
     filters: { ...DEFAULT_USER_SEARCH_FILTERS },
     limit: 10,
@@ -65,12 +49,12 @@ function createInitialState(): UsersState {
 }
 
 @Injectable({ providedIn: 'root' })
-export class UsersFacade {
-  private readonly api = inject(UsersApi);
+export class UsersSearchFacade {
+  private readonly api = inject(UsersSearchApi);
   private readonly destroyRef = inject(DestroyRef);
   private readonly searchRequests$ = new Subject<UsersSearchRequest>();
 
-  private readonly state = signal<UsersState>(createInitialState());
+  private readonly state = signal<UsersSearchState>(createInitialState());
 
   readonly filters = computed(() => this.state().filters);
   readonly error = computed(() => this.state().error);
@@ -86,7 +70,7 @@ export class UsersFacade {
       .pipe(
         tap(() => this.startLoading()),
         switchMap((request) =>
-          this.api.search(request).pipe(
+          this.api.searchUsers(request).pipe(
             tap((page) => this.setPage(page)),
             catchError(() => {
               this.setError('Failed to load users');
@@ -140,30 +124,6 @@ export class UsersFacade {
     this.search();
   }
 
-  loadUser(userId: number) {
-    return this.api.getById(userId);
-  }
-
-  updateUser(userId: number, command: UpdateUserCommand) {
-    return this.api.update(userId, command);
-  }
-
-  loadPersonalData(userId: number) {
-    return this.api.getPersonalData(userId);
-  }
-
-  updatePersonalData(userId: number, command: UpdateUserPersonalDataCommand) {
-    return this.api.updatePersonalData(userId, command);
-  }
-
-  loadRoles(userId: number) {
-    return this.api.getRoles(userId);
-  }
-
-  updateRoles(userId: number, roleIds: readonly number[]) {
-    return this.api.updateRoles(userId, roleIds);
-  }
-
   private resetFilters(): void {
     this.patchState({ filters: { ...DEFAULT_USER_SEARCH_FILTERS } });
   }
@@ -202,10 +162,12 @@ export class UsersFacade {
     });
   }
 
-  private patchState(patch: Partial<UsersState>): void;
-  private patchState(project: (state: UsersState) => Partial<UsersState>): void;
+  private patchState(patch: Partial<UsersSearchState>): void;
+  private patchState(project: (state: UsersSearchState) => Partial<UsersSearchState>): void;
   private patchState(
-    patchOrProject: Partial<UsersState> | ((state: UsersState) => Partial<UsersState>),
+    patchOrProject:
+      | Partial<UsersSearchState>
+      | ((state: UsersSearchState) => Partial<UsersSearchState>),
   ): void {
     this.state.update((state) => ({
       ...state,

@@ -15,7 +15,7 @@ import {
   AppStatusBadgeComponent,
   AppTextFieldComponent,
 } from '../../../../shared/ui';
-import { UsersFacade } from '../../application/users.facade';
+import { UsersSearchFacade } from '../application/users-search.facade';
 
 type UserSearchFormValue = Partial<{
   id: number | null;
@@ -86,7 +86,7 @@ type UserSearchFormValue = Partial<{
   `,
 })
 export class UsersSearchPage implements OnInit {
-  readonly facade = inject(UsersFacade);
+  readonly facade = inject(UsersSearchFacade);
   private readonly fb = inject(FormBuilder);
   private readonly destroyRef = inject(DestroyRef);
 
