@@ -50,7 +50,7 @@ export function getNavigationTarget(node: AppNavNode): string | undefined {
 function dashboardLink(): AppNavNode {
   return {
     key: 'dashboard',
-    label: 'Dashboard',
+    label: 'Inicio',
     icon: 'dashboard',
     route: '/',
     exact: true,

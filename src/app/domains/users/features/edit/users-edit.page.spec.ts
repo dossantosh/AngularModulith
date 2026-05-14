@@ -72,31 +72,22 @@ describe('UsersEditPage', () => {
     expect(facade.loadPersonalData).toHaveBeenCalledWith(7);
     expect(fixture.componentInstance.loading()).toBe(false);
     expect(fixture.componentInstance.personalDataForm.getRawValue()).toEqual({
-      employeeCode: 'EMP-7',
       firstName: 'Ana',
       lastName: 'Lopez',
       corporateEmail: 'ana.lopez@company.local',
       phone: '+34 600 000 000',
-      identityDocument: 'DNI-7',
-      birthDate: '1990-01-01',
       address: 'Calle Mayor 1',
       city: 'Madrid',
       stateProvince: 'Madrid',
       postalCode: '28001',
       country: 'Espana',
-      jobTitle: 'Analista',
-      department: 'Sistemas',
-      hireDate: '2024-01-01',
-      status: 'ACTIVE',
-      contractType: 'FULL_TIME',
-      internalNotes: 'Notas',
     });
   });
 
-  it('saves valid personal data and keeps the user in the edit flow', () => {
+  it('saves editable personal data while preserving administrative fields', () => {
     fixture.componentInstance.personalDataForm.patchValue({
       firstName: 'Ana Maria',
-      status: 'INACTIVE',
+      phone: '+34 611 111 111',
     });
 
     fixture.componentInstance.savePersonalData();
@@ -104,8 +95,14 @@ describe('UsersEditPage', () => {
     expect(facade.updatePersonalData).toHaveBeenCalledWith(
       7,
       expect.objectContaining({
+        employeeCode: 'EMP-7',
         firstName: 'Ana Maria',
-        status: 'INACTIVE',
+        phone: '+34 611 111 111',
+        identityDocument: 'DNI-7',
+        hireDate: '2024-01-01',
+        status: 'ACTIVE',
+        contractType: 'FULL_TIME',
+        internalNotes: 'Notas',
       }),
     );
     expect(fixture.componentInstance.saveSuccess()).toBe(true);

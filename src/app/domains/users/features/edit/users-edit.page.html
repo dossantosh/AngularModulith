@@ -22,7 +22,7 @@
 
     <app-command-bar
       title="Modificar datos personales"
-      subtitle="Actualiza la informacion de empleado asociada a este usuario."
+      subtitle="Actualiza los datos de contacto y perfil personal del usuario."
     >
       <div command-actions class="flex flex-wrap items-center gap-2">
         <app-button
@@ -47,13 +47,6 @@
 
       <div class="users-edit-form-grid">
         <app-text-field
-          label="Codigo interno"
-          [control]="personalDataForm.controls.employeeCode"
-          [showErrors]="submitted"
-          [errorMessages]="{ maxlength: 'Codigo interno no puede superar 30 caracteres.' }"
-        />
-
-        <app-text-field
           label="Nombre"
           autocomplete="given-name"
           [control]="personalDataForm.controls.firstName"
@@ -70,14 +63,14 @@
         />
 
         <app-text-field
-          label="Email corporativo"
+          label="Correo corporativo"
           type="email"
           autocomplete="email"
           [control]="personalDataForm.controls.corporateEmail"
           [showErrors]="submitted"
           [errorMessages]="{
-            email: 'Introduce un email valido.',
-            maxlength: 'Email corporativo no puede superar 120 caracteres.',
+            email: 'Introduce un correo valido.',
+            maxlength: 'Correo corporativo no puede superar 120 caracteres.',
           }"
         />
 
@@ -88,19 +81,6 @@
           [control]="personalDataForm.controls.phone"
           [showErrors]="submitted"
           [errorMessages]="{ maxlength: 'Telefono no puede superar 30 caracteres.' }"
-        />
-
-        <app-text-field
-          label="Documento de identidad"
-          [control]="personalDataForm.controls.identityDocument"
-          [showErrors]="submitted"
-          [errorMessages]="{ maxlength: 'Documento no puede superar 40 caracteres.' }"
-        />
-
-        <app-text-field
-          label="Fecha de nacimiento"
-          type="date"
-          [control]="personalDataForm.controls.birthDate"
         />
 
         <app-text-field
@@ -142,58 +122,6 @@
           [showErrors]="submitted"
           [errorMessages]="{ maxlength: 'Pais no puede superar 80 caracteres.' }"
         />
-
-        <app-text-field
-          label="Puesto"
-          [control]="personalDataForm.controls.jobTitle"
-          [showErrors]="submitted"
-          [errorMessages]="{ maxlength: 'Puesto no puede superar 100 caracteres.' }"
-        />
-
-        <app-text-field
-          label="Departamento"
-          [control]="personalDataForm.controls.department"
-          [showErrors]="submitted"
-          [errorMessages]="{ maxlength: 'Departamento no puede superar 100 caracteres.' }"
-        />
-
-        <app-text-field
-          label="Fecha de alta"
-          type="date"
-          [control]="personalDataForm.controls.hireDate"
-        />
-
-        <mat-form-field appearance="outline" class="w-full">
-          <mat-label>Estado del empleado</mat-label>
-          <mat-select formControlName="status">
-            @for (status of statusOptions; track status.value) {
-              <mat-option [value]="status.value">{{ status.label }}</mat-option>
-            }
-          </mat-select>
-        </mat-form-field>
-
-        <mat-form-field appearance="outline" class="w-full">
-          <mat-label>Tipo de contrato</mat-label>
-          <mat-select formControlName="contractType">
-            <mat-option [value]="null">Sin especificar</mat-option>
-            @for (contractType of contractTypeOptions; track contractType.value) {
-              <mat-option [value]="contractType.value">{{ contractType.label }}</mat-option>
-            }
-          </mat-select>
-        </mat-form-field>
-
-        <mat-form-field appearance="outline" class="users-edit-form-grid__wide w-full">
-          <mat-label>Observaciones internas</mat-label>
-          <textarea
-            matInput
-            rows="4"
-            formControlName="internalNotes"
-            [attr.aria-invalid]="personalDataForm.controls.internalNotes.invalid"
-          ></textarea>
-          @if (personalDataForm.controls.internalNotes.hasError('maxlength')) {
-            <mat-error>Observaciones no puede superar 1000 caracteres.</mat-error>
-          }
-        </mat-form-field>
       </div>
     </app-command-bar>
   </form>

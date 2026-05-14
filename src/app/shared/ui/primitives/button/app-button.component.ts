@@ -22,20 +22,31 @@ type MaterialButtonAppearance = 'filled' | 'outlined' | 'text';
       display: inline-flex;
       align-items: center;
       justify-content: center;
-      gap: 0.5rem;
       min-inline-size: max-content;
       line-height: 1;
       white-space: nowrap;
     }
 
-    .app-button mat-icon {
-      width: 1.125rem;
-      height: 1.125rem;
-      font-size: 1.125rem;
+    .app-button__content {
+      align-items: center;
+      display: inline-flex;
+      gap: 0.5rem;
+      justify-content: center;
       line-height: 1;
     }
 
-    .app-button span {
+    .app-button mat-icon {
+      align-items: center;
+      display: inline-flex;
+      flex: 0 0 auto;
+      height: 1.125rem;
+      justify-content: center;
+      font-size: 1.125rem;
+      line-height: 1.125rem;
+      width: 1.125rem;
+    }
+
+    .app-button__label {
       display: inline-flex;
       align-items: center;
       line-height: 1.25rem;
@@ -76,19 +87,21 @@ type MaterialButtonAppearance = 'filled' | 'outlined' | 'text';
     }
 
     <ng-template #content>
-      @if (loading()) {
-        <mat-progress-spinner
-          class="app-button__spinner"
-          mode="indeterminate"
-          diameter="16"
-          aria-hidden="true"
-        />
-      } @else if (icon()) {
-        <mat-icon aria-hidden="true">{{ icon() }}</mat-icon>
-      }
+      <span class="app-button__content">
+        @if (loading()) {
+          <mat-progress-spinner
+            class="app-button__spinner"
+            mode="indeterminate"
+            diameter="16"
+            aria-hidden="true"
+          />
+        } @else if (icon()) {
+          <mat-icon aria-hidden="true">{{ icon() }}</mat-icon>
+        }
 
-      <span>
-        <ng-content />
+        <span class="app-button__label">
+          <ng-content />
+        </span>
       </span>
     </ng-template>
   `,

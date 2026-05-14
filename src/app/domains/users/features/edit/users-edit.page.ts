@@ -1,9 +1,6 @@
 import { Component, DestroyRef, OnInit, inject, signal } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
-import { MatFormFieldModule } from '@angular/material/form-field';
-import { MatInputModule } from '@angular/material/input';
-import { MatSelectModule } from '@angular/material/select';
 import { ActivatedRoute } from '@angular/router';
 
 import {
@@ -14,17 +11,11 @@ import {
   AppTextFieldComponent,
 } from '../../../../shared/ui';
 import {
-  type ContractTypeDto,
-  type EmployeeStatusDto,
+  type UpdateUserPersonalDataCommand,
   type UserPersonalDataDto,
   UsersFacade,
 } from '../../application/users.facade';
 import { userIdFromRoute } from '../detail/users-detail-route';
-
-interface SelectOption<T> {
-  value: T;
-  label: string;
-}
 
 @Component({
   standalone: true,
@@ -35,9 +26,6 @@ interface SelectOption<T> {
     AppErrorStateComponent,
     AppLoadingStateComponent,
     AppTextFieldComponent,
-    MatFormFieldModule,
-    MatInputModule,
-    MatSelectModule,
     ReactiveFormsModule,
   ],
   templateUrl: './users-edit.page.html',
@@ -46,10 +34,6 @@ interface SelectOption<T> {
       display: grid;
       gap: 1rem;
       grid-template-columns: 1fr;
-    }
-
-    .users-edit-form-grid__wide {
-      grid-column: 1 / -1;
     }
 
     .users-edit-success {
@@ -81,21 +65,7 @@ export class UsersEditPage implements OnInit {
   readonly loadError = signal<string | null>(null);
   readonly saveError = signal<string | null>(null);
   readonly saveSuccess = signal(false);
-
-  readonly statusOptions: readonly SelectOption<EmployeeStatusDto>[] = [
-    { value: 'ACTIVE', label: 'Activo' },
-    { value: 'INACTIVE', label: 'Inactivo' },
-    { value: 'TERMINATED', label: 'Baja' },
-    { value: 'ON_LEAVE', label: 'Ausencia' },
-  ];
-  readonly contractTypeOptions: readonly SelectOption<ContractTypeDto>[] = [
-    { value: 'FULL_TIME', label: 'Jornada completa' },
-    { value: 'PART_TIME', label: 'Jornada parcial' },
-    { value: 'TEMPORARY', label: 'Temporal' },
-    { value: 'CONTRACTOR', label: 'Contratista' },
-    { value: 'INTERN', label: 'Practicas' },
-    { value: 'OTHER', label: 'Otro' },
-  ];
+  readonly currentPersonalData = signal<UserPersonalDataDto | null>(null);
 
   private readonly fb = inject(FormBuilder);
   private readonly route = inject(ActivatedRoute);
@@ -103,24 +73,15 @@ export class UsersEditPage implements OnInit {
   private readonly destroyRef = inject(DestroyRef);
 
   readonly personalDataForm = this.fb.group({
-    employeeCode: this.fb.nonNullable.control('', [Validators.maxLength(30)]),
     firstName: this.fb.nonNullable.control('', [Validators.maxLength(80)]),
     lastName: this.fb.nonNullable.control('', [Validators.maxLength(120)]),
     corporateEmail: this.fb.nonNullable.control('', [Validators.email, Validators.maxLength(120)]),
     phone: this.fb.nonNullable.control('', [Validators.maxLength(30)]),
-    identityDocument: this.fb.nonNullable.control('', [Validators.maxLength(40)]),
-    birthDate: this.fb.nonNullable.control(''),
     address: this.fb.nonNullable.control('', [Validators.maxLength(160)]),
     city: this.fb.nonNullable.control('', [Validators.maxLength(80)]),
     stateProvince: this.fb.nonNullable.control('', [Validators.maxLength(80)]),
     postalCode: this.fb.nonNullable.control('', [Validators.maxLength(20)]),
     country: this.fb.nonNullable.control('', [Validators.maxLength(80)]),
-    jobTitle: this.fb.nonNullable.control('', [Validators.maxLength(100)]),
-    department: this.fb.nonNullable.control('', [Validators.maxLength(100)]),
-    hireDate: this.fb.nonNullable.control(''),
-    status: this.fb.nonNullable.control<EmployeeStatusDto>('ACTIVE', [Validators.required]),
-    contractType: this.fb.control<ContractTypeDto | null>(null),
-    internalNotes: this.fb.nonNullable.control('', [Validators.maxLength(1000)]),
   });
 
   ngOnInit(): void {
@@ -147,11 +108,19 @@ export class UsersEditPage implements OnInit {
       return;
     }
 
+    const currentPersonalData = this.currentPersonalData();
+    if (!currentPersonalData) {
+      this.saveError.set('No se pudieron cargar los datos originales del usuario.');
+      return;
+    }
+
+    const command = this.buildUpdateCommand(currentPersonalData);
+
     this.saving.set(true);
     this.personalDataForm.disable({ emitEvent: false });
 
     this.facade
-      .updatePersonalData(userId, this.personalDataForm.getRawValue())
+      .updatePersonalData(userId, command)
       .pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe({
         next: (personalData) => {
@@ -183,6 +152,7 @@ export class UsersEditPage implements OnInit {
     }
 
     this.loading.set(true);
+    this.currentPersonalData.set(null);
     this.loadError.set(null);
     this.saveError.set(null);
     this.saveSuccess.set(false);
@@ -205,28 +175,45 @@ export class UsersEditPage implements OnInit {
   }
 
   private patchPersonalData(personalData: UserPersonalDataDto): void {
+    this.currentPersonalData.set(personalData);
     this.personalDataForm.reset(
       {
-        employeeCode: personalData.employeeCode,
         firstName: personalData.firstName,
         lastName: personalData.lastName,
         corporateEmail: personalData.corporateEmail,
         phone: personalData.phone,
-        identityDocument: personalData.identityDocument,
-        birthDate: personalData.birthDate,
         address: personalData.address,
         city: personalData.city,
         stateProvince: personalData.stateProvince,
         postalCode: personalData.postalCode,
         country: personalData.country,
-        jobTitle: personalData.jobTitle,
-        department: personalData.department,
-        hireDate: personalData.hireDate,
-        status: personalData.status,
-        contractType: personalData.contractType,
-        internalNotes: personalData.internalNotes,
       },
       { emitEvent: false },
     );
+  }
+
+  private buildUpdateCommand(personalData: UserPersonalDataDto): UpdateUserPersonalDataCommand {
+    const editableData = this.personalDataForm.getRawValue();
+
+    return {
+      employeeCode: personalData.employeeCode,
+      firstName: editableData.firstName,
+      lastName: editableData.lastName,
+      corporateEmail: editableData.corporateEmail,
+      phone: editableData.phone,
+      identityDocument: personalData.identityDocument,
+      birthDate: personalData.birthDate,
+      address: editableData.address,
+      city: editableData.city,
+      stateProvince: editableData.stateProvince,
+      postalCode: editableData.postalCode,
+      country: editableData.country,
+      jobTitle: personalData.jobTitle,
+      department: personalData.department,
+      hireDate: personalData.hireDate,
+      status: personalData.status,
+      contractType: personalData.contractType,
+      internalNotes: personalData.internalNotes,
+    };
   }
 }

@@ -162,7 +162,7 @@ export class UsersPersonalDataPage implements OnInit {
 
     return [
       { label: 'Codigo interno', value: data.employeeCode },
-      { label: 'Email corporativo', value: data.corporateEmail },
+      { label: 'Correo corporativo', value: data.corporateEmail },
       { label: 'Telefono', value: data.phone },
       { label: 'Documento de identidad', value: data.identityDocument },
       { label: 'Fecha de nacimiento', value: data.birthDate },

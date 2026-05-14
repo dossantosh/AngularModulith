@@ -19,6 +19,6 @@ import { AppCommandBarComponent } from '../../layout/command-bar/app-command-bar
   `,
 })
 export class AppSearchFiltersComponent {
-  readonly title = input('Filtros');
+  readonly title = input('Busqueda');
   readonly subtitle = input('');
 }

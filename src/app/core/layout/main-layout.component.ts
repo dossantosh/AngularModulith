@@ -1,4 +1,4 @@
-import { Component, HostListener, computed, input, output, signal } from '@angular/core';
+import { Component, HostListener, computed, effect, input, output, signal } from '@angular/core';
 
 import {
   AppNavigationRailComponent,
@@ -32,12 +32,14 @@ const EMPTY_ACTIVE_NAVIGATION: AppActiveNavigation = {
       <app-navigation-rail
         class="app-layout__desktop-rail shrink-0"
         [items]="navigationTree()"
-        [activeItemKey]="activePrimary()?.key ?? null"
+        [activeItemKey]="visiblePrimary()?.key ?? null"
+        (sectionSelected)="selectPrimarySection($event)"
+        (navigated)="navigateFromRail()"
       />
 
       @if (!sidebarCollapsed() && hasContextSidebar()) {
         <aside class="app-layout__desktop-sidebar shrink-0">
-          <app-sidebar [primaryItem]="activePrimary()" [activePathKeys]="activePathKeys()" />
+          <app-sidebar [primaryItem]="visiblePrimary()" [activePathKeys]="activePathKeys()" />
         </aside>
       }
 
@@ -59,13 +61,14 @@ const EMPTY_ACTIVE_NAVIGATION: AppActiveNavigation = {
             <app-navigation-rail
               class="shrink-0"
               [items]="navigationTree()"
-              [activeItemKey]="activePrimary()?.key ?? null"
-              (navigated)="closeSidebar()"
+              [activeItemKey]="visiblePrimary()?.key ?? null"
+              (sectionSelected)="selectPrimarySection($event)"
+              (navigated)="navigateFromRail()"
             />
 
             @if (hasContextSidebar()) {
               <app-sidebar
-                [primaryItem]="activePrimary()"
+                [primaryItem]="visiblePrimary()"
                 [activePathKeys]="activePathKeys()"
                 (navigated)="closeSidebar()"
               />
@@ -133,9 +136,23 @@ export class MainLayoutComponent {
 
   readonly sidebarOpen = signal(false);
   readonly sidebarCollapsed = signal(false);
+  private readonly selectedPrimaryKey = signal<string | null>(null);
+  private visiblePrimaryKeySnapshot: string | null = null;
 
   protected readonly activePrimary = computed(() => this.activeNavigation().primary);
   protected readonly activeTertiary = computed(() => this.activeNavigation().tertiary);
+  protected readonly selectedPrimary = computed(() => {
+    const selectedPrimaryKey = this.selectedPrimaryKey();
+
+    return (
+      this.navigationTree().find(
+        (item) => item.key === selectedPrimaryKey && Boolean(item.children?.length),
+      ) ?? null
+    );
+  });
+  protected readonly visiblePrimary = computed(
+    () => this.selectedPrimary() ?? this.activePrimary(),
+  );
   protected readonly activePathKeys = computed(() =>
     this.activeNavigation().path.map((item) => item.key),
   );
@@ -143,10 +160,72 @@ export class MainLayoutComponent {
     () => this.activeNavigation().secondary?.children ?? [],
   );
   protected readonly hasContextSidebar = computed(() =>
-    Boolean(this.activePrimary()?.children?.length),
+    Boolean(this.visiblePrimary()?.children?.length),
   );
 
+  constructor() {
+    effect(() => {
+      const activePrimaryKey = this.activePrimary()?.key ?? null;
+      const selectedPrimaryKey = this.selectedPrimaryKey();
+      const visiblePrimaryKey = this.visiblePrimary()?.key ?? null;
+      const hasContextSidebar = this.hasContextSidebar();
+      const visiblePrimaryChanged = visiblePrimaryKey !== this.visiblePrimaryKeySnapshot;
+
+      if (
+        selectedPrimaryKey &&
+        activePrimaryKey &&
+        activePrimaryKey !== this.visiblePrimaryKeySnapshot
+      ) {
+        this.selectedPrimaryKey.set(null);
+      }
+
+      if (!hasContextSidebar) {
+        this.sidebarOpen.set(false);
+        this.sidebarCollapsed.set(false);
+        this.visiblePrimaryKeySnapshot = visiblePrimaryKey;
+        return;
+      }
+
+      if (visiblePrimaryChanged) {
+        this.sidebarOpen.set(false);
+        this.sidebarCollapsed.set(false);
+      }
+
+      this.visiblePrimaryKeySnapshot = visiblePrimaryKey;
+    });
+  }
+
+  selectPrimarySection(item: AppNavNode): void {
+    if (item.disabled || !item.children?.length) {
+      return;
+    }
+
+    if (this.visiblePrimary()?.key === item.key && this.isContextSidebarOpen()) {
+      this.sidebarCollapsed.set(true);
+      this.sidebarOpen.set(false);
+      return;
+    }
+
+    this.selectedPrimaryKey.set(item.key);
+    this.sidebarCollapsed.set(false);
+
+    if (!this.isDesktopViewport()) {
+      this.sidebarOpen.set(true);
+    }
+  }
+
+  navigateFromRail(): void {
+    this.selectedPrimaryKey.set(null);
+    this.closeSidebar();
+  }
+
   toggleSidebar(): void {
+    if (!this.hasContextSidebar()) {
+      this.sidebarOpen.set(false);
+      this.sidebarCollapsed.set(false);
+      return;
+    }
+
     if (this.isDesktopViewport()) {
       this.sidebarCollapsed.update((collapsed) => !collapsed);
       this.sidebarOpen.set(false);
@@ -173,5 +252,9 @@ export class MainLayoutComponent {
       typeof window.matchMedia === 'function' &&
       window.matchMedia('(min-width: 1024px)').matches
     );
+  }
+
+  private isContextSidebarOpen(): boolean {
+    return this.hasContextSidebar() && (!this.sidebarCollapsed() || this.sidebarOpen());
   }
 }

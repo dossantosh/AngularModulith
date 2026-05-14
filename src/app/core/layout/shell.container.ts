@@ -31,7 +31,7 @@ export class ShellContainer {
 
   readonly companyName = "Seb's Perfumes";
   readonly username = this.auth.username;
-  readonly userName = computed(() => this.username() ?? 'Guest');
+  readonly userName = computed(() => this.username() ?? 'Invitado');
   readonly dataSource = this.auth.dataSource;
   private readonly currentUrl = signal(this.router.url);
   readonly navigation = this.auth.navigation;

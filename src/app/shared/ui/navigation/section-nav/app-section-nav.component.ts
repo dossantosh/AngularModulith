@@ -10,7 +10,7 @@ import { type AppNavNode } from '../app-nav-node';
   template: `
     @if (items().length) {
       <nav aria-label="Navegacion de seccion" class="border-b app-border app-surface px-4">
-        <ul class="flex gap-1 overflow-x-auto py-2">
+        <ul class="flex w-full justify-start gap-1 overflow-x-auto py-2 sm:justify-center">
           @for (item of items(); track item.key) {
             <li>
               @if (item.route && !item.disabled) {

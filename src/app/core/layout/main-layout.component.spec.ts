@@ -1,11 +1,22 @@
-import { Component } from '@angular/core';
+import { Component, signal } from '@angular/core';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
+import { By } from '@angular/platform-browser';
 import { provideRouter } from '@angular/router';
+import { vi } from 'vitest';
 
 import { type AppActiveNavigation, type AppNavNode } from '../../shared/ui';
 import { MainLayoutComponent } from './main-layout.component';
 
+const dashboardNode: AppNavNode = {
+  key: 'dashboard',
+  label: 'Inicio',
+  icon: 'dashboard',
+  route: '/',
+  exact: true,
+};
+
 const navigationTree: readonly AppNavNode[] = [
+  dashboardNode,
   {
     key: 'styles',
     label: 'Styles',
@@ -30,14 +41,21 @@ const navigationTree: readonly AppNavNode[] = [
 ];
 
 const activeNavigation: AppActiveNavigation = {
-  primary: navigationTree[0],
-  secondary: navigationTree[0].children?.[0] ?? null,
-  tertiary: navigationTree[0].children?.[0]?.children?.[0] ?? null,
+  primary: navigationTree[1],
+  secondary: navigationTree[1].children?.[0] ?? null,
+  tertiary: navigationTree[1].children?.[0]?.children?.[0] ?? null,
   path: [
-    navigationTree[0],
-    navigationTree[0].children?.[0],
-    navigationTree[0].children?.[0]?.children?.[0],
+    navigationTree[1],
+    navigationTree[1].children?.[0],
+    navigationTree[1].children?.[0]?.children?.[0],
   ].filter((item): item is AppNavNode => Boolean(item)),
+};
+
+const dashboardActiveNavigation: AppActiveNavigation = {
+  primary: dashboardNode,
+  secondary: null,
+  tertiary: null,
+  path: [dashboardNode],
 };
 
 @Component({
@@ -48,7 +66,7 @@ const activeNavigation: AppActiveNavigation = {
       companyName="Seb's Perfumes"
       userName="John"
       [navigationTree]="navigationTree"
-      [activeNavigation]="activeNavigation"
+      [activeNavigation]="activeNavigation()"
     >
       <p>Page content</p>
     </app-main-layout>
@@ -56,7 +74,7 @@ const activeNavigation: AppActiveNavigation = {
 })
 class MainLayoutHostComponent {
   readonly navigationTree = navigationTree;
-  readonly activeNavigation = activeNavigation;
+  readonly activeNavigation = signal(activeNavigation);
 }
 
 describe('MainLayoutComponent', () => {
@@ -88,13 +106,111 @@ describe('MainLayoutComponent', () => {
   });
 
   it('marks active navigation levels without local duplicate active state', () => {
+    const activeRailItem = fixture.nativeElement.querySelector(
+      '.app-navigation-rail__item--active',
+    ) as HTMLElement;
     const currentLinks = Array.from(
       fixture.nativeElement.querySelectorAll('[aria-current="page"]'),
     ) as HTMLElement[];
     const currentLinkTexts = currentLinks.map((link) => link.textContent?.trim() ?? '');
 
-    expect(currentLinkTexts.some((text) => text.includes('Styles'))).toBe(true);
+    expect(activeRailItem.textContent).toContain('Styles');
     expect(currentLinkTexts.some((text) => text.includes('Elevation'))).toBe(true);
     expect(currentLinkTexts.some((text) => text.includes('Overview'))).toBe(true);
   });
+
+  it('selects a primary section from the rail without changing the active route', () => {
+    fixture.componentInstance.activeNavigation.set(dashboardActiveNavigation);
+    fixture.detectChanges();
+
+    const stylesRailButton = Array.from<HTMLButtonElement>(
+      fixture.nativeElement.querySelectorAll('button.app-navigation-rail__item'),
+    ).find((button): button is HTMLButtonElement => (button.textContent ?? '').includes('Styles'));
+
+    expect(stylesRailButton).toBeTruthy();
+
+    stylesRailButton?.click();
+    fixture.detectChanges();
+
+    expect(fixture.componentInstance.activeNavigation().primary?.key).toBe('dashboard');
+    expect(fixture.nativeElement.querySelector('aside.app-layout__desktop-sidebar')).toBeTruthy();
+    expect(fixture.nativeElement.textContent).toContain('Elevation');
+  });
+
+  it('collapses contextual navigation when selecting the open primary section again', () => {
+    mockDesktopViewport();
+    const layout = getMainLayout(fixture);
+    const stylesRailButton = Array.from<HTMLButtonElement>(
+      fixture.nativeElement.querySelectorAll('button.app-navigation-rail__item'),
+    ).find((button): button is HTMLButtonElement => (button.textContent ?? '').includes('Styles'));
+
+    expect(stylesRailButton).toBeTruthy();
+    expect(fixture.nativeElement.querySelector('aside.app-layout__desktop-sidebar')).toBeTruthy();
+
+    stylesRailButton?.click();
+    fixture.detectChanges();
+
+    expect(layout.sidebarCollapsed()).toBe(true);
+    expect(fixture.nativeElement.querySelector('aside.app-layout__desktop-sidebar')).toBeFalsy();
+
+    stylesRailButton?.click();
+    fixture.detectChanges();
+
+    expect(layout.sidebarCollapsed()).toBe(false);
+    expect(fixture.nativeElement.querySelector('aside.app-layout__desktop-sidebar')).toBeTruthy();
+  });
+
+  it('does not collapse contextual navigation from a primary item without secondary navigation', () => {
+    mockDesktopViewport();
+    fixture.componentInstance.activeNavigation.set(dashboardActiveNavigation);
+    fixture.detectChanges();
+
+    const layout = getMainLayout(fixture);
+
+    layout.toggleSidebar();
+
+    expect(layout.sidebarCollapsed()).toBe(false);
+    expect(layout.sidebarOpen()).toBe(false);
+  });
+
+  it('opens contextual navigation again when entering a primary item with secondary navigation', () => {
+    mockDesktopViewport();
+    const layout = getMainLayout(fixture);
+
+    layout.toggleSidebar();
+    expect(layout.sidebarCollapsed()).toBe(true);
+
+    fixture.componentInstance.activeNavigation.set(dashboardActiveNavigation);
+    fixture.detectChanges();
+    fixture.componentInstance.activeNavigation.set(activeNavigation);
+    fixture.detectChanges();
+
+    expect(layout.sidebarCollapsed()).toBe(false);
+    expect(fixture.nativeElement.querySelector('aside.app-layout__desktop-sidebar')).toBeTruthy();
+  });
 });
+
+function getMainLayout(fixture: ComponentFixture<MainLayoutHostComponent>): MainLayoutComponent {
+  return fixture.debugElement.query(By.directive(MainLayoutComponent)).componentInstance;
+}
+
+function mockDesktopViewport(): void {
+  Object.defineProperty(window, 'matchMedia', {
+    configurable: true,
+    writable: true,
+    value: vi.fn().mockImplementation((query: string): MediaQueryList => {
+      const mediaQueryList = {
+        matches: true,
+        media: query,
+        onchange: null,
+        addEventListener: vi.fn(),
+        removeEventListener: vi.fn(),
+        addListener: vi.fn(),
+        removeListener: vi.fn(),
+        dispatchEvent: vi.fn(() => true),
+      };
+
+      return mediaQueryList as unknown as MediaQueryList;
+    }),
+  });
+}

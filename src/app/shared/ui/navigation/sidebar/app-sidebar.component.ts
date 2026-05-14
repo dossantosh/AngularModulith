@@ -1,14 +1,14 @@
 import { NgTemplateOutlet } from '@angular/common';
 import { Component, computed, input, output, signal } from '@angular/core';
 import { MatIconModule } from '@angular/material/icon';
-import { RouterLink, RouterLinkActive } from '@angular/router';
+import { RouterLink } from '@angular/router';
 
 import { type AppNavNode } from '../app-nav-node';
 
 @Component({
   selector: 'app-sidebar',
   standalone: true,
-  imports: [MatIconModule, NgTemplateOutlet, RouterLink, RouterLinkActive],
+  imports: [MatIconModule, NgTemplateOutlet, RouterLink],
   template: `
     <nav
       aria-label="Navegacion contextual"
@@ -50,9 +50,8 @@ import { type AppNavNode } from '../app-nav-node';
             <div class="app-sidebar__group-row">
               <a
                 [routerLink]="item.route"
-                routerLinkActive="app-sidebar__link--active"
-                [routerLinkActiveOptions]="{ exact: item.exact ?? false }"
                 class="app-sidebar__link min-w-0 flex-1"
+                [class.app-sidebar__link--active]="isNodeActive(item)"
                 [class.app-sidebar__link--nested]="level > 0"
                 [attr.aria-current]="isNodeActive(item) ? 'page' : null"
                 (click)="navigated.emit()"
@@ -126,9 +125,8 @@ import { type AppNavNode } from '../app-nav-node';
         } @else {
           <a
             [routerLink]="item.route"
-            routerLinkActive="app-sidebar__link--active"
-            [routerLinkActiveOptions]="{ exact: item.exact ?? false }"
             class="app-sidebar__link"
+            [class.app-sidebar__link--active]="isNodeActive(item)"
             [class.app-sidebar__link--nested]="level > 0"
             [attr.aria-current]="isNodeActive(item) ? 'page' : null"
             (click)="navigated.emit()"

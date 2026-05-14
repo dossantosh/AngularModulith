@@ -68,6 +68,10 @@ type UserSearchFormValue = Partial<{
       width: 5rem;
     }
 
+    .users-results-table__action-link {
+      color: var(--mat-sys-primary);
+    }
+
     .users-results-table th,
     .users-results-table td {
       height: 3.25rem;

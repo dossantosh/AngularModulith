@@ -1,13 +1,13 @@
 import { Component, input, output } from '@angular/core';
 import { MatIconModule } from '@angular/material/icon';
-import { RouterLink, RouterLinkActive } from '@angular/router';
+import { RouterLink } from '@angular/router';
 
 import { type AppNavNode } from '../app-nav-node';
 
 @Component({
   selector: 'app-navigation-rail',
   standalone: true,
-  imports: [MatIconModule, RouterLink, RouterLinkActive],
+  imports: [MatIconModule, RouterLink],
   template: `
     <nav
       aria-label="Navegacion principal"
@@ -22,15 +22,28 @@ import { type AppNavNode } from '../app-nav-node';
       <ul class="flex w-full flex-1 flex-col items-center gap-1 overflow-y-auto">
         @for (item of items(); track item.key) {
           <li class="w-full">
-            @if (targetFor(item); as target) {
+            @if (canSelectSection(item)) {
+              <button
+                type="button"
+                class="app-navigation-rail__item"
+                [class.app-navigation-rail__item--active]="isActive(item)"
+                [attr.aria-expanded]="isActive(item)"
+                (click)="sectionSelected.emit(item)"
+              >
+                <span class="app-navigation-rail__indicator">
+                  @if (item.icon) {
+                    <mat-icon aria-hidden="true">{{ item.icon }}</mat-icon>
+                  }
+                </span>
+                <span class="app-navigation-rail__label">{{ item.label }}</span>
+              </button>
+            } @else if (targetFor(item); as target) {
               <a
                 [routerLink]="target"
-                routerLinkActive="app-navigation-rail__item--active"
-                [routerLinkActiveOptions]="{ exact: item.exact ?? false }"
                 class="app-navigation-rail__item"
                 [class.app-navigation-rail__item--active]="isActive(item)"
                 [attr.aria-current]="isActive(item) ? 'page' : null"
-                (click)="navigated.emit()"
+                (click)="navigated.emit(item)"
               >
                 <span class="app-navigation-rail__indicator">
                   @if (item.icon) {
@@ -83,6 +96,13 @@ import { type AppNavNode } from '../app-nav-node';
       width: 100%;
     }
 
+    button.app-navigation-rail__item {
+      background: transparent;
+      border: 0;
+      cursor: pointer;
+      font: inherit;
+    }
+
     .app-navigation-rail__item:hover {
       background-color: var(--color-surface-container);
       color: var(--color-text);
@@ -121,7 +141,8 @@ export class AppNavigationRailComponent {
   readonly items = input<readonly AppNavNode[]>([]);
   readonly activeItemKey = input<string | null>(null);
 
-  readonly navigated = output<void>();
+  readonly navigated = output<AppNavNode>();
+  readonly sectionSelected = output<AppNavNode>();
 
   isActive(item: AppNavNode): boolean {
     return this.activeItemKey() === item.key;
@@ -133,6 +154,10 @@ export class AppNavigationRailComponent {
     }
 
     return this.firstChildRoute(item) ?? null;
+  }
+
+  canSelectSection(item: AppNavNode): boolean {
+    return !item.disabled && Boolean(item.children?.length) && this.firstChildRoute(item) != null;
   }
 
   private firstChildRoute(item: AppNavNode): string | undefined {
