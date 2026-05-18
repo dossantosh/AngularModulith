@@ -1,6 +1,6 @@
 <main class="flex min-h-screen items-center justify-center app-bg-background px-4 py-8">
   <mat-card appearance="outlined" class="w-full max-w-sm">
-    <mat-card-content class="app-card-content-padded">
+    <div class="p-6">
       <div class="mb-5 flex flex-col items-center gap-2">
         <img src="/favicon.ico" alt="" class="h-10 w-10 app-rounded-lg" />
         <p class="text-sm app-text">Seb's Perfumes</p>
@@ -21,9 +21,9 @@
         }
 
         <mat-form-field class="w-full" appearance="outline">
-          <mat-label>Origen de datos</mat-label>
+          <mat-label>Modo de trabajo</mat-label>
           <mat-select formControlName="dataSource" [disabled]="isSubmitting()">
-            <mat-option value="prod">Produccion</mat-option>
+            <mat-option value="prod">Actual</mat-option>
             <mat-option value="historic">Historico</mat-option>
           </mat-select>
         </mat-form-field>
@@ -49,6 +49,6 @@
           Entrar
         </app-button>
       </form>
-    </mat-card-content>
+    </div>
   </mat-card>
 </main>

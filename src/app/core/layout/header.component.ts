@@ -33,7 +33,7 @@ type ShellDataSource = 'prod' | 'historic';
 
         <div class="min-w-0">
           <p class="truncate text-sm app-text">{{ companyName() }}</p>
-          <p class="hidden text-xs app-text-muted sm:block">Workspace operativo</p>
+          <p class="hidden text-xs app-text-muted sm:block">Gestion diaria</p>
         </div>
       </div>
 
@@ -43,7 +43,7 @@ type ShellDataSource = 'prod' | 'historic';
             label="Historico"
             icon="history"
             variant="warning"
-            title="Estas navegando contra el origen historico"
+            title="Estas viendo informacion historica"
           />
         }
 

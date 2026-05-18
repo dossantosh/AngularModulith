@@ -22,8 +22,12 @@ import {
   CreateUserRequest,
   KeysetPageUserSummaryView,
   RequestOptions,
+  UpdateUserPersonalDataRequest,
   UpdateUserRequest,
+  UpdateUserRolesRequest,
   UserDetailsView,
+  UserPersonalDataView,
+  UserRolesView,
 } from '../models';
 import { BASE_PATH_DEFAULT, CLIENT_CONTEXT_TOKEN_DEFAULT } from '../tokens';
 import { HttpParamsBuilder } from '../utils/http-params-builder';
@@ -163,6 +167,182 @@ export class UserControllerService {
     };
 
     return this.httpClient.delete(url, requestOptions);
+  }
+
+  getUserRoles(
+    id: number,
+    observe?: 'body',
+    options?: RequestOptions<'json'>,
+  ): Observable<UserRolesView>;
+  getUserRoles(
+    id: number,
+    observe?: 'response',
+    options?: RequestOptions<'json'>,
+  ): Observable<HttpResponse<UserRolesView>>;
+  getUserRoles(
+    id: number,
+    observe?: 'events',
+    options?: RequestOptions<'json'>,
+  ): Observable<HttpEvent<UserRolesView>>;
+  getUserRoles(
+    id: number,
+    observe?: 'body' | 'events' | 'response',
+    options?: RequestOptions<'arraybuffer' | 'blob' | 'json' | 'text'>,
+  ): Observable<any> {
+    const url = `${this.basePath}/api/users/${id}/roles`;
+
+    let headers: HttpHeaders;
+    if (options?.headers instanceof HttpHeaders) {
+      headers = options.headers;
+    } else {
+      headers = new HttpHeaders(options?.headers);
+    }
+
+    const requestOptions: any = {
+      observe: observe as any,
+      headers,
+      reportProgress: options?.reportProgress,
+      withCredentials: options?.withCredentials,
+      context: this.createContextWithClientId(options?.context),
+    };
+
+    return this.httpClient.get(url, requestOptions);
+  }
+
+  updateUserRoles(
+    id: number,
+    updateUserRolesRequest: UpdateUserRolesRequest,
+    observe?: 'body',
+    options?: RequestOptions<'json'>,
+  ): Observable<UserRolesView>;
+  updateUserRoles(
+    id: number,
+    updateUserRolesRequest: UpdateUserRolesRequest,
+    observe?: 'response',
+    options?: RequestOptions<'json'>,
+  ): Observable<HttpResponse<UserRolesView>>;
+  updateUserRoles(
+    id: number,
+    updateUserRolesRequest: UpdateUserRolesRequest,
+    observe?: 'events',
+    options?: RequestOptions<'json'>,
+  ): Observable<HttpEvent<UserRolesView>>;
+  updateUserRoles(
+    id: number,
+    updateUserRolesRequest: UpdateUserRolesRequest,
+    observe?: 'body' | 'events' | 'response',
+    options?: RequestOptions<'arraybuffer' | 'blob' | 'json' | 'text'>,
+  ): Observable<any> {
+    const url = `${this.basePath}/api/users/${id}/roles`;
+
+    let headers: HttpHeaders;
+    if (options?.headers instanceof HttpHeaders) {
+      headers = options.headers;
+    } else {
+      headers = new HttpHeaders(options?.headers);
+    }
+    // Set Content-Type for JSON requests if not already set
+    if (!headers.has('Content-Type')) {
+      headers = headers.set('Content-Type', 'application/json');
+    }
+
+    const requestOptions: any = {
+      observe: observe as any,
+      headers,
+      reportProgress: options?.reportProgress,
+      withCredentials: options?.withCredentials,
+      context: this.createContextWithClientId(options?.context),
+    };
+
+    return this.httpClient.put(url, updateUserRolesRequest, requestOptions);
+  }
+
+  getUserPersonalData(
+    id: number,
+    observe?: 'body',
+    options?: RequestOptions<'json'>,
+  ): Observable<UserPersonalDataView>;
+  getUserPersonalData(
+    id: number,
+    observe?: 'response',
+    options?: RequestOptions<'json'>,
+  ): Observable<HttpResponse<UserPersonalDataView>>;
+  getUserPersonalData(
+    id: number,
+    observe?: 'events',
+    options?: RequestOptions<'json'>,
+  ): Observable<HttpEvent<UserPersonalDataView>>;
+  getUserPersonalData(
+    id: number,
+    observe?: 'body' | 'events' | 'response',
+    options?: RequestOptions<'arraybuffer' | 'blob' | 'json' | 'text'>,
+  ): Observable<any> {
+    const url = `${this.basePath}/api/users/${id}/personal-data`;
+
+    let headers: HttpHeaders;
+    if (options?.headers instanceof HttpHeaders) {
+      headers = options.headers;
+    } else {
+      headers = new HttpHeaders(options?.headers);
+    }
+
+    const requestOptions: any = {
+      observe: observe as any,
+      headers,
+      reportProgress: options?.reportProgress,
+      withCredentials: options?.withCredentials,
+      context: this.createContextWithClientId(options?.context),
+    };
+
+    return this.httpClient.get(url, requestOptions);
+  }
+
+  updateUserPersonalData(
+    id: number,
+    updateUserPersonalDataRequest: UpdateUserPersonalDataRequest,
+    observe?: 'body',
+    options?: RequestOptions<'json'>,
+  ): Observable<UserPersonalDataView>;
+  updateUserPersonalData(
+    id: number,
+    updateUserPersonalDataRequest: UpdateUserPersonalDataRequest,
+    observe?: 'response',
+    options?: RequestOptions<'json'>,
+  ): Observable<HttpResponse<UserPersonalDataView>>;
+  updateUserPersonalData(
+    id: number,
+    updateUserPersonalDataRequest: UpdateUserPersonalDataRequest,
+    observe?: 'events',
+    options?: RequestOptions<'json'>,
+  ): Observable<HttpEvent<UserPersonalDataView>>;
+  updateUserPersonalData(
+    id: number,
+    updateUserPersonalDataRequest: UpdateUserPersonalDataRequest,
+    observe?: 'body' | 'events' | 'response',
+    options?: RequestOptions<'arraybuffer' | 'blob' | 'json' | 'text'>,
+  ): Observable<any> {
+    const url = `${this.basePath}/api/users/${id}/personal-data`;
+
+    let headers: HttpHeaders;
+    if (options?.headers instanceof HttpHeaders) {
+      headers = options.headers;
+    } else {
+      headers = new HttpHeaders(options?.headers);
+    }
+    // Set Content-Type for JSON requests if not already set
+    if (!headers.has('Content-Type')) {
+      headers = headers.set('Content-Type', 'application/json');
+    }
+
+    const requestOptions: any = {
+      observe: observe as any,
+      headers,
+      reportProgress: options?.reportProgress,
+      withCredentials: options?.withCredentials,
+      context: this.createContextWithClientId(options?.context),
+    };
+
+    return this.httpClient.put(url, updateUserPersonalDataRequest, requestOptions);
   }
 
   getUsers(

@@ -2,8 +2,8 @@ import { TestBed } from '@angular/core/testing';
 import { Subject, of, throwError } from 'rxjs';
 import { vi } from 'vitest';
 
-import { UsersApi } from '../data-access/users.api';
-import { UsersFacade } from './users.facade';
+import { UsersSearchApi } from '../services/users-search.api';
+import { UsersSearchFacade } from './users-search.facade';
 
 function userPage(overrides = {}) {
   return {
@@ -17,22 +17,22 @@ function userPage(overrides = {}) {
   };
 }
 
-function setup(api: Pick<UsersApi, 'search'>) {
+function setup(api: Pick<UsersSearchApi, 'searchUsers'>) {
   TestBed.configureTestingModule({
-    providers: [UsersFacade, { provide: UsersApi, useValue: api }],
+    providers: [UsersSearchFacade, { provide: UsersSearchApi, useValue: api }],
   });
 
-  return TestBed.inject(UsersFacade);
+  return TestBed.inject(UsersSearchFacade);
 }
 
-describe('UsersFacade', () => {
+describe('UsersSearchFacade', () => {
   afterEach(() => {
     TestBed.resetTestingModule();
   });
 
   it('search() sets loading true while request is in-flight, then success', () => {
     const subject = new Subject<ReturnType<typeof userPage>>();
-    const api = { search: vi.fn(() => subject.asObservable()) };
+    const api = { searchUsers: vi.fn(() => subject.asObservable()) };
     const facade = setup(api);
 
     facade.search();
@@ -72,7 +72,7 @@ describe('UsersFacade', () => {
       isAdmin: false,
     };
     const api = {
-      search: vi
+      searchUsers: vi
         .fn()
         .mockReturnValueOnce(first.asObservable())
         .mockReturnValueOnce(second.asObservable()),
@@ -92,7 +92,7 @@ describe('UsersFacade', () => {
 
   it('search() sets error state on failure', () => {
     const facade = setup({
-      search: () => throwError(() => new Error('boom')),
+      searchUsers: () => throwError(() => new Error('boom')),
     });
 
     facade.search();
@@ -104,7 +104,7 @@ describe('UsersFacade', () => {
 
   it('loadNext/loadPrevious set direction/lastId and call search()', () => {
     const api = {
-      search: vi.fn(() =>
+      searchUsers: vi.fn(() =>
         of(
           userPage({
             hasNext: true,
@@ -118,26 +118,26 @@ describe('UsersFacade', () => {
     const facade = setup(api);
 
     facade.search();
-    api.search.mockClear();
+    api.searchUsers.mockClear();
 
     facade.loadNext();
-    expect(api.search).toHaveBeenCalledOnce();
-    expect(api.search).toHaveBeenCalledWith(
+    expect(api.searchUsers).toHaveBeenCalledOnce();
+    expect(api.searchUsers).toHaveBeenCalledWith(
       expect.objectContaining({ direction: 'NEXT', lastId: 123 }),
     );
 
-    api.search.mockClear();
+    api.searchUsers.mockClear();
 
     facade.loadPrevious();
-    expect(api.search).toHaveBeenCalledOnce();
-    expect(api.search).toHaveBeenCalledWith(
+    expect(api.searchUsers).toHaveBeenCalledOnce();
+    expect(api.searchUsers).toHaveBeenCalledWith(
       expect.objectContaining({ direction: 'PREVIOUS', lastId: 55 }),
     );
   });
 
   it('resets keyset pagination when filters change before a new search', () => {
     const api = {
-      search: vi.fn(() =>
+      searchUsers: vi.fn(() =>
         of(
           userPage({
             hasNext: true,
@@ -150,13 +150,13 @@ describe('UsersFacade', () => {
 
     facade.search();
     facade.loadNext();
-    api.search.mockClear();
+    api.searchUsers.mockClear();
 
     facade.setFilters({ username: 'ana' });
     facade.search();
 
-    expect(api.search).toHaveBeenCalledOnce();
-    expect(api.search).toHaveBeenCalledWith(
+    expect(api.searchUsers).toHaveBeenCalledOnce();
+    expect(api.searchUsers).toHaveBeenCalledWith(
       expect.objectContaining({
         direction: 'NEXT',
         lastId: null,
@@ -166,36 +166,36 @@ describe('UsersFacade', () => {
   });
 
   it('loadNext does nothing when hasNext is false or nextId is null', () => {
-    const api = { search: vi.fn(() => of(userPage())) };
+    const api = { searchUsers: vi.fn(() => of(userPage())) };
     const facade = setup(api);
 
     facade.search();
-    api.search.mockClear();
+    api.searchUsers.mockClear();
 
     facade.loadNext();
-    expect(api.search).not.toHaveBeenCalled();
+    expect(api.searchUsers).not.toHaveBeenCalled();
   });
 
   it('loadPrevious does nothing when hasPrevious is false or previousId is null', () => {
-    const api = { search: vi.fn(() => of(userPage())) };
+    const api = { searchUsers: vi.fn(() => of(userPage())) };
     const facade = setup(api);
 
     facade.search();
-    api.search.mockClear();
+    api.searchUsers.mockClear();
 
     facade.loadPrevious();
-    expect(api.search).not.toHaveBeenCalled();
+    expect(api.searchUsers).not.toHaveBeenCalled();
   });
 
   it('clearFiltersAndSearch resets filters and pagination before searching', () => {
-    const api = { search: vi.fn(() => of(userPage())) };
+    const api = { searchUsers: vi.fn(() => of(userPage())) };
     const facade = setup(api);
 
     facade.setFilters({ id: 7, username: 'john', email: 'john@example.com' });
 
     facade.clearFiltersAndSearch();
 
-    expect(api.search).toHaveBeenCalledWith(
+    expect(api.searchUsers).toHaveBeenCalledWith(
       expect.objectContaining({
         direction: 'NEXT',
         lastId: null,

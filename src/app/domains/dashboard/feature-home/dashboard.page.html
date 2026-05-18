@@ -1,39 +1,39 @@
 <app-page
-  title="Panel operativo"
-  subtitle="Resumen compacto del workspace, módulos disponibles y contexto de sesión."
+  title="Inicio"
+  subtitle="Vista general de las areas disponibles y tu actividad de trabajo."
   eyebrow="Inicio"
   [breadcrumbs]="breadcrumbs"
 >
   <div class="dashboard-grid">
-    <app-card title="Módulos activos">
+    <app-card title="Areas disponibles">
       <div class="flex items-end justify-between gap-3">
         <div>
           <p class="text-3xl font-medium app-text">1+</p>
-          <p class="mt-1 text-sm app-text-muted">Disponibles o planificados</p>
+          <p class="mt-1 text-sm app-text-muted">Listas para usar o en preparacion</p>
         </div>
-        <app-status-badge label="Operativo" icon="check_circle" variant="success" />
+        <app-status-badge label="Disponible" icon="check_circle" variant="success" />
       </div>
     </app-card>
 
-    <app-card title="Origen de datos">
+    <app-card title="Modo de trabajo">
       <div class="flex items-end justify-between gap-3">
         <div>
           <p class="text-3xl font-medium app-text">{{ dataSourceLabel() }}</p>
-          <p class="mt-1 text-sm app-text-muted">Sincronizado con la sesión</p>
+          <p class="mt-1 text-sm app-text-muted">Aplicado a tu acceso actual</p>
         </div>
         <app-status-badge
-          label="Sesión"
+          label="En uso"
           icon="storage"
           [variant]="dataSource() === 'historic' ? 'warning' : 'info'"
         />
       </div>
     </app-card>
 
-    <app-card title="Permisos">
+    <app-card title="Acceso">
       <div class="flex items-end justify-between gap-3">
         <div>
-          <p class="text-3xl font-medium app-text">UX</p>
-          <p class="mt-1 text-sm app-text-muted">Filtrado por scopes</p>
+          <p class="text-3xl font-medium app-text">Perfil</p>
+          <p class="mt-1 text-sm app-text-muted">Adaptado a tus responsabilidades</p>
         </div>
         <app-status-badge label="Activo" icon="verified_user" variant="success" />
       </div>
@@ -41,8 +41,8 @@
 
     <app-card
       class="dashboard-card--wide"
-      title="Trabajo disponible"
-      subtitle="Acciones principales según tus permisos."
+      title="Que puedes hacer"
+      subtitle="Accesos disponibles para tu perfil."
     >
       <div class="grid gap-3 md:grid-cols-2">
         <section
@@ -53,7 +53,7 @@
             <div>
               <h2 class="text-sm font-medium app-text">Usuarios</h2>
               <p class="mt-1 text-sm app-text-muted">
-                Buscar usuarios, revisar estado y preparar tareas de administración.
+                Busca personas, revisa su estado y gestiona su ficha.
               </p>
             </div>
             <app-status-badge label="Disponible" icon="check_circle" variant="success" />
@@ -71,7 +71,7 @@
             <div>
               <h2 class="text-sm font-medium app-text">Perfumes</h2>
               <p class="mt-1 text-sm app-text-muted">
-                Módulo previsto para catálogo y operaciones futuras.
+                Catalogo y operaciones de perfumeria en preparacion.
               </p>
             </div>
             <app-status-badge label="Pendiente" icon="schedule" variant="warning" />
@@ -80,41 +80,40 @@
       </div>
     </app-card>
 
-    <app-card title="Sesión" subtitle="Contexto actual">
+    <app-card title="Mi acceso" subtitle="Informacion actual">
       <dl class="space-y-3 text-sm">
         <div class="flex items-center justify-between gap-3">
           <dt class="app-text-muted">Usuario</dt>
           <dd class="font-medium app-text">{{ userName() }}</dd>
         </div>
         <div class="flex items-center justify-between gap-3">
-          <dt class="app-text-muted">Tema</dt>
-          <dd class="app-text">Controlado desde topbar</dd>
+          <dt class="app-text-muted">Apariencia</dt>
+          <dd class="app-text">Se cambia desde la barra superior</dd>
         </div>
         <div class="flex items-center justify-between gap-3">
-          <dt class="app-text-muted">Permisos</dt>
+          <dt class="app-text-muted">Acceso</dt>
           <dd>
-            <app-status-badge label="Scopes" icon="shield" variant="info" />
+            <app-status-badge label="Perfil" icon="shield" variant="info" />
           </dd>
         </div>
       </dl>
     </app-card>
 
-    <app-card title="Autenticación">
+    <app-card title="Acceso seguro">
       <p class="text-sm app-text-muted">
-        Login, sesión, scopes y origen de datos están centralizados en core/auth.
+        El inicio de sesion mantiene tu usuario, perfil y modo de trabajo.
       </p>
     </app-card>
 
     <app-card title="Usuarios">
       <p class="text-sm app-text-muted">
-        La pantalla usa un patrón list report con filtros compactos, tabla densa y feedback
-        inmediato.
+        Gestiona busquedas, estados y fichas de usuario desde una vista unica.
       </p>
     </app-card>
 
-    <app-card title="UI enterprise">
+    <app-card title="Experiencia de trabajo">
       <p class="text-sm app-text-muted">
-        Sidebar estable, topbar global, tokens visuales y componentes compuestos sobre Material.
+        Navegacion clara y controles coherentes para trabajar con rapidez.
       </p>
     </app-card>
   </div>

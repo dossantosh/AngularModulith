@@ -17,7 +17,7 @@ import {
   template: `
     <app-page
       title="Acceso denegado"
-      subtitle="Tu sesion esta activa, pero faltan permisos para entrar en esta zona."
+      subtitle="Tu usuario no tiene acceso para entrar en esta zona."
       eyebrow="Seguridad"
       [breadcrumbs]="breadcrumbs"
     >
@@ -25,8 +25,8 @@ import {
         <app-card class="w-full max-w-xl" [spacious]="true">
           <div class="space-y-4 text-center">
             <app-error-state
-              title="No tienes acceso a este modulo"
-              message="La sesion es valida, pero te falta el scope requerido para abrir esta pantalla."
+              title="No tienes acceso a esta zona"
+              message="Tu usuario no tiene permiso para abrir esta pantalla."
             />
 
             <div class="flex flex-col justify-center gap-3 sm:flex-row">
@@ -49,7 +49,7 @@ export class ForbiddenPage {
   readonly breadcrumbs = [
     { label: 'Inicio', routerLink: '/' },
     { label: 'Seguridad' },
-    { label: '403' },
+    { label: 'Acceso' },
   ];
 
   changeUser(): void {

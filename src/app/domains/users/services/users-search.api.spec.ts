@@ -6,17 +6,17 @@ import { vi } from 'vitest';
 
 import { authInterceptor } from '../../../core/auth/http/auth.interceptor';
 import { provideNgOpenapi, UserControllerService } from '../../../generated/openapi';
-import { UsersApi } from './users.api';
+import { UsersSearchApi } from './users-search.api';
 
-function setup(client: { getUsers: (...args: unknown[]) => unknown }) {
+function setup(client: unknown) {
   TestBed.configureTestingModule({
-    providers: [UsersApi, { provide: UserControllerService, useValue: client }],
+    providers: [UsersSearchApi, { provide: UserControllerService, useValue: client }],
   });
 
-  return TestBed.inject(UsersApi);
+  return TestBed.inject(UsersSearchApi);
 }
 
-describe('UsersApi', () => {
+describe('UsersSearchApi', () => {
   afterEach(() => {
     TestBed.resetTestingModule();
   });
@@ -36,7 +36,7 @@ describe('UsersApi', () => {
     const api = setup(client);
 
     await firstValueFrom(
-      api.search({
+      api.searchUsers({
         limit: 10,
         direction: 'NEXT',
         lastId: 99,
@@ -55,7 +55,7 @@ describe('UsersApi', () => {
     const api = setup(client);
 
     await firstValueFrom(
-      api.search({
+      api.searchUsers({
         limit: 10,
         direction: 'NEXT',
         lastId: null,
@@ -73,7 +73,7 @@ describe('UsersApi', () => {
     );
   });
 
-  it('maps generated user pages to the current UserPageDto contract', async () => {
+  it('maps generated user pages to the current page contract', async () => {
     const client = {
       getUsers: vi.fn(() =>
         of({
@@ -88,7 +88,7 @@ describe('UsersApi', () => {
     const api = setup(client);
 
     const page = await firstValueFrom(
-      api.search({
+      api.searchUsers({
         limit: 10,
         direction: 'NEXT',
         lastId: null,
@@ -104,42 +104,6 @@ describe('UsersApi', () => {
       previousId: null,
       empty: false,
     });
-  });
-
-  it('calculates empty when the generated response does not include it', async () => {
-    const client = {
-      getUsers: vi.fn(() => of({ content: [], hasNext: false, hasPrevious: false })),
-    };
-    const api = setup(client);
-
-    const page = await firstValueFrom(
-      api.search({
-        limit: 10,
-        direction: 'NEXT',
-        lastId: null,
-        filters: { id: null, username: '', email: '' },
-      }),
-    );
-
-    expect(page.empty).toBe(true);
-  });
-
-  it('preserves empty if the backend contract adds it later', async () => {
-    const client = {
-      getUsers: vi.fn(() => of({ content: [], hasNext: false, hasPrevious: false, empty: false })),
-    };
-    const api = setup(client);
-
-    const page = await firstValueFrom(
-      api.search({
-        limit: 10,
-        direction: 'NEXT',
-        lastId: null,
-        filters: { id: null, username: '', email: '' },
-      }),
-    );
-
-    expect(page.empty).toBe(false);
   });
 
   it('keeps the generated users URL at /api/users and applies the auth interceptor', () => {

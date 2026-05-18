@@ -7,8 +7,8 @@ import { AppSearchFiltersComponent } from './app-search-filters.component';
   standalone: true,
   imports: [AppSearchFiltersComponent],
   template: `
-    <app-search-filters title="Filtros" subtitle="Busqueda incremental">
-      <span search-filter-actions>Debounce 400ms</span>
+    <app-search-filters title="Busqueda" subtitle="Encuentra usuarios por sus datos principales">
+      <span search-filter-actions>Accion secundaria</span>
       <label>
         Nombre
         <input />
@@ -38,9 +38,9 @@ describe('AppSearchFiltersComponent', () => {
     fixture.detectChanges();
 
     const text = fixture.nativeElement.textContent;
-    expect(text).toContain('Filtros');
-    expect(text).toContain('Busqueda incremental');
-    expect(text).toContain('Debounce 400ms');
+    expect(text).toContain('Busqueda');
+    expect(text).toContain('Encuentra usuarios por sus datos principales');
+    expect(text).toContain('Accion secundaria');
     expect(text).toContain('Nombre');
     expect(text).toContain('Limpiar');
   });

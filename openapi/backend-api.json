@@ -60,6 +60,110 @@
         "responses": { "200": { "description": "OK" } }
       }
     },
+    "/api/users/{id}/roles": {
+      "get": {
+        "tags": ["user-controller"],
+        "operationId": "getUserRoles",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": { "type": "integer", "format": "int64" }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": { "schema": { "$ref": "#/components/schemas/UserRolesView" } }
+            }
+          }
+        }
+      },
+      "put": {
+        "tags": ["user-controller"],
+        "operationId": "updateUserRoles",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": { "type": "integer", "format": "int64" }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": { "$ref": "#/components/schemas/UpdateUserRolesRequest" }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": { "schema": { "$ref": "#/components/schemas/UserRolesView" } }
+            }
+          }
+        }
+      }
+    },
+    "/api/users/{id}/personal-data": {
+      "get": {
+        "tags": ["user-controller"],
+        "operationId": "getUserPersonalData",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": { "type": "integer", "format": "int64" }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/UserPersonalDataView" }
+              }
+            }
+          }
+        }
+      },
+      "put": {
+        "tags": ["user-controller"],
+        "operationId": "updateUserPersonalData",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": { "type": "integer", "format": "int64" }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": { "$ref": "#/components/schemas/UpdateUserPersonalDataRequest" }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/UserPersonalDataView" }
+              }
+            }
+          }
+        }
+      }
+    },
     "/api/users": {
       "get": {
         "tags": ["user-controller"],
@@ -174,6 +278,17 @@
         },
         "required": ["roleIds"]
       },
+      "UpdateUserRolesRequest": {
+        "type": "object",
+        "properties": {
+          "roleIds": {
+            "type": "array",
+            "items": { "type": "integer", "format": "int64" },
+            "minItems": 1
+          }
+        },
+        "required": ["roleIds"]
+      },
       "RoleView": {
         "type": "object",
         "properties": {
@@ -194,6 +309,81 @@
             "items": { "$ref": "#/components/schemas/RoleView" },
             "uniqueItems": true
           }
+        }
+      },
+      "UserRolesView": {
+        "type": "object",
+        "properties": {
+          "userId": { "type": "integer", "format": "int64" },
+          "username": { "type": "string" },
+          "roles": {
+            "type": "array",
+            "items": { "$ref": "#/components/schemas/RoleView" },
+            "uniqueItems": true
+          },
+          "availableRoles": {
+            "type": "array",
+            "items": { "$ref": "#/components/schemas/RoleView" }
+          }
+        }
+      },
+      "UpdateUserPersonalDataRequest": {
+        "type": "object",
+        "properties": {
+          "employeeCode": { "type": "string", "maxLength": 30, "minLength": 0 },
+          "firstName": { "type": "string", "maxLength": 80, "minLength": 0 },
+          "lastName": { "type": "string", "maxLength": 120, "minLength": 0 },
+          "corporateEmail": {
+            "type": "string",
+            "format": "email",
+            "maxLength": 120,
+            "minLength": 0
+          },
+          "phone": { "type": "string", "maxLength": 30, "minLength": 0 },
+          "identityDocument": { "type": "string", "maxLength": 40, "minLength": 0 },
+          "birthDate": { "type": "string", "format": "date" },
+          "address": { "type": "string", "maxLength": 160, "minLength": 0 },
+          "city": { "type": "string", "maxLength": 80, "minLength": 0 },
+          "stateProvince": { "type": "string", "maxLength": 80, "minLength": 0 },
+          "postalCode": { "type": "string", "maxLength": 20, "minLength": 0 },
+          "country": { "type": "string", "maxLength": 80, "minLength": 0 },
+          "jobTitle": { "type": "string", "maxLength": 100, "minLength": 0 },
+          "department": { "type": "string", "maxLength": 100, "minLength": 0 },
+          "hireDate": { "type": "string", "format": "date" },
+          "status": { "type": "string", "enum": ["ACTIVE", "INACTIVE", "TERMINATED", "ON_LEAVE"] },
+          "contractType": {
+            "type": "string",
+            "enum": ["FULL_TIME", "PART_TIME", "TEMPORARY", "CONTRACTOR", "INTERN", "OTHER"]
+          },
+          "internalNotes": { "type": "string", "maxLength": 1000, "minLength": 0 }
+        }
+      },
+      "UserPersonalDataView": {
+        "type": "object",
+        "properties": {
+          "userId": { "type": "integer", "format": "int64" },
+          "username": { "type": "string" },
+          "employeeCode": { "type": "string" },
+          "firstName": { "type": "string" },
+          "lastName": { "type": "string" },
+          "corporateEmail": { "type": "string" },
+          "phone": { "type": "string" },
+          "identityDocument": { "type": "string" },
+          "birthDate": { "type": "string", "format": "date" },
+          "address": { "type": "string" },
+          "city": { "type": "string" },
+          "stateProvince": { "type": "string" },
+          "postalCode": { "type": "string" },
+          "country": { "type": "string" },
+          "jobTitle": { "type": "string" },
+          "department": { "type": "string" },
+          "hireDate": { "type": "string", "format": "date" },
+          "status": { "type": "string", "enum": ["ACTIVE", "INACTIVE", "TERMINATED", "ON_LEAVE"] },
+          "contractType": {
+            "type": "string",
+            "enum": ["FULL_TIME", "PART_TIME", "TEMPORARY", "CONTRACTOR", "INTERN", "OTHER"]
+          },
+          "internalNotes": { "type": "string" }
         }
       },
       "CreateUserRequest": {

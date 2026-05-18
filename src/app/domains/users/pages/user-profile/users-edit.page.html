@@ -1,0 +1,128 @@
+@if (loading()) {
+  <app-loading-state message="Cargando datos personales..." />
+} @else if (loadError()) {
+  <app-error-state
+    title="No se pudieron cargar los datos personales"
+    [message]="loadError() ?? 'Intentalo de nuevo.'"
+    actionLabel="Reintentar"
+    (retry)="reload()"
+  />
+} @else {
+  <form [formGroup]="personalDataForm" (ngSubmit)="savePersonalData()" class="space-y-4">
+    @if (saveSuccess()) {
+      <p role="status" class="users-edit-success">Datos personales actualizados.</p>
+    }
+
+    @if (saveError()) {
+      <app-error-state
+        title="No se pudieron guardar los datos personales"
+        [message]="saveError() ?? 'Intentalo de nuevo.'"
+      />
+    }
+
+    <app-command-bar
+      title="Modificar datos personales"
+      subtitle="Actualiza los datos de contacto y perfil personal del usuario."
+    >
+      <div command-actions class="flex flex-wrap items-center gap-2">
+        <app-button
+          variant="secondary"
+          type="button"
+          [routerLink]="cancelLink()"
+          [disabled]="saving()"
+        >
+          Cancelar
+        </app-button>
+
+        <app-button
+          variant="primary"
+          type="submit"
+          icon="save"
+          [disabled]="personalDataForm.invalid || saving()"
+          [loading]="saving()"
+        >
+          Guardar cambios
+        </app-button>
+      </div>
+
+      <div class="users-edit-form-grid">
+        <app-text-field
+          label="Nombre"
+          autocomplete="given-name"
+          [control]="personalDataForm.controls.firstName"
+          [showErrors]="submitted"
+          [errorMessages]="{ maxlength: 'Nombre no puede superar 80 caracteres.' }"
+        />
+
+        <app-text-field
+          label="Apellidos"
+          autocomplete="family-name"
+          [control]="personalDataForm.controls.lastName"
+          [showErrors]="submitted"
+          [errorMessages]="{ maxlength: 'Apellidos no puede superar 120 caracteres.' }"
+        />
+
+        <app-text-field
+          label="Correo corporativo"
+          type="email"
+          autocomplete="email"
+          [control]="personalDataForm.controls.corporateEmail"
+          [showErrors]="submitted"
+          [errorMessages]="{
+            email: 'Introduce un correo valido.',
+            maxlength: 'Correo corporativo no puede superar 120 caracteres.',
+          }"
+        />
+
+        <app-text-field
+          label="Telefono"
+          type="tel"
+          autocomplete="tel"
+          [control]="personalDataForm.controls.phone"
+          [showErrors]="submitted"
+          [errorMessages]="{ maxlength: 'Telefono no puede superar 30 caracteres.' }"
+        />
+
+        <app-text-field
+          label="Direccion"
+          autocomplete="street-address"
+          [control]="personalDataForm.controls.address"
+          [showErrors]="submitted"
+          [errorMessages]="{ maxlength: 'Direccion no puede superar 160 caracteres.' }"
+        />
+
+        <app-text-field
+          label="Ciudad"
+          autocomplete="address-level2"
+          [control]="personalDataForm.controls.city"
+          [showErrors]="submitted"
+          [errorMessages]="{ maxlength: 'Ciudad no puede superar 80 caracteres.' }"
+        />
+
+        <app-text-field
+          label="Provincia / estado"
+          autocomplete="address-level1"
+          [control]="personalDataForm.controls.stateProvince"
+          [showErrors]="submitted"
+          [errorMessages]="{ maxlength: 'Provincia no puede superar 80 caracteres.' }"
+        />
+
+        <app-text-field
+          label="Codigo postal"
+          autocomplete="postal-code"
+          [control]="personalDataForm.controls.postalCode"
+          [showErrors]="submitted"
+          [errorMessages]="{ maxlength: 'Codigo postal no puede superar 20 caracteres.' }"
+        />
+
+        <app-text-field
+          label="Pais"
+          autocomplete="country-name"
+          [control]="personalDataForm.controls.country"
+          [showErrors]="submitted"
+          [errorMessages]="{ maxlength: 'Pais no puede superar 80 caracteres.' }"
+        />
+      </div>
+    </app-command-bar>
+  </form>
+}

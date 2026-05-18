@@ -1,7 +1,7 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { vi } from 'vitest';
 
-import { UsersFacade } from '../../application/users.facade';
+import { UsersSearchFacade } from '../../state/users-search.facade';
 import { UsersSearchPage } from './users-search.page';
 
 function createFacadeStub() {
@@ -23,7 +23,7 @@ describe('UsersSearchPage', () => {
     facade = createFacadeStub();
 
     TestBed.configureTestingModule({
-      providers: [{ provide: UsersFacade, useValue: facade }],
+      providers: [{ provide: UsersSearchFacade, useValue: facade }],
     });
 
     TestBed.overrideComponent(UsersSearchPage, {
@@ -81,5 +81,10 @@ describe('UsersSearchPage', () => {
 
     expect(facade.loadPrevious).toHaveBeenCalledOnce();
     expect(facade.loadNext).toHaveBeenCalledOnce();
+  });
+
+  it('exposes the edit action as the last table column', () => {
+    expect(fixture.componentInstance.displayedColumns.at(-1)).toBe('actions');
+    expect(fixture.componentInstance.userDetailsLink(7)).toEqual(['/users', 7, 'personal-data']);
   });
 });

@@ -7,18 +7,22 @@ import {
   UserSummaryView,
 } from '../../../generated/openapi';
 
-interface UsersSearchRequest {
-  limit: number;
-  direction: 'NEXT' | 'PREVIOUS';
-  lastId: number | null;
-  filters: {
-    id: number | null;
-    username: string;
-    email: string;
-  };
+export type PageDirection = 'NEXT' | 'PREVIOUS';
+
+export interface UserSearchFilters {
+  id: number | null;
+  username: string;
+  email: string;
 }
 
-interface UserSummaryDto {
+export interface UsersSearchRequest {
+  limit: number;
+  direction: PageDirection;
+  lastId: number | null;
+  filters: UserSearchFilters;
+}
+
+export interface UserSummaryDto {
   id: number;
   username: string;
   email: string;
@@ -36,10 +40,10 @@ export interface UserPageDto {
 }
 
 @Injectable({ providedIn: 'root' })
-export class UsersApi {
+export class UsersSearchApi {
   private readonly usersClient = inject(UserControllerService);
 
-  search(query: UsersSearchRequest): Observable<UserPageDto> {
+  searchUsers(query: UsersSearchRequest): Observable<UserPageDto> {
     const { filters, lastId } = query;
     const username = filters.username.trim() || undefined;
     const email = filters.email.trim() || undefined;

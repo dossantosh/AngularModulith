@@ -1,9 +1,10 @@
-import { Component, DestroyRef, computed, inject } from '@angular/core';
+import { Component, DestroyRef, computed, inject, signal } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
-import { Router, RouterOutlet } from '@angular/router';
+import { NavigationEnd, Router, RouterOutlet } from '@angular/router';
+import { filter } from 'rxjs';
 
 import { AuthFacade } from '../auth/session/auth.facade';
-import { buildSidebarNavigation } from '../navigation/app-navigation';
+import { buildNavigationTree, resolveActiveNavigation } from '../navigation/app-navigation';
 import { MainLayoutComponent } from './main-layout.component';
 
 @Component({
@@ -15,7 +16,8 @@ import { MainLayoutComponent } from './main-layout.component';
       [companyName]="companyName"
       [userName]="userName()"
       [dataSource]="dataSource()"
-      [navigationItems]="navigationItems()"
+      [navigationTree]="navigationTree()"
+      [activeNavigation]="activeNavigation()"
       (logout)="logout()"
     >
       <router-outlet></router-outlet>
@@ -29,10 +31,23 @@ export class ShellContainer {
 
   readonly companyName = "Seb's Perfumes";
   readonly username = this.auth.username;
-  readonly userName = computed(() => this.username() ?? 'Guest');
+  readonly userName = computed(() => this.username() ?? 'Invitado');
   readonly dataSource = this.auth.dataSource;
+  private readonly currentUrl = signal(this.router.url);
   readonly navigation = this.auth.navigation;
-  readonly navigationItems = computed(() => buildSidebarNavigation(this.navigation()));
+  readonly navigationTree = computed(() => buildNavigationTree(this.navigation()));
+  readonly activeNavigation = computed(() =>
+    resolveActiveNavigation(this.navigationTree(), this.currentUrl()),
+  );
+
+  constructor() {
+    this.router.events
+      .pipe(
+        filter((event): event is NavigationEnd => event instanceof NavigationEnd),
+        takeUntilDestroyed(this.destroyRef),
+      )
+      .subscribe((event) => this.currentUrl.set(event.urlAfterRedirects));
+  }
 
   logout(): void {
     this.auth

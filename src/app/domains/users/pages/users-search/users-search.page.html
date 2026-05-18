@@ -1,15 +1,12 @@
 <app-page
   title="Usuarios"
-  subtitle="List report operativo con busqueda incremental, estados claros y tabla compacta."
+  subtitle="Consulta usuarios, revisa su estado y accede a su ficha de gestion."
   eyebrow="Sistemas"
   layout="full"
   [breadcrumbs]="breadcrumbs"
 >
-  <form aria-label="Filtros de busqueda de usuarios" [formGroup]="filtersForm">
-    <app-search-filters
-      title="Filtros"
-      subtitle="La busqueda se actualiza automaticamente al escribir."
-    >
+  <form aria-label="Busqueda de usuarios" [formGroup]="filtersForm">
+    <app-search-filters title="Busqueda" subtitle="Busca por codigo, usuario o correo.">
       <app-button
         search-filter-actions
         variant="secondary"
@@ -21,21 +18,21 @@
       </app-button>
 
       <app-text-field
-        label="ID"
+        label="Codigo"
         type="number"
         inputMode="numeric"
         [control]="filtersForm.controls.id"
       ></app-text-field>
 
       <app-text-field
-        label="Username"
+        label="Usuario"
         autocomplete="username"
         [control]="filtersForm.controls.username"
       ></app-text-field>
 
       <app-text-field
         class="sm:col-span-2 lg:col-span-1"
-        label="Email"
+        label="Correo"
         type="email"
         autocomplete="email"
         [control]="filtersForm.controls.email"
@@ -46,12 +43,12 @@
   <div class="mt-4">
     <app-search-results
       title="Resultados"
-      subtitle="Tabla densa para lectura rapida y acciones futuras."
+      subtitle="Usuarios que coinciden con tu busqueda."
       loadingMessage="Cargando usuarios..."
       errorTitle="No se pudieron cargar los usuarios"
       emptyIcon="person_search"
       emptyTitle="Sin usuarios"
-      emptyMessage="No hay usuarios para los filtros actuales."
+      emptyMessage="No hay usuarios para la busqueda actual."
       paginationAriaLabel="Paginacion de usuarios"
       previousAriaLabel="Cargar pagina anterior de usuarios"
       nextAriaLabel="Cargar pagina siguiente de usuarios"
@@ -65,7 +62,7 @@
       (next)="loadNext()"
     >
       <app-button empty-actions variant="secondary" type="button" (clicked)="clearFilters()">
-        Limpiar filtros
+        Limpiar busqueda
       </app-button>
 
       <div class="overflow-x-auto">
@@ -82,16 +79,14 @@
           </caption>
 
           <ng-container matColumnDef="id">
-            <th mat-header-cell *matHeaderCellDef class="users-results-table__id">ID</th>
+            <th mat-header-cell *matHeaderCellDef class="users-results-table__id">Codigo</th>
             <td mat-cell *matCellDef="let user" class="users-results-table__id app-text-muted">
               {{ user.id }}
             </td>
           </ng-container>
 
           <ng-container matColumnDef="username">
-            <th mat-header-cell *matHeaderCellDef class="users-results-table__username">
-              Username
-            </th>
+            <th mat-header-cell *matHeaderCellDef class="users-results-table__username">Usuario</th>
             <td
               mat-cell
               *matCellDef="let user"
@@ -102,14 +97,14 @@
           </ng-container>
 
           <ng-container matColumnDef="email">
-            <th mat-header-cell *matHeaderCellDef class="users-results-table__email">Email</th>
+            <th mat-header-cell *matHeaderCellDef class="users-results-table__email">Correo</th>
             <td mat-cell *matCellDef="let user" class="users-results-table__email app-text-muted">
               {{ user.email }}
             </td>
           </ng-container>
 
           <ng-container matColumnDef="enabled">
-            <th mat-header-cell *matHeaderCellDef class="users-results-table__status">Enabled</th>
+            <th mat-header-cell *matHeaderCellDef class="users-results-table__status">Estado</th>
             <td mat-cell *matCellDef="let user" class="users-results-table__status">
               <app-status-badge
                 [label]="user.enabled ? 'Activo' : 'Inactivo'"
@@ -120,13 +115,28 @@
           </ng-container>
 
           <ng-container matColumnDef="admin">
-            <th mat-header-cell *matHeaderCellDef class="users-results-table__admin">Admin</th>
+            <th mat-header-cell *matHeaderCellDef class="users-results-table__admin">Perfil</th>
             <td mat-cell *matCellDef="let user" class="users-results-table__admin">
               <app-status-badge
-                [label]="user.isAdmin ? 'Admin' : 'Usuario'"
+                [label]="user.isAdmin ? 'Administrador' : 'Usuario'"
                 [icon]="user.isAdmin ? 'shield_person' : 'person'"
                 [variant]="user.isAdmin ? 'info' : 'neutral'"
               ></app-status-badge>
+            </td>
+          </ng-container>
+
+          <ng-container matColumnDef="actions">
+            <th mat-header-cell *matHeaderCellDef class="users-results-table__actions">Acciones</th>
+            <td mat-cell *matCellDef="let user" class="users-results-table__actions">
+              <a
+                mat-icon-button
+                [routerLink]="userDetailsLink(user.id)"
+                [attr.aria-label]="'Abrir usuario ' + user.username"
+                [attr.title]="'Abrir usuario ' + user.username"
+                class="users-results-table__action-link"
+              >
+                <mat-icon aria-hidden="true">manage_accounts</mat-icon>
+              </a>
             </td>
           </ng-container>
 
