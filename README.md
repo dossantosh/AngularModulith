@@ -37,10 +37,9 @@ src/app
 |   |-- dashboard
 |   |   `-- feature-home
 |   `-- users
-|       |-- application
-|       |-- data-access
-|       |-- features
-|       |   `-- search
+|       |-- pages
+|       |-- services
+|       |-- state
 |       `-- users.routes.ts
 `-- shared
     `-- ui
@@ -78,32 +77,32 @@ No crear wrappers triviales para cada componente de Material. Si `mat-select`, `
 
 ### domains
 
-Cada dominio contiene la UI y el flujo propio del negocio. La estructura recomendada para un CRUD que crece es:
+Cada dominio contiene la UI y el flujo propio del negocio. La estructura base evita capas vacias y se mantiene plana:
 
 ```text
 domains/<domain>/
-|-- data-access/
-|-- application/
-|-- features/
-|-- ui/              # solo si hay componentes presentacionales del dominio
+|-- pages/       # pantallas route-level
+|-- services/    # llamadas API y servicios del dominio
+|-- state/       # facades/stores solo si aportan estado real
+|-- components/  # piezas visuales especificas del dominio, si aparecen
 `-- <domain>.routes.ts
 ```
 
-No crear carpetas vacias. Un dominio simple puede empezar solo con `feature-*` o `features/<screen>`.
+No crear carpetas vacias. Si una pantalla es simple, puede vivir solo en `pages/` y llamar a un `service` directo.
 
-### data-access
+### pages
 
-Adaptadores HTTP y DTOs. No maneja layout, permisos visuales ni estado de pantalla. No importa `features`.
+Pantallas de ruta. Componen layout, leen parametros/query params, conectan eventos de UI y navegan. No deberian acumular paginacion, filtros, loading/error y mutaciones complejas si eso ya merece una facade.
 
-### application
+### services
 
-Facades o servicios de orquestacion cuando una pantalla necesita estado, paginacion, filtros, loading/error o combinacion de varios adapters. No crear una facade si la page es trivial.
+Clientes API, mocks temporales, DTOs y adaptadores de datos del dominio. No manejan layout, navegacion ni estado de pantalla.
 
-### features
+### state
 
-Pantallas route-level y containers. Componen `shared/ui`, Material y servicios `application`. No deberian llamar directamente a `data-access` si ya existe facade.
+Facades o stores de pantalla cuando aportan estado real: filtros, paginacion, loading/error, seleccion, datos derivados o coordinacion de varias llamadas. No crear facades pasarela que solo llamen a un metodo del service.
 
-### ui dentro de dominio
+### components dentro de dominio
 
 Componentes presentacionales especificos del dominio. No importan facades, APIs ni pages. Se crean cuando una pantalla empieza a repetir partes visibles dentro del mismo dominio.
 
@@ -119,7 +118,7 @@ Componentes presentacionales especificos del dominio. No importan facades, APIs 
 
 Para un listado enterprise:
 
-1. Crear una feature route en `domains/<domain>/features/<screen>`.
+1. Crear una pantalla en `domains/<domain>/pages/<screen>`.
 2. Usar `app-page` para el marco de pantalla.
 3. Usar `app-search-filters` para filtros y acciones compactas de vistas search/list report.
 4. Usar controles Material o wrappers existentes (`app-text-field`) con Reactive Forms.
@@ -155,11 +154,19 @@ Las reglas actuales protegen limites reales:
 - `core` no importa `domains`.
 - `shared/ui` no importa `core` ni `domains`.
 - `shared` no importa `domains`.
-- `features` no accede directo a `data-access` cuando existe `application`.
-- `application` no importa pages/features.
-- `data-access` no importa application/features.
+- `services` no importa `pages` ni `state`.
+- `state` no importa `pages`.
+- `pages` puede componer `shared/ui`, `state` y `services` del mismo dominio.
 
 Si aparece una nueva capa real, ajustar reglas despues de crear uso real, no antes.
+
+## Reglas de no sobreingenieria
+
+- No copiar DDD backend 1:1 al frontend.
+- No crear `api`, `facade`, `store` o carpetas por inercia.
+- Mantener facades solo cuando aporten estado u orquestacion visible.
+- Mover a `shared` solo componentes o utilidades reutilizables por varios dominios.
+- Empezar simple con `pages/services/state` y dividir mas cuando haya repeticion real.
 
 ## Auth y autorizacion
 
@@ -197,12 +204,3 @@ npm run e2e
 ```
 
 `npm run e2e` requiere specs Playwright. Si no hay specs, el comando puede fallar por falta de tests, no por la aplicacion.
-
-## Reglas de no sobreingenieria
-
-- No copiar DDD backend 1:1 al frontend.
-- No crear carpetas vacias para parecer enterprise.
-- No crear facades, stores, engines o adapters sin repeticion real.
-- No introducir Nx, NgRx, microfrontends, SSR o librerias nuevas sin evidencia fuerte.
-- No envolver Material si usar Material directo es mas claro.
-- Mantener componentes pequenos y APIs explicitas.

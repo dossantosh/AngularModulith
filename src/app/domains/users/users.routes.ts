@@ -1,12 +1,12 @@
 import { Routes } from '@angular/router';
 
-import { UserProfileFacade } from './manage-user/profile/application/user-profile.facade';
-import { UsersEditPage } from './manage-user/profile/pages/users-edit.page';
-import { UsersPersonalDataPage } from './manage-user/profile/pages/users-personal-data.page';
-import { UserRolesFacade } from './manage-user/roles/application/user-roles.facade';
-import { UsersRolesPage } from './manage-user/roles/pages/users-roles.page';
-import { UsersManageShellPage } from './manage-user/shell/users-manage-shell.page';
-import { UsersSearchPage } from './search/pages/users-search.page';
+import { UsersManageShellPage } from './pages/manage-user/users-manage-shell.page';
+import { UsersEditPage } from './pages/user-profile/users-edit.page';
+import { UsersPersonalDataPage } from './pages/user-profile/users-personal-data.page';
+import { UsersRolesPage } from './pages/user-roles/users-roles.page';
+import { UsersSearchPage } from './pages/users-search/users-search.page';
+import { UserProfileFacade } from './state/user-profile.facade';
+import { UserRolesFacade } from './state/user-roles.facade';
 
 export const USERS_ROUTES: Routes = [
   { path: '', pathMatch: 'full', redirectTo: 'search' },

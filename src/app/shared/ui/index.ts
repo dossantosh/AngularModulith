@@ -3,6 +3,7 @@ export { AppErrorStateComponent } from './feedback/error-state/app-error-state.c
 export { AppLoadingStateComponent } from './feedback/loading-state/app-loading-state.component';
 export { AppCardComponent } from './layout/card/app-card.component';
 export { AppCommandBarComponent } from './layout/command-bar/app-command-bar.component';
+export { AppManageShellComponent } from './layout/manage-shell/app-manage-shell.component';
 export { AppPageComponent } from './layout/page/app-page.component';
 export { type AppActiveNavigation, type AppNavNode } from './navigation/app-nav-node';
 export {
