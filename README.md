@@ -83,7 +83,7 @@ Cada dominio contiene la UI y el flujo propio del negocio. La estructura base ev
 domains/<domain>/
 |-- pages/       # pantallas route-level
 |-- services/    # llamadas API y servicios del dominio
-|-- state/       # facades/stores solo si aportan estado real
+|-- state/       # opcional: estado compartido o muy complejo
 |-- components/  # piezas visuales especificas del dominio, si aparecen
 `-- <domain>.routes.ts
 ```
@@ -92,7 +92,7 @@ No crear carpetas vacias. Si una pantalla es simple, puede vivir solo en `pages/
 
 ### pages
 
-Pantallas de ruta. Componen layout, leen parametros/query params, conectan eventos de UI y navegan. No deberian acumular paginacion, filtros, loading/error y mutaciones complejas si eso ya merece una facade.
+Pantallas de ruta. Componen layout, leen parametros/query params, conectan eventos de UI, mantienen estado local razonable y navegan. Si el estado se comparte entre varias rutas o la page se vuelve dificil de leer, se extrae a `state`.
 
 ### services
 
@@ -100,7 +100,7 @@ Clientes API, mocks temporales, DTOs y adaptadores de datos del dominio. No mane
 
 ### state
 
-Facades o stores de pantalla cuando aportan estado real: filtros, paginacion, loading/error, seleccion, datos derivados o coordinacion de varias llamadas. No crear facades pasarela que solo llamen a un metodo del service.
+Facades o stores solo cuando aportan valor claro: estado compartido entre varias pages, datos derivados usados por un shell, coordinacion de varias llamadas o una pantalla demasiado grande. No crear facades pasarela que solo llamen a un metodo del service.
 
 ### components dentro de dominio
 
@@ -122,7 +122,7 @@ Para un listado enterprise:
 2. Usar `app-page` para el marco de pantalla.
 3. Usar `app-search-filters` para filtros y acciones compactas de vistas search/list report.
 4. Usar controles Material o wrappers existentes (`app-text-field`) con Reactive Forms.
-5. Mantener filtros, paginacion, loading/error/empty en una facade si la pantalla deja de ser trivial.
+5. Mantener filtros, paginacion, loading/error/empty en la page mientras sea legible.
 6. Usar `app-search-results` para estados de resultados, error, empty y paginacion.
 7. Renderizar tablas con Angular Material (`mat-table`) y Tailwind solo para overflow/layout externo.
 8. Usar `app-loading-state`, `app-error-state`, `app-empty-state`, `app-status-badge` y `app-pagination-bar` para consistencia cuando se necesiten de forma directa.
@@ -131,7 +131,7 @@ No crear un form-engine o schema-table hasta que existan varios CRUDs con repeti
 
 ## Estado y reactividad
 
-- Preferir estado local en la page o facade del dominio.
+- Preferir estado local en la page.
 - Usar signals para estado de UI consultado por templates.
 - Usar RxJS para HTTP, debounce, formularios y cancelacion de flujos async.
 - Evitar estado global salvo sesion/auth, theme o necesidades realmente transversales.
@@ -141,7 +141,7 @@ Guia interna:
 
 - Signals: estado sincronico de UI, sesion/permisos/theme, flags de pantalla y valores derivados con `computed()`.
 - RxJS: HTTP, guards, `valueChanges`, debounce, cancelacion con `switchMap`, inicializadores y streams externos.
-- Facades: exponen signals para lectura desde UI y pueden usar RxJS internamente para asincronia. Evitar `Subscription` manual en flujos repetibles; modelar comandos privados con `Subject` + `switchMap` cuando la ultima accion debe ganar.
+- Facades: usarlas solo para estado compartido o complejo; exponen signals para lectura desde UI y pueden usar RxJS internamente para asincronia.
 - Componentes: un `subscribe()` puntual para login/logout/navegacion es aceptable, pero debe usar `takeUntilDestroyed()` si el componente puede destruirse antes de que termine.
 - `effect()`: usarlo para renderizado o integracion visual, como directivas estructurales. No usarlo para fetch, navegacion o reglas de negocio salvo justificacion clara.
 - Interop: usar `toSignal()`/`toObservable()` solo en fronteras claras entre estado UI y streams async; no convertir por reflejo.
@@ -164,9 +164,9 @@ Si aparece una nueva capa real, ajustar reglas despues de crear uso real, no ant
 
 - No copiar DDD backend 1:1 al frontend.
 - No crear `api`, `facade`, `store` o carpetas por inercia.
-- Mantener facades solo cuando aporten estado u orquestacion visible.
+- Mantener facades solo cuando aporten estado compartido u orquestacion visible.
 - Mover a `shared` solo componentes o utilidades reutilizables por varios dominios.
-- Empezar simple con `pages/services/state` y dividir mas cuando haya repeticion real.
+- Empezar simple con `pages/services`; anadir `state`, `schemas` o `components` cuando haya una razon concreta.
 
 ## Auth y autorizacion
 

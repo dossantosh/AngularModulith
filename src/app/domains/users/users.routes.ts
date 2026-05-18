@@ -6,7 +6,6 @@ import { UsersPersonalDataPage } from './pages/user-profile/users-personal-data.
 import { UsersRolesPage } from './pages/user-roles/users-roles.page';
 import { UsersSearchPage } from './pages/users-search/users-search.page';
 import { UserProfileFacade } from './state/user-profile.facade';
-import { UserRolesFacade } from './state/user-roles.facade';
 
 export const USERS_ROUTES: Routes = [
   { path: '', pathMatch: 'full', redirectTo: 'search' },
@@ -19,7 +18,7 @@ export const USERS_ROUTES: Routes = [
       { path: '', pathMatch: 'full', redirectTo: 'personal-data' },
       { path: 'personal-data', component: UsersPersonalDataPage },
       { path: 'personal-data/edit', component: UsersEditPage },
-      { path: 'roles', component: UsersRolesPage, providers: [UserRolesFacade] },
+      { path: 'roles', component: UsersRolesPage },
       { path: 'edit', redirectTo: 'personal-data/edit' },
     ],
   },
