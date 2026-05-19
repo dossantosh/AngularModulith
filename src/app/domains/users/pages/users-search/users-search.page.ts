@@ -28,7 +28,7 @@ import {
   type UserPageDto,
   type UserSearchFilters,
   UsersSearchApi,
-} from '../../services/users-search.api';
+} from '../../api/users-search.api';
 
 type LoadStatus = 'idle' | 'loading' | 'success' | 'error';
 

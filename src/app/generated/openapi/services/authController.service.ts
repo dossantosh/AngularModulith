@@ -18,7 +18,13 @@ import {
 } from '@angular/common/http';
 import { inject, Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
-import { CsrfToken, RequestOptions } from '../models';
+import {
+  AuthSessionResponse,
+  CsrfToken,
+  LoginRequest,
+  LoginResponse,
+  RequestOptions,
+} from '../models';
 import { BASE_PATH_DEFAULT, CLIENT_CONTEXT_TOKEN_DEFAULT } from '../tokens';
 import { HttpParamsBuilder } from '../utils/http-params-builder';
 
@@ -33,15 +39,15 @@ export class AuthControllerService {
     return context.set(this.clientContextToken, 'default');
   }
 
-  me(observe?: 'body', options?: RequestOptions<'blob'>): Observable<Record<string, any>>;
+  me(observe?: 'body', options?: RequestOptions<'json'>): Observable<AuthSessionResponse>;
   me(
     observe?: 'response',
-    options?: RequestOptions<'blob'>,
-  ): Observable<HttpResponse<Record<string, any>>>;
+    options?: RequestOptions<'json'>,
+  ): Observable<HttpResponse<AuthSessionResponse>>;
   me(
     observe?: 'events',
-    options?: RequestOptions<'blob'>,
-  ): Observable<HttpEvent<Record<string, any>>>;
+    options?: RequestOptions<'json'>,
+  ): Observable<HttpEvent<AuthSessionResponse>>;
   me(
     observe?: 'body' | 'events' | 'response',
     options?: RequestOptions<'arraybuffer' | 'blob' | 'json' | 'text'>,
@@ -58,7 +64,6 @@ export class AuthControllerService {
     const requestOptions: any = {
       observe: observe as any,
       headers,
-      responseType: 'blob' as 'blob',
       reportProgress: options?.reportProgress,
       withCredentials: options?.withCredentials,
       context: this.createContextWithClientId(options?.context),
@@ -67,28 +72,14 @@ export class AuthControllerService {
     return this.httpClient.get(url, requestOptions);
   }
 
-  csrf(token: CsrfToken, observe?: 'body', options?: RequestOptions<'blob'>): Observable<CsrfToken>;
+  csrf(observe?: 'body', options?: RequestOptions<'json'>): Observable<CsrfToken>;
+  csrf(observe?: 'response', options?: RequestOptions<'json'>): Observable<HttpResponse<CsrfToken>>;
+  csrf(observe?: 'events', options?: RequestOptions<'json'>): Observable<HttpEvent<CsrfToken>>;
   csrf(
-    token: CsrfToken,
-    observe?: 'response',
-    options?: RequestOptions<'blob'>,
-  ): Observable<HttpResponse<CsrfToken>>;
-  csrf(
-    token: CsrfToken,
-    observe?: 'events',
-    options?: RequestOptions<'blob'>,
-  ): Observable<HttpEvent<CsrfToken>>;
-  csrf(
-    token: CsrfToken,
     observe?: 'body' | 'events' | 'response',
     options?: RequestOptions<'arraybuffer' | 'blob' | 'json' | 'text'>,
   ): Observable<any> {
     const url = `${this.basePath}/api/auth/csrf`;
-
-    let params = new HttpParams();
-    if (token != null) {
-      params = HttpParamsBuilder.addToHttpParams(params, token, 'token');
-    }
 
     let headers: HttpHeaders;
     if (options?.headers instanceof HttpHeaders) {
@@ -100,13 +91,82 @@ export class AuthControllerService {
     const requestOptions: any = {
       observe: observe as any,
       headers,
-      params,
-      responseType: 'blob' as 'blob',
       reportProgress: options?.reportProgress,
       withCredentials: options?.withCredentials,
       context: this.createContextWithClientId(options?.context),
     };
 
     return this.httpClient.get(url, requestOptions);
+  }
+
+  login(
+    loginRequest: LoginRequest,
+    observe?: 'body',
+    options?: RequestOptions<'json'>,
+  ): Observable<LoginResponse>;
+  login(
+    loginRequest: LoginRequest,
+    observe?: 'response',
+    options?: RequestOptions<'json'>,
+  ): Observable<HttpResponse<LoginResponse>>;
+  login(
+    loginRequest: LoginRequest,
+    observe?: 'events',
+    options?: RequestOptions<'json'>,
+  ): Observable<HttpEvent<LoginResponse>>;
+  login(
+    loginRequest: LoginRequest,
+    observe?: 'body' | 'events' | 'response',
+    options?: RequestOptions<'arraybuffer' | 'blob' | 'json' | 'text'>,
+  ): Observable<any> {
+    const url = `${this.basePath}/api/auth/login`;
+
+    let headers: HttpHeaders;
+    if (options?.headers instanceof HttpHeaders) {
+      headers = options.headers;
+    } else {
+      headers = new HttpHeaders(options?.headers);
+    }
+    // Set Content-Type for JSON requests if not already set
+    if (!headers.has('Content-Type')) {
+      headers = headers.set('Content-Type', 'application/json');
+    }
+
+    const requestOptions: any = {
+      observe: observe as any,
+      headers,
+      reportProgress: options?.reportProgress,
+      withCredentials: options?.withCredentials,
+      context: this.createContextWithClientId(options?.context),
+    };
+
+    return this.httpClient.post(url, loginRequest, requestOptions);
+  }
+
+  logout(observe?: 'body', options?: RequestOptions<'json'>): Observable<any>;
+  logout(observe?: 'response', options?: RequestOptions<'json'>): Observable<HttpResponse<any>>;
+  logout(observe?: 'events', options?: RequestOptions<'json'>): Observable<HttpEvent<any>>;
+  logout(
+    observe?: 'body' | 'events' | 'response',
+    options?: RequestOptions<'arraybuffer' | 'blob' | 'json' | 'text'>,
+  ): Observable<any> {
+    const url = `${this.basePath}/api/auth/logout`;
+
+    let headers: HttpHeaders;
+    if (options?.headers instanceof HttpHeaders) {
+      headers = options.headers;
+    } else {
+      headers = new HttpHeaders(options?.headers);
+    }
+
+    const requestOptions: any = {
+      observe: observe as any,
+      headers,
+      reportProgress: options?.reportProgress,
+      withCredentials: options?.withCredentials,
+      context: this.createContextWithClientId(options?.context),
+    };
+
+    return this.httpClient.post(url, null, requestOptions);
   }
 }

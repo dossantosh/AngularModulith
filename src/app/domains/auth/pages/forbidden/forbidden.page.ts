@@ -2,13 +2,13 @@ import { Component, DestroyRef, inject } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { Router } from '@angular/router';
 
-import { AuthFacade } from '../../../core/auth/session/auth.facade';
+import { AuthFacade } from '../../../../core/auth/session/auth.facade';
 import {
   AppButtonComponent,
   AppCardComponent,
   AppErrorStateComponent,
   AppPageComponent,
-} from '../../../shared/ui';
+} from '../../../../shared/ui';
 
 @Component({
   selector: 'app-forbidden-page',

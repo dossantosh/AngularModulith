@@ -10,7 +10,7 @@ import {
   AppLoadingStateComponent,
   AppStatusBadgeComponent,
 } from '../../../../shared/ui';
-import { UserRolesApi, type UserRolesDto } from '../../services/user-roles.api';
+import { UserRolesApi, type UserRolesDto } from '../../api/user-roles.api';
 import { userIdFromRoute } from '../manage-user/users-detail-route';
 
 interface UserRolesState {

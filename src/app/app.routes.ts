@@ -15,14 +15,14 @@ export const routes: Routes = [
       {
         path: '',
         loadComponent: () =>
-          import('./domains/dashboard/feature-home/dashboard.page').then(
+          import('./domains/dashboard/pages/dashboard/dashboard.page').then(
             (component) => component.DashboardPage,
           ),
       },
       {
         path: 'forbidden',
         loadComponent: () =>
-          import('./domains/auth/feature-forbidden/forbidden.page').then(
+          import('./domains/auth/pages/forbidden/forbidden.page').then(
             (component) => component.ForbiddenPage,
           ),
       },
@@ -37,7 +37,7 @@ export const routes: Routes = [
   {
     path: 'login',
     loadComponent: () =>
-      import('./domains/auth/feature-login/login.page').then((component) => component.LoginPage),
+      import('./domains/auth/pages/login/login.page').then((component) => component.LoginPage),
   },
   { path: '**', redirectTo: '/forbidden' },
 ];

@@ -2,7 +2,7 @@ import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { Subject, of, throwError } from 'rxjs';
 import { vi } from 'vitest';
 
-import { UsersSearchApi, type UserPageDto } from '../../services/users-search.api';
+import { UsersSearchApi, type UserPageDto } from '../../api/users-search.api';
 import { UsersSearchPage } from './users-search.page';
 
 function userPage(overrides: Partial<UserPageDto> = {}): UserPageDto {

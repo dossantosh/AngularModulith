@@ -4,7 +4,7 @@ import { ActivatedRoute, convertToParamMap } from '@angular/router';
 import { Subject, of, throwError } from 'rxjs';
 import { vi } from 'vitest';
 
-import { UserRolesApi, type UserRolesDto } from '../../services/user-roles.api';
+import { UserRolesApi, type UserRolesDto } from '../../api/user-roles.api';
 import { UsersRolesPage } from './users-roles.page';
 
 const userRoles: UserRolesDto = {

@@ -3,7 +3,7 @@ import { Router } from '@angular/router';
 import { throwError } from 'rxjs';
 import { vi } from 'vitest';
 
-import { AuthFacade } from '../../../core/auth/session/auth.facade';
+import { AuthFacade } from '../../../../core/auth/session/auth.facade';
 import { LoginPage } from './login.page';
 
 describe('LoginPage', () => {

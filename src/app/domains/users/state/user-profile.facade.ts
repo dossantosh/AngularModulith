@@ -4,14 +4,14 @@ import {
   UserProfileApi,
   type UpdateUserPersonalDataCommand,
   type UserPersonalDataDto,
-} from '../services/user-profile.api';
+} from '../api/user-profile.api';
 
 export type {
   ContractTypeDto,
   EmployeeStatusDto,
   UpdateUserPersonalDataCommand,
   UserPersonalDataDto,
-} from '../services/user-profile.api';
+} from '../api/user-profile.api';
 
 interface UserProfileState {
   userId: number | null;

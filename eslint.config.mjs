@@ -9,6 +9,16 @@ const restrictedImports = (patterns) => [
   },
 ];
 
+const noDirectHttpClient = [
+  'error',
+  {
+    selector:
+      "ImportDeclaration[source.value='@angular/common/http'] ImportSpecifier[imported.name='HttpClient']",
+    message:
+      'Backend access must go through generated OpenAPI controllers wrapped by core/domain api adapters.',
+  },
+];
+
 export default tseslint.config(
   {
     ignores: ['**/dist', '**/out-tsc', '**/node_modules', 'src/app/generated/openapi/**'],
@@ -42,6 +52,13 @@ export default tseslint.config(
     },
   },
   {
+    files: ['src/app/**/*.ts'],
+    ignores: ['**/*.spec.ts', 'src/app/generated/openapi/**'],
+    rules: {
+      'no-restricted-syntax': noDirectHttpClient,
+    },
+  },
+  {
     files: ['src/app/core/**/*.ts'],
     ignores: ['**/*.spec.ts'],
     rules: {
@@ -66,66 +83,43 @@ export default tseslint.config(
     },
   },
   {
-    files: ['src/app/domains/**/features/**/*.ts', 'src/app/domains/**/feature-*/**/*.ts'],
-    ignores: ['**/*.spec.ts'],
+    files: ['src/app/domains/**/*.ts'],
+    ignores: [
+      '**/*.spec.ts',
+      'src/app/domains/**/api/**/*.ts',
+      'src/app/domains/**/services/**/*.ts',
+    ],
     rules: {
       'no-restricted-imports': restrictedImports([
         {
-          group: ['../data-access', '../data-access/*', '../../data-access', '../../data-access/*'],
+          group: ['**/generated/openapi', '**/generated/openapi/**'],
           message:
-            'Feature code should reach remote data through application services or facades, not data-access directly.',
+            'Domain code must reach generated OpenAPI clients through its own api/ adapters.',
         },
       ]),
     },
   },
   {
-    files: ['src/app/domains/**/application/**/*.ts'],
+    files: ['src/app/domains/**/api/**/*.ts', 'src/app/domains/**/services/**/*.ts'],
     ignores: ['**/*.spec.ts'],
     rules: {
       'no-restricted-imports': restrictedImports([
         {
-          group: [
-            '../features',
-            '../features/*',
-            '../features/**',
-            '../../features',
-            '../../features/*',
-            '../../features/**',
-            '../feature-*',
-            '../feature-*/*',
-            '../../feature-*',
-            '../../feature-*/*',
-          ],
-          message:
-            'Application services should orchestrate state/data and must not depend on pages.',
+          group: ['**/pages', '**/pages/**', '**/state', '**/state/**'],
+          message: 'Domain api/services adapters must not depend on pages or state.',
         },
       ]),
     },
   },
   {
-    files: ['src/app/domains/**/data-access/**/*.ts'],
+    files: ['src/app/domains/**/state/**/*.ts'],
     ignores: ['**/*.spec.ts'],
     rules: {
       'no-restricted-imports': restrictedImports([
         {
-          group: [
-            '../application',
-            '../application/*',
-            '../../application',
-            '../../application/*',
-            '../features',
-            '../features/*',
-            '../features/**',
-            '../../features',
-            '../../features/*',
-            '../../features/**',
-            '../feature-*',
-            '../feature-*/*',
-            '../../feature-*',
-            '../../feature-*/*',
-          ],
+          group: ['**/pages', '**/pages/**', '**/generated/openapi', '**/generated/openapi/**'],
           message:
-            'Data-access should stay an adapter layer and must not depend on app orchestration or pages.',
+            'Domain state can use domain api/ adapters, but must not depend on pages or generated clients.',
         },
       ]),
     },

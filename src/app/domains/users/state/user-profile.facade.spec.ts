@@ -6,7 +6,7 @@ import {
   UserProfileApi,
   type UpdateUserPersonalDataCommand,
   type UserPersonalDataDto,
-} from '../services/user-profile.api';
+} from '../api/user-profile.api';
 import { UserProfileFacade } from './user-profile.facade';
 
 const personalData: UserPersonalDataDto = {
