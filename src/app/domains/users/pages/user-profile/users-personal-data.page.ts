@@ -1,6 +1,8 @@
 import { Component, OnInit, computed, inject } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 
+import { AUTH_SCOPES } from '../../../../core/auth/permissions/permissions';
+import { AuthFacade } from '../../../../core/auth/session/auth.facade';
 import {
   AppButtonComponent,
   AppCardComponent,
@@ -57,9 +59,11 @@ const CONTRACT_LABELS: Record<NonNullable<UserPersonalDataDto['contractType']>, 
         title="Datos personales"
         subtitle="Informacion de empleado asociada al usuario seleccionado."
       >
-        <app-button card-actions variant="secondary" [routerLink]="editLink()" icon="edit">
-          Modificar
-        </app-button>
+        @if (canWriteUsers()) {
+          <app-button card-actions variant="secondary" [routerLink]="editLink()" icon="edit">
+            Modificar
+          </app-button>
+        }
 
         <div class="users-personal-data__summary">
           <div>
@@ -140,8 +144,10 @@ const CONTRACT_LABELS: Record<NonNullable<UserPersonalDataDto['contractType']>, 
 })
 export class UsersPersonalDataPage implements OnInit {
   private readonly route = inject(ActivatedRoute);
+  private readonly auth = inject(AuthFacade);
   private readonly facade = inject(UserProfileFacade);
 
+  readonly canWriteUsers = computed(() => this.auth.hasScope(AUTH_SCOPES.systems.write));
   readonly loading = this.facade.loading;
   readonly loadError = this.facade.loadError;
   readonly personalData = this.facade.profile;

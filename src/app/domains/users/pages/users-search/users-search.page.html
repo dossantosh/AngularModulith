@@ -11,7 +11,7 @@
         search-filter-actions
         variant="secondary"
         type="button"
-        [disabled]="facade.loading()"
+        [disabled]="loading()"
         (clicked)="clearFilters()"
       >
         Limpiar
@@ -52,11 +52,11 @@
       paginationAriaLabel="Paginacion de usuarios"
       previousAriaLabel="Cargar pagina anterior de usuarios"
       nextAriaLabel="Cargar pagina siguiente de usuarios"
-      [loading]="facade.loading()"
-      [empty]="facade.users().length === 0"
-      [error]="facade.error()"
-      [previousDisabled]="!facade.hasPrevious() || facade.loading()"
-      [nextDisabled]="!facade.hasNext() || facade.loading()"
+      [loading]="loading()"
+      [empty]="users().length === 0"
+      [error]="error()"
+      [previousDisabled]="!hasPrevious() || loading()"
+      [nextDisabled]="!hasNext() || loading()"
       (retry)="searchUsers()"
       (previous)="loadPrevious()"
       (next)="loadNext()"
@@ -68,10 +68,10 @@
       <div class="overflow-x-auto">
         <table
           mat-table
-          [dataSource]="facade.users()"
+          [dataSource]="users()"
           id="users-results-table"
           aria-label="Listado de usuarios encontrados"
-          [attr.aria-busy]="facade.loading()"
+          [attr.aria-busy]="loading()"
           class="users-results-table min-w-full"
         >
           <caption class="sr-only">

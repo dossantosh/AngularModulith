@@ -1,7 +1,8 @@
-import { HttpClient, provideHttpClient } from '@angular/common/http';
+import { provideHttpClient } from '@angular/common/http';
 import { HttpTestingController, provideHttpClientTesting } from '@angular/common/http/testing';
 import { TestBed } from '@angular/core/testing';
 
+import { provideNgOpenapi } from '../../../generated/openapi';
 import { AuthFacade } from './auth.facade';
 import { AuthenticatedUser } from './session.model';
 
@@ -11,11 +12,14 @@ describe('AuthFacade', () => {
 
   beforeEach(() => {
     TestBed.configureTestingModule({
-      providers: [provideHttpClient(), provideHttpClientTesting()],
+      providers: [
+        provideNgOpenapi({ basePath: '' }),
+        provideHttpClient(),
+        provideHttpClientTesting(),
+      ],
     });
 
     facade = TestBed.inject(AuthFacade);
-    TestBed.inject(HttpClient);
     http = TestBed.inject(HttpTestingController);
   });
 

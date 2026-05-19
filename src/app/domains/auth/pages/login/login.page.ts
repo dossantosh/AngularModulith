@@ -6,9 +6,9 @@ import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatSelectModule } from '@angular/material/select';
 import { Router } from '@angular/router';
 
-import { AuthFacade } from '../../../core/auth/session/auth.facade';
-import { BackendDataSource } from '../../../core/auth/session/session.model';
-import { AppButtonComponent, AppTextFieldComponent } from '../../../shared/ui';
+import { AuthFacade } from '../../../../core/auth/session/auth.facade';
+import { BackendDataSource } from '../../../../core/auth/session/session.model';
+import { AppButtonComponent, AppTextFieldComponent } from '../../../../shared/ui';
 
 @Component({
   selector: 'app-login-page',

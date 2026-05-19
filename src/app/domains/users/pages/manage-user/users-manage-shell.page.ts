@@ -3,6 +3,8 @@ import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { ActivatedRoute, NavigationEnd, Router, RouterOutlet } from '@angular/router';
 import { filter, map, tap } from 'rxjs';
 
+import { AUTH_SCOPES } from '../../../../core/auth/permissions/permissions';
+import { AuthFacade } from '../../../../core/auth/session/auth.facade';
 import {
   AppManageShellComponent,
   type AppBreadcrumbItem,
@@ -31,6 +33,7 @@ import { UserProfileFacade } from '../../state/user-profile.facade';
 export class UsersManageShellPage {
   private readonly route = inject(ActivatedRoute);
   private readonly router = inject(Router);
+  private readonly auth = inject(AuthFacade);
   private readonly facade = inject(UserProfileFacade);
   private readonly destroyRef = inject(DestroyRef);
 
@@ -51,26 +54,33 @@ export class UsersManageShellPage {
       return [];
     }
 
-    return [
+    const items: AppNavNode[] = [
       {
         key: 'personal-data',
         label: 'Datos personales',
         route: `/users/${userId}/personal-data`,
         exact: true,
       },
-      {
-        key: 'personal-data-edit',
-        label: 'Modificar datos personales',
-        route: `/users/${userId}/personal-data/edit`,
-        exact: true,
-      },
-      {
-        key: 'roles',
-        label: 'Roles',
-        route: `/users/${userId}/roles`,
-        exact: true,
-      },
     ];
+
+    if (this.auth.hasScope(AUTH_SCOPES.systems.write)) {
+      items.push(
+        {
+          key: 'personal-data-edit',
+          label: 'Modificar datos personales',
+          route: `/users/${userId}/personal-data/edit`,
+          exact: true,
+        },
+        {
+          key: 'roles',
+          label: 'Modificar Roles',
+          route: `/users/${userId}/roles`,
+          exact: true,
+        },
+      );
+    }
+
+    return items;
   });
 
   readonly activeSectionKey = computed(() => {

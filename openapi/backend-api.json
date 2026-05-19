@@ -1,7 +1,15 @@
 {
   "openapi": "3.1.0",
-  "info": { "title": "OpenAPI definition", "version": "v0" },
-  "servers": [{ "url": "http://localhost:7070", "description": "Generated server url" }],
+  "info": {
+    "title": "OpenAPI definition",
+    "version": "v0"
+  },
+  "servers": [
+    {
+      "url": "http://localhost:7070",
+      "description": "Generated server url"
+    }
+  ],
   "paths": {
     "/api/users/{id}": {
       "get": {
@@ -12,13 +20,22 @@
             "name": "id",
             "in": "path",
             "required": true,
-            "schema": { "type": "integer", "format": "int64" }
+            "schema": {
+              "type": "integer",
+              "format": "int64"
+            }
           }
         ],
         "responses": {
           "200": {
             "description": "OK",
-            "content": { "*/*": { "schema": { "$ref": "#/components/schemas/UserDetailsView" } } }
+            "content": {
+              "*/*": {
+                "schema": {
+                  "$ref": "#/components/schemas/UserDetailsView"
+                }
+              }
+            }
           }
         }
       },
@@ -30,19 +47,32 @@
             "name": "id",
             "in": "path",
             "required": true,
-            "schema": { "type": "integer", "format": "int64" }
+            "schema": {
+              "type": "integer",
+              "format": "int64"
+            }
           }
         ],
         "requestBody": {
           "content": {
-            "application/json": { "schema": { "$ref": "#/components/schemas/UpdateUserRequest" } }
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/UpdateUserRequest"
+              }
+            }
           },
           "required": true
         },
         "responses": {
           "200": {
             "description": "OK",
-            "content": { "*/*": { "schema": { "$ref": "#/components/schemas/UserDetailsView" } } }
+            "content": {
+              "*/*": {
+                "schema": {
+                  "$ref": "#/components/schemas/UserDetailsView"
+                }
+              }
+            }
           }
         }
       },
@@ -54,10 +84,17 @@
             "name": "id",
             "in": "path",
             "required": true,
-            "schema": { "type": "integer", "format": "int64" }
+            "schema": {
+              "type": "integer",
+              "format": "int64"
+            }
           }
         ],
-        "responses": { "200": { "description": "OK" } }
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
       }
     },
     "/api/users/{id}/roles": {
@@ -69,14 +106,21 @@
             "name": "id",
             "in": "path",
             "required": true,
-            "schema": { "type": "integer", "format": "int64" }
+            "schema": {
+              "type": "integer",
+              "format": "int64"
+            }
           }
         ],
         "responses": {
           "200": {
             "description": "OK",
             "content": {
-              "application/json": { "schema": { "$ref": "#/components/schemas/UserRolesView" } }
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/UserRolesView"
+                }
+              }
             }
           }
         }
@@ -89,13 +133,18 @@
             "name": "id",
             "in": "path",
             "required": true,
-            "schema": { "type": "integer", "format": "int64" }
+            "schema": {
+              "type": "integer",
+              "format": "int64"
+            }
           }
         ],
         "requestBody": {
           "content": {
             "application/json": {
-              "schema": { "$ref": "#/components/schemas/UpdateUserRolesRequest" }
+              "schema": {
+                "$ref": "#/components/schemas/UpdateUserRolesRequest"
+              }
             }
           },
           "required": true
@@ -104,7 +153,11 @@
           "200": {
             "description": "OK",
             "content": {
-              "application/json": { "schema": { "$ref": "#/components/schemas/UserRolesView" } }
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/UserRolesView"
+                }
+              }
             }
           }
         }
@@ -119,7 +172,10 @@
             "name": "id",
             "in": "path",
             "required": true,
-            "schema": { "type": "integer", "format": "int64" }
+            "schema": {
+              "type": "integer",
+              "format": "int64"
+            }
           }
         ],
         "responses": {
@@ -127,7 +183,9 @@
             "description": "OK",
             "content": {
               "application/json": {
-                "schema": { "$ref": "#/components/schemas/UserPersonalDataView" }
+                "schema": {
+                  "$ref": "#/components/schemas/UserPersonalDataView"
+                }
               }
             }
           }
@@ -141,13 +199,18 @@
             "name": "id",
             "in": "path",
             "required": true,
-            "schema": { "type": "integer", "format": "int64" }
+            "schema": {
+              "type": "integer",
+              "format": "int64"
+            }
           }
         ],
         "requestBody": {
           "content": {
             "application/json": {
-              "schema": { "$ref": "#/components/schemas/UpdateUserPersonalDataRequest" }
+              "schema": {
+                "$ref": "#/components/schemas/UpdateUserPersonalDataRequest"
+              }
             }
           },
           "required": true
@@ -157,7 +220,9 @@
             "description": "OK",
             "content": {
               "application/json": {
-                "schema": { "$ref": "#/components/schemas/UserPersonalDataView" }
+                "schema": {
+                  "$ref": "#/components/schemas/UserPersonalDataView"
+                }
               }
             }
           }
@@ -173,27 +238,54 @@
             "name": "id",
             "in": "query",
             "required": false,
-            "schema": { "type": "integer", "format": "int64" }
+            "schema": {
+              "type": "integer",
+              "format": "int64"
+            }
           },
-          { "name": "username", "in": "query", "required": false, "schema": { "type": "string" } },
-          { "name": "email", "in": "query", "required": false, "schema": { "type": "string" } },
+          {
+            "name": "username",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "email",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string"
+            }
+          },
           {
             "name": "lastId",
             "in": "query",
             "required": false,
-            "schema": { "type": "integer", "format": "int64" }
+            "schema": {
+              "type": "integer",
+              "format": "int64"
+            }
           },
           {
             "name": "limit",
             "in": "query",
             "required": false,
-            "schema": { "type": "integer", "format": "int32", "default": 25 }
+            "schema": {
+              "type": "integer",
+              "format": "int32",
+              "default": 25
+            }
           },
           {
             "name": "direction",
             "in": "query",
             "required": false,
-            "schema": { "type": "string", "default": "NEXT" }
+            "schema": {
+              "type": "string",
+              "default": "NEXT"
+            }
           }
         ],
         "responses": {
@@ -201,7 +293,9 @@
             "description": "OK",
             "content": {
               "application/json": {
-                "schema": { "$ref": "#/components/schemas/KeysetPageUserSummaryView" }
+                "schema": {
+                  "$ref": "#/components/schemas/KeysetPageUserSummaryView"
+                }
               }
             }
           }
@@ -212,14 +306,24 @@
         "operationId": "createUser",
         "requestBody": {
           "content": {
-            "application/json": { "schema": { "$ref": "#/components/schemas/CreateUserRequest" } }
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CreateUserRequest"
+              }
+            }
           },
           "required": true
         },
         "responses": {
           "200": {
             "description": "OK",
-            "content": { "*/*": { "schema": { "$ref": "#/components/schemas/UserDetailsView" } } }
+            "content": {
+              "*/*": {
+                "schema": {
+                  "$ref": "#/components/schemas/UserDetailsView"
+                }
+              }
+            }
           }
         }
       }
@@ -229,7 +333,16 @@
         "tags": ["auth-controller"],
         "operationId": "me",
         "responses": {
-          "200": { "description": "OK", "content": { "*/*": { "schema": { "type": "object" } } } }
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AuthSessionResponse"
+                }
+              }
+            }
+          }
         }
       }
     },
@@ -237,18 +350,60 @@
       "get": {
         "tags": ["auth-controller"],
         "operationId": "csrf",
-        "parameters": [
-          {
-            "name": "token",
-            "in": "query",
-            "required": true,
-            "schema": { "$ref": "#/components/schemas/CsrfToken" }
-          }
-        ],
         "responses": {
           "200": {
             "description": "OK",
-            "content": { "*/*": { "schema": { "$ref": "#/components/schemas/CsrfToken" } } }
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CsrfToken"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/auth/login": {
+      "post": {
+        "tags": ["auth-controller"],
+        "summary": "Authenticate with username and password",
+        "operationId": "login",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/LoginRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/LoginResponse"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized"
+          }
+        }
+      }
+    },
+    "/api/auth/logout": {
+      "post": {
+        "tags": ["auth-controller"],
+        "summary": "Invalidate the current session",
+        "operationId": "logout",
+        "responses": {
+          "204": {
+            "description": "No Content"
           }
         }
       }
@@ -259,12 +414,31 @@
       "UpdateUserRequest": {
         "type": "object",
         "properties": {
-          "username": { "type": "string", "maxLength": 40, "minLength": 0 },
-          "email": { "type": "string", "format": "email", "maxLength": 100, "minLength": 0 },
-          "enabled": { "type": "boolean" },
-          "password": { "type": "string", "maxLength": 100, "minLength": 8 },
-          "isAdmin": { "type": "boolean" },
-          "access": { "$ref": "#/components/schemas/UserAccessRequest" }
+          "username": {
+            "type": "string",
+            "maxLength": 40,
+            "minLength": 0
+          },
+          "email": {
+            "type": "string",
+            "format": "email",
+            "maxLength": 100,
+            "minLength": 0
+          },
+          "enabled": {
+            "type": "boolean"
+          },
+          "password": {
+            "type": "string",
+            "maxLength": 100,
+            "minLength": 8
+          },
+          "isAdmin": {
+            "type": "boolean"
+          },
+          "access": {
+            "$ref": "#/components/schemas/UserAccessRequest"
+          }
         }
       },
       "UserAccessRequest": {
@@ -272,18 +446,10 @@
         "properties": {
           "roleIds": {
             "type": "array",
-            "items": { "type": "integer", "format": "int64" },
-            "minItems": 1
-          }
-        },
-        "required": ["roleIds"]
-      },
-      "UpdateUserRolesRequest": {
-        "type": "object",
-        "properties": {
-          "roleIds": {
-            "type": "array",
-            "items": { "type": "integer", "format": "int64" },
+            "items": {
+              "type": "integer",
+              "format": "int64"
+            },
             "minItems": 1
           }
         },
@@ -292,108 +458,269 @@
       "RoleView": {
         "type": "object",
         "properties": {
-          "id": { "type": "integer", "format": "int64" },
-          "name": { "type": "string" }
+          "id": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "name": {
+            "type": "string"
+          }
         }
       },
       "UserDetailsView": {
         "type": "object",
         "properties": {
-          "id": { "type": "integer", "format": "int64" },
-          "username": { "type": "string" },
-          "email": { "type": "string" },
-          "enabled": { "type": "boolean" },
-          "isAdmin": { "type": "boolean" },
+          "id": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "username": {
+            "type": "string"
+          },
+          "email": {
+            "type": "string"
+          },
+          "enabled": {
+            "type": "boolean"
+          },
+          "isAdmin": {
+            "type": "boolean"
+          },
           "roles": {
             "type": "array",
-            "items": { "$ref": "#/components/schemas/RoleView" },
+            "items": {
+              "$ref": "#/components/schemas/RoleView"
+            },
             "uniqueItems": true
           }
         }
       },
+      "UpdateUserRolesRequest": {
+        "type": "object",
+        "properties": {
+          "roleIds": {
+            "type": "array",
+            "items": {
+              "type": "integer",
+              "format": "int64"
+            },
+            "minItems": 1
+          }
+        },
+        "required": ["roleIds"]
+      },
       "UserRolesView": {
         "type": "object",
         "properties": {
-          "userId": { "type": "integer", "format": "int64" },
-          "username": { "type": "string" },
+          "userId": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "username": {
+            "type": "string"
+          },
           "roles": {
             "type": "array",
-            "items": { "$ref": "#/components/schemas/RoleView" },
+            "items": {
+              "$ref": "#/components/schemas/RoleView"
+            },
             "uniqueItems": true
           },
           "availableRoles": {
             "type": "array",
-            "items": { "$ref": "#/components/schemas/RoleView" }
+            "items": {
+              "$ref": "#/components/schemas/RoleView"
+            }
           }
         }
       },
       "UpdateUserPersonalDataRequest": {
         "type": "object",
         "properties": {
-          "employeeCode": { "type": "string", "maxLength": 30, "minLength": 0 },
-          "firstName": { "type": "string", "maxLength": 80, "minLength": 0 },
-          "lastName": { "type": "string", "maxLength": 120, "minLength": 0 },
+          "employeeCode": {
+            "type": "string",
+            "maxLength": 30,
+            "minLength": 0
+          },
+          "firstName": {
+            "type": "string",
+            "maxLength": 80,
+            "minLength": 0
+          },
+          "lastName": {
+            "type": "string",
+            "maxLength": 120,
+            "minLength": 0
+          },
           "corporateEmail": {
             "type": "string",
             "format": "email",
             "maxLength": 120,
             "minLength": 0
           },
-          "phone": { "type": "string", "maxLength": 30, "minLength": 0 },
-          "identityDocument": { "type": "string", "maxLength": 40, "minLength": 0 },
-          "birthDate": { "type": "string", "format": "date" },
-          "address": { "type": "string", "maxLength": 160, "minLength": 0 },
-          "city": { "type": "string", "maxLength": 80, "minLength": 0 },
-          "stateProvince": { "type": "string", "maxLength": 80, "minLength": 0 },
-          "postalCode": { "type": "string", "maxLength": 20, "minLength": 0 },
-          "country": { "type": "string", "maxLength": 80, "minLength": 0 },
-          "jobTitle": { "type": "string", "maxLength": 100, "minLength": 0 },
-          "department": { "type": "string", "maxLength": 100, "minLength": 0 },
-          "hireDate": { "type": "string", "format": "date" },
-          "status": { "type": "string", "enum": ["ACTIVE", "INACTIVE", "TERMINATED", "ON_LEAVE"] },
+          "phone": {
+            "type": "string",
+            "maxLength": 30,
+            "minLength": 0
+          },
+          "identityDocument": {
+            "type": "string",
+            "maxLength": 40,
+            "minLength": 0
+          },
+          "birthDate": {
+            "type": "string",
+            "format": "date"
+          },
+          "address": {
+            "type": "string",
+            "maxLength": 160,
+            "minLength": 0
+          },
+          "city": {
+            "type": "string",
+            "maxLength": 80,
+            "minLength": 0
+          },
+          "stateProvince": {
+            "type": "string",
+            "maxLength": 80,
+            "minLength": 0
+          },
+          "postalCode": {
+            "type": "string",
+            "maxLength": 20,
+            "minLength": 0
+          },
+          "country": {
+            "type": "string",
+            "maxLength": 80,
+            "minLength": 0
+          },
+          "jobTitle": {
+            "type": "string",
+            "maxLength": 100,
+            "minLength": 0
+          },
+          "department": {
+            "type": "string",
+            "maxLength": 100,
+            "minLength": 0
+          },
+          "hireDate": {
+            "type": "string",
+            "format": "date"
+          },
+          "status": {
+            "type": "string",
+            "enum": ["ACTIVE", "INACTIVE", "TERMINATED", "ON_LEAVE"]
+          },
           "contractType": {
             "type": "string",
             "enum": ["FULL_TIME", "PART_TIME", "TEMPORARY", "CONTRACTOR", "INTERN", "OTHER"]
           },
-          "internalNotes": { "type": "string", "maxLength": 1000, "minLength": 0 }
+          "internalNotes": {
+            "type": "string",
+            "maxLength": 1000,
+            "minLength": 0
+          }
         }
       },
       "UserPersonalDataView": {
         "type": "object",
         "properties": {
-          "userId": { "type": "integer", "format": "int64" },
-          "username": { "type": "string" },
-          "employeeCode": { "type": "string" },
-          "firstName": { "type": "string" },
-          "lastName": { "type": "string" },
-          "corporateEmail": { "type": "string" },
-          "phone": { "type": "string" },
-          "identityDocument": { "type": "string" },
-          "birthDate": { "type": "string", "format": "date" },
-          "address": { "type": "string" },
-          "city": { "type": "string" },
-          "stateProvince": { "type": "string" },
-          "postalCode": { "type": "string" },
-          "country": { "type": "string" },
-          "jobTitle": { "type": "string" },
-          "department": { "type": "string" },
-          "hireDate": { "type": "string", "format": "date" },
-          "status": { "type": "string", "enum": ["ACTIVE", "INACTIVE", "TERMINATED", "ON_LEAVE"] },
+          "userId": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "username": {
+            "type": "string"
+          },
+          "employeeCode": {
+            "type": "string"
+          },
+          "firstName": {
+            "type": "string"
+          },
+          "lastName": {
+            "type": "string"
+          },
+          "corporateEmail": {
+            "type": "string"
+          },
+          "phone": {
+            "type": "string"
+          },
+          "identityDocument": {
+            "type": "string"
+          },
+          "birthDate": {
+            "type": "string",
+            "format": "date"
+          },
+          "address": {
+            "type": "string"
+          },
+          "city": {
+            "type": "string"
+          },
+          "stateProvince": {
+            "type": "string"
+          },
+          "postalCode": {
+            "type": "string"
+          },
+          "country": {
+            "type": "string"
+          },
+          "jobTitle": {
+            "type": "string"
+          },
+          "department": {
+            "type": "string"
+          },
+          "hireDate": {
+            "type": "string",
+            "format": "date"
+          },
+          "status": {
+            "type": "string",
+            "enum": ["ACTIVE", "INACTIVE", "TERMINATED", "ON_LEAVE"]
+          },
           "contractType": {
             "type": "string",
             "enum": ["FULL_TIME", "PART_TIME", "TEMPORARY", "CONTRACTOR", "INTERN", "OTHER"]
           },
-          "internalNotes": { "type": "string" }
+          "internalNotes": {
+            "type": "string"
+          }
         }
       },
       "CreateUserRequest": {
         "type": "object",
         "properties": {
-          "username": { "type": "string", "maxLength": 40, "minLength": 0 },
-          "email": { "type": "string", "format": "email", "maxLength": 100, "minLength": 0 },
-          "password": { "type": "string", "maxLength": 100, "minLength": 8 },
-          "isAdmin": { "type": "boolean" },
-          "access": { "$ref": "#/components/schemas/UserAccessRequest" }
+          "username": {
+            "type": "string",
+            "maxLength": 40,
+            "minLength": 0
+          },
+          "email": {
+            "type": "string",
+            "format": "email",
+            "maxLength": 100,
+            "minLength": 0
+          },
+          "password": {
+            "type": "string",
+            "maxLength": 100,
+            "minLength": 8
+          },
+          "isAdmin": {
+            "type": "boolean"
+          },
+          "access": {
+            "$ref": "#/components/schemas/UserAccessRequest"
+          }
         },
         "required": ["email", "isAdmin", "password", "username"]
       },
@@ -402,31 +729,165 @@
         "properties": {
           "content": {
             "type": "array",
-            "items": { "$ref": "#/components/schemas/UserSummaryView" }
+            "items": {
+              "$ref": "#/components/schemas/UserSummaryView"
+            }
           },
-          "hasNext": { "type": "boolean" },
-          "hasPrevious": { "type": "boolean" },
-          "nextId": { "type": "integer", "format": "int64" },
-          "previousId": { "type": "integer", "format": "int64" }
+          "hasNext": {
+            "type": "boolean"
+          },
+          "hasPrevious": {
+            "type": "boolean"
+          },
+          "nextId": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "previousId": {
+            "type": "integer",
+            "format": "int64"
+          }
         }
       },
       "UserSummaryView": {
         "type": "object",
         "properties": {
-          "id": { "type": "integer", "format": "int64" },
-          "username": { "type": "string" },
-          "email": { "type": "string" },
-          "enabled": { "type": "boolean" },
-          "isAdmin": { "type": "boolean" }
+          "id": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "username": {
+            "type": "string"
+          },
+          "email": {
+            "type": "string"
+          },
+          "enabled": {
+            "type": "boolean"
+          },
+          "isAdmin": {
+            "type": "boolean"
+          }
         }
+      },
+      "AuthSessionResponse": {
+        "type": "object",
+        "properties": {
+          "userId": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "username": {
+            "type": "string"
+          },
+          "dataSource": {
+            "type": "string",
+            "enum": ["prod", "historic"]
+          },
+          "roles": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "scopes": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "navigation": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/NavigationModuleResponse"
+            }
+          }
+        },
+        "required": ["dataSource", "navigation", "roles", "scopes", "username"]
+      },
+      "NavigationItemResponse": {
+        "type": "object",
+        "properties": {
+          "key": {
+            "type": "string"
+          },
+          "label": {
+            "type": "string"
+          },
+          "icon": {
+            "type": "string"
+          },
+          "route": {
+            "type": "string"
+          },
+          "disabled": {
+            "type": "boolean"
+          },
+          "hint": {
+            "type": "string"
+          }
+        },
+        "required": ["disabled", "icon", "key", "label", "route"]
+      },
+      "NavigationModuleResponse": {
+        "type": "object",
+        "properties": {
+          "key": {
+            "type": "string"
+          },
+          "label": {
+            "type": "string"
+          },
+          "icon": {
+            "type": "string"
+          },
+          "items": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/NavigationItemResponse"
+            }
+          }
+        },
+        "required": ["icon", "items", "key", "label"]
       },
       "CsrfToken": {
         "type": "object",
         "properties": {
-          "parameterName": { "type": "string" },
-          "token": { "type": "string" },
-          "headerName": { "type": "string" }
+          "parameterName": {
+            "type": "string"
+          },
+          "token": {
+            "type": "string"
+          },
+          "headerName": {
+            "type": "string"
+          }
         }
+      },
+      "LoginRequest": {
+        "type": "object",
+        "properties": {
+          "username": {
+            "type": "string"
+          },
+          "password": {
+            "type": "string"
+          },
+          "dataSource": {
+            "type": "string",
+            "enum": ["prod", "historic"]
+          }
+        },
+        "required": ["dataSource", "password", "username"]
+      },
+      "LoginResponse": {
+        "type": "object",
+        "properties": {
+          "username": {
+            "type": "string"
+          }
+        },
+        "required": ["username"]
       }
     }
   }

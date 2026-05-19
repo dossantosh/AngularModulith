@@ -21,10 +21,6 @@ export interface UserAccessRequest {
   roleIds: Array<number>;
 }
 
-export interface UpdateUserRolesRequest {
-  roleIds: Array<number>;
-}
-
 export interface RoleView {
   id?: number;
   name?: string;
@@ -37,6 +33,10 @@ export interface UserDetailsView {
   enabled?: boolean;
   isAdmin?: boolean;
   roles?: Array<RoleView>;
+}
+
+export interface UpdateUserRolesRequest {
+  roleIds: Array<number>;
 }
 
 export interface UserRolesView {
@@ -114,10 +114,45 @@ export interface UserSummaryView {
   isAdmin?: boolean;
 }
 
+export interface AuthSessionResponse {
+  userId?: number;
+  username: string;
+  dataSource: 'prod' | 'historic';
+  roles: Array<string>;
+  scopes: Array<string>;
+  navigation: Array<NavigationModuleResponse>;
+}
+
+export interface NavigationItemResponse {
+  key: string;
+  label: string;
+  icon: string;
+  route: string;
+  disabled: boolean;
+  hint?: string;
+}
+
+export interface NavigationModuleResponse {
+  key: string;
+  label: string;
+  icon: string;
+  items: Array<NavigationItemResponse>;
+}
+
 export interface CsrfToken {
   parameterName?: string;
   token?: string;
   headerName?: string;
+}
+
+export interface LoginRequest {
+  username: string;
+  password: string;
+  dataSource: 'prod' | 'historic';
+}
+
+export interface LoginResponse {
+  username: string;
 }
 
 /** Request Options for Angular HttpClient requests */

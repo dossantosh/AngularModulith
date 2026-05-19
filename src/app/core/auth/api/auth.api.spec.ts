@@ -1,38 +1,63 @@
-import { HttpClient, provideHttpClient } from '@angular/common/http';
-import { HttpTestingController, provideHttpClientTesting } from '@angular/common/http/testing';
 import { TestBed } from '@angular/core/testing';
+import { firstValueFrom, of, throwError } from 'rxjs';
+import { vi } from 'vitest';
 
+import { AuthControllerService } from '../../../generated/openapi';
 import { AuthApi } from './auth.api';
 
 describe('AuthApi', () => {
   let api: AuthApi;
-  let http: HttpTestingController;
+  let authClient: {
+    login: ReturnType<typeof vi.fn>;
+    logout: ReturnType<typeof vi.fn>;
+    me: ReturnType<typeof vi.fn>;
+    csrf: ReturnType<typeof vi.fn>;
+  };
 
   beforeEach(() => {
+    authClient = {
+      login: vi.fn(() => of({ username: 'john' })),
+      logout: vi.fn(() => of(null)),
+      me: vi.fn(() =>
+        of({
+          username: 'john',
+          dataSource: 'prod',
+          scopes: ['systems:read'],
+          navigation: [],
+        }),
+      ),
+      csrf: vi.fn(() => of({ token: 'csrf-token' })),
+    };
+
     TestBed.configureTestingModule({
-      providers: [AuthApi, provideHttpClient(), provideHttpClientTesting()],
+      providers: [AuthApi, { provide: AuthControllerService, useValue: authClient }],
     });
 
     api = TestBed.inject(AuthApi);
-    TestBed.inject(HttpClient);
-    http = TestBed.inject(HttpTestingController);
   });
 
   afterEach(() => {
-    http.verify();
     TestBed.resetTestingModule();
   });
 
-  it('initCsrf() swallows errors and completes', () => {
-    let completed = false;
+  it('delegates auth calls to the generated auth controller', async () => {
+    await firstValueFrom(api.login({ username: 'john', password: 'pw', dataSource: 'prod' }));
+    await firstValueFrom(api.logout());
+    await firstValueFrom(api.me());
 
-    api.initCsrf().subscribe({
-      complete: () => (completed = true),
+    expect(authClient.login).toHaveBeenCalledWith({
+      username: 'john',
+      password: 'pw',
+      dataSource: 'prod',
     });
+    expect(authClient.logout).toHaveBeenCalledWith();
+    expect(authClient.me).toHaveBeenCalled();
+  });
 
-    const request = http.expectOne((req) => req.url === '/api/auth/csrf');
-    request.flush('boom', { status: 500, statusText: 'Server Error' });
+  it('initCsrf() swallows errors and completes', async () => {
+    authClient.csrf.mockReturnValueOnce(throwError(() => new Error('csrf unavailable')));
 
-    expect(completed).toBe(true);
+    await expect(firstValueFrom(api.initCsrf())).resolves.toBeUndefined();
+    expect(authClient.csrf).toHaveBeenCalledWith();
   });
 });

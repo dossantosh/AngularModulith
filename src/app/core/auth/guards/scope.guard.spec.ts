@@ -1,11 +1,17 @@
 import { TestBed } from '@angular/core/testing';
-import { ActivatedRouteSnapshot, Router, RouterStateSnapshot, UrlTree } from '@angular/router';
+import {
+  ActivatedRouteSnapshot,
+  Route,
+  Router,
+  RouterStateSnapshot,
+  UrlTree,
+} from '@angular/router';
 import { firstValueFrom, from, isObservable, of, throwError } from 'rxjs';
 import { vi } from 'vitest';
 
 import { AUTH_SCOPES, requireScopes } from '../permissions/permissions';
 import { AuthFacade } from '../session/auth.facade';
-import { scopeGuard } from './scope.guard';
+import { scopeGuard, scopeMatchGuard } from './scope.guard';
 
 describe('scopeGuard', () => {
   const state = {} as RouterStateSnapshot;
@@ -41,6 +47,11 @@ describe('scopeGuard', () => {
     return isObservable(result) ? firstValueFrom(result) : from(Promise.resolve(result));
   }
 
+  async function runMatchGuard(route: Route) {
+    const result = TestBed.runInInjectionContext(() => scopeMatchGuard(route, []));
+    return isObservable(result) ? firstValueFrom(result) : from(Promise.resolve(result));
+  }
+
   it('allows navigation when the user has every required scope', async () => {
     const auth = TestBed.inject(AuthFacade) as unknown as {
       loadSession: ReturnType<typeof vi.fn>;
@@ -54,6 +65,23 @@ describe('scopeGuard', () => {
     auth.hasAllScopes.mockReturnValue(true);
 
     await expect(runGuard(route)).resolves.toBe(true);
+    expect(auth.hasAllScopes).toHaveBeenCalledWith([AUTH_SCOPES.systems.read]);
+    expect(createUrlTree).not.toHaveBeenCalled();
+  });
+
+  it('allows lazy route matching when the user has every required scope', async () => {
+    const auth = TestBed.inject(AuthFacade) as unknown as {
+      loadSession: ReturnType<typeof vi.fn>;
+      hasAllScopes: ReturnType<typeof vi.fn>;
+    };
+    const route = {
+      data: requireScopes(AUTH_SCOPES.systems.read),
+    } satisfies Route;
+
+    auth.loadSession.mockReturnValue(of({ username: 'john' }));
+    auth.hasAllScopes.mockReturnValue(true);
+
+    await expect(runMatchGuard(route)).resolves.toBe(true);
     expect(auth.hasAllScopes).toHaveBeenCalledWith([AUTH_SCOPES.systems.read]);
     expect(createUrlTree).not.toHaveBeenCalled();
   });
@@ -107,6 +135,24 @@ describe('scopeGuard', () => {
     auth.hasAllScopes.mockReturnValue(false);
 
     await expect(runGuard(route)).resolves.toBe(forbiddenTree);
+    expect(createUrlTree).toHaveBeenCalledWith(['/forbidden']);
+  });
+
+  it('redirects lazy route matching to forbidden when a required scope is missing', async () => {
+    const auth = TestBed.inject(AuthFacade) as unknown as {
+      loadSession: ReturnType<typeof vi.fn>;
+      hasAllScopes: ReturnType<typeof vi.fn>;
+    };
+    const forbiddenTree = { redirected: true } as unknown as UrlTree;
+    const route = {
+      data: requireScopes(AUTH_SCOPES.systems.read),
+    } satisfies Route;
+
+    createUrlTree.mockReturnValue(forbiddenTree);
+    auth.loadSession.mockReturnValue(of({ username: 'john' }));
+    auth.hasAllScopes.mockReturnValue(false);
+
+    await expect(runMatchGuard(route)).resolves.toBe(forbiddenTree);
     expect(createUrlTree).toHaveBeenCalledWith(['/forbidden']);
   });
 

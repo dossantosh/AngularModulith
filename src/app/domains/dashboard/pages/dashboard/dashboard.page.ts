@@ -1,14 +1,14 @@
 import { Component, computed, inject } from '@angular/core';
 
-import { HasScopeDirective } from '../../../core/auth/permissions/has-scope.directive';
-import { AUTH_SCOPES } from '../../../core/auth/permissions/permissions';
-import { AuthFacade } from '../../../core/auth/session/auth.facade';
+import { HasScopeDirective } from '../../../../core/auth/permissions/has-scope.directive';
+import { AUTH_SCOPES } from '../../../../core/auth/permissions/permissions';
+import { AuthFacade } from '../../../../core/auth/session/auth.facade';
 import {
   AppButtonComponent,
   AppCardComponent,
   AppPageComponent,
   AppStatusBadgeComponent,
-} from '../../../shared/ui';
+} from '../../../../shared/ui';
 
 @Component({
   standalone: true,
@@ -46,7 +46,7 @@ export class DashboardPage {
   readonly dataSource = this.auth.dataSource;
   readonly userName = computed(() => this.username() ?? 'Invitado');
   readonly dataSourceLabel = computed(() =>
-    this.dataSource() === 'historic' ? 'Historico' : 'Actual',
+    this.dataSource() === 'historic' ? 'Historico' : 'Producción',
   );
   readonly scopes = AUTH_SCOPES;
   readonly breadcrumbs = [{ label: 'Inicio' }];
