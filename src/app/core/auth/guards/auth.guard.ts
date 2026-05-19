@@ -4,7 +4,9 @@ import { catchError, map, of } from 'rxjs';
 
 import { AuthFacade } from '../session/auth.facade';
 
-export const authGuard: CanActivateFn = () => {
+export const authGuard: CanActivateFn = () => checkAuthenticated();
+
+function checkAuthenticated() {
   const auth = inject(AuthFacade);
   const router = inject(Router);
 
@@ -12,4 +14,4 @@ export const authGuard: CanActivateFn = () => {
     map(() => true),
     catchError(() => of(router.createUrlTree(['/login']))),
   );
-};
+}

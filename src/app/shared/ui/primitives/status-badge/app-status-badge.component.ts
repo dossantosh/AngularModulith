@@ -51,6 +51,7 @@ export type AppStatusBadgeVariant = 'success' | 'danger' | 'warning' | 'info' | 
     }
 
     .app-status-badge--info {
+      --app-status-badge-icon-color: var(--color-info);
       background: var(--color-info-container);
       color: var(--color-on-info-container);
     }
@@ -61,6 +62,7 @@ export type AppStatusBadgeVariant = 'success' | 'danger' | 'warning' | 'info' | 
     }
 
     .app-status-badge__icon {
+      color: var(--app-status-badge-icon-color, currentColor);
       width: 0.875rem;
       height: 0.875rem;
       font-size: 0.875rem;

@@ -46,7 +46,7 @@ export class DashboardPage {
   readonly dataSource = this.auth.dataSource;
   readonly userName = computed(() => this.username() ?? 'Invitado');
   readonly dataSourceLabel = computed(() =>
-    this.dataSource() === 'historic' ? 'Historico' : 'Actual',
+    this.dataSource() === 'historic' ? 'Historico' : 'Producción',
   );
   readonly scopes = AUTH_SCOPES;
   readonly breadcrumbs = [{ label: 'Inicio' }];

@@ -68,7 +68,10 @@ const INITIAL_STATE: UserRolesState = {
         />
       }
 
-      <app-command-bar title="Roles" subtitle="Selecciona los roles asignados al usuario.">
+      <app-command-bar
+        title="Modificar Roles"
+        subtitle="Selecciona los roles asignados al usuario."
+      >
         <div command-actions class="flex flex-wrap items-center gap-2">
           <app-status-badge
             [label]="selectedRoleIds().length + ' seleccionados'"

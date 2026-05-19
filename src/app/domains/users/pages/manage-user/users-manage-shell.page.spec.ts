@@ -4,6 +4,7 @@ import { ActivatedRoute, Router, convertToParamMap } from '@angular/router';
 import { EMPTY, of } from 'rxjs';
 import { vi } from 'vitest';
 
+import { AuthFacade } from '../../../../core/auth/session/auth.facade';
 import { UserProfileFacade } from '../../state/user-profile.facade';
 import { UsersManageShellPage } from './users-manage-shell.page';
 
@@ -24,6 +25,12 @@ describe('UsersManageShellPage', () => {
     TestBed.configureTestingModule({
       providers: [
         { provide: UserProfileFacade, useValue: facade },
+        {
+          provide: AuthFacade,
+          useValue: {
+            hasScope: vi.fn(() => true),
+          },
+        },
         {
           provide: ActivatedRoute,
           useValue: {
